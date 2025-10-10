@@ -1,229 +1,97 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>首頁｜暗夜飛鳶線上資訊庫</title>
-    <link rel="stylesheet" href="assets/css/site.css">
-  </head>
-  <body>
-    <canvas id="starfield"></canvas>
-    <div class="twinkle" id="tw"></div>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>資訊公告與文件搜尋</title>
+  <meta name="description" content="公告欄 + 文件搜尋 + PDF 預覽" />
 
-    <!-- 全螢幕線條：位於 LOGO 下層（z=1），不遮擋 LOGO（LOGO 在 z=2） -->
-    <div class="intro-underlay" data-autoremove>
-      <div class="lines">
-        <div class="line run" style="top:5%; --d:.05s; --t:.55s"></div>
-        <div class="line v run" style="left:10%; --d:.10s; --t:.60s"></div>
-        <div class="line run" style="top:40%; --d:.18s; --t:.50s"></div>
-        <div class="line run" style="top:60%; --d:.22s; --t:.60s"></div>
-        <div class="line v run" style="left:85%; --d:.26s; --t:.58s"></div>
-        <div class="line run" style="bottom:8%; --d:.28s; --t:.65s"></div>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter','ui-sans-serif','system-ui','-apple-system','Segoe UI','Roboto','Noto Sans TC','Helvetica','Arial','sans-serif'] }}}};</script>
+
+  <!-- Fuse.js for search -->
+  <script src="https://cdn.jsdelivr.net/npm/fuse.js@6.6.2"></script>
+
+  <!-- Lucide icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <link rel="manifest" href="assets/manifest.webmanifest">
+  <meta name="theme-color" content="#0f172a">
+
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📄</text></svg>">
+  <style>
+    /* Extra polish */
+    .glass {
+      background: rgba(255,255,255,0.08);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .fade-in { animation: fade-in 0.6s ease-out both; }
+    @keyframes fade-in { from { opacity: 0; transform: translateY(6px);} to { opacity: 1; transform: none;} }
+    .twinkle { animation: twinkle 2.6s ease-in-out infinite; }
+    @keyframes twinkle { 0%,100%{opacity:.7} 50%{opacity:1} }
+    .card-hover:hover { transform: translateY(-2px); box-shadow: 0 12px 28px rgba(0,0,0,.28); }
+    .chip { border: 1px solid rgba(255,255,255,.18); }
+    ::selection { background: #22d3ee44; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100">
+  <!-- Starfield -->
+  <canvas id="starfield" class="fixed inset-0 -z-10"></canvas>
+
+  <header class="sticky top-0 z-20 glass">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center gap-3">
+      <div class="w-10 h-10 rounded-xl bg-cyan-400/20 flex items-center justify-center twinkle">⭐</div>
+      <div class="flex-1">
+        <h1 class="text-xl md:text-2xl font-semibold leading-tight">資訊公告與文件搜尋</h1>
+        <p class="text-sm text-slate-300/80">公告欄、PDF 上傳、全文搜尋與預覽（PWA）</p>
       </div>
+      <a href="admin.html" class="text-sm px-3 py-1.5 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30 transition">Admin 上傳</a>
     </div>
+  </header>
 
-    <section class="hero" id="home">
-      <div class="hero-inner">
-        <div class="logo-wrap">
-          <img class="logo" id="logo" alt="暗夜飛鳶工作室 LOGO" src="logo/logo_white.png" />
-        </div>
-        <div class="divider"></div>
-        <h1 class="title-zh">暗夜飛鳶工作室｜線上資訊庫</h1>
-        <h2 class="title-en">DNFKStudios · Online Info‑base</h2>
+  <main class="max-w-6xl mx-auto px-4 py-6 space-y-8">
+    <!-- 公告欄 -->
+    <section class="space-y-3 fade-in">
+      <div class="flex items-center gap-2">
+        <i data-lucide="megaphone" class="w-5 h-5"></i>
+        <h2 class="text-lg md:text-xl font-semibold">公告欄</h2>
+        <span id="annCount" class="text-xs text-slate-400"></span>
       </div>
+      <div id="annBoard" class="grid md:grid-cols-2 gap-4"></div>
     </section>
 
-    <aside class="sidebar">
-      <div class="brand">
-        <img src="logo/logo_white.png" alt="logo mini"/>
-        <b>DNFK Studios</b>
+    <!-- 搜尋與篩選 -->
+    <section class="space-y-3 fade-in">
+      <div class="flex items-center gap-2">
+        <i data-lucide="search" class="w-5 h-5"></i>
+        <h2 class="text-lg md:text-xl font-semibold">搜尋文件</h2>
       </div>
-<nav class="sidenav">
-  <a class="nav-item" href="index.html">首頁</a>
-
-  <div class="nav-group" id="grp-docs" data-open="false">
-    <a class="nav-item" href="documents/index.html">公文</a>
-    <button class="caret" aria-label="展開公文" aria-expanded="false"></button>
-    <div class="nav-sub">
-      <!-- 範例子項（自行替換為實際分類頁） -->
-      <!-- <a class="subbtn" href="documents/year/2025.html">2025 年</a> -->
-    </div>
-  </div>
-
-  <div class="nav-group" id="grp-meeting" data-open="false">
-    <a class="nav-item" href="meeting/index.html">會議</a>
-    <button class="caret" aria-label="展開會議" aria-expanded="false"></button>
-    <div class="nav-sub"></div>
-  </div>
-
-  <div class="nav-group" id="grp-rule" data-open="false">
-    <a class="nav-item" href="rule/index.html">規章</a>
-    <button class="caret" aria-label="展開規章" aria-expanded="false"></button>
-    <div class="nav-sub"></div>
-  </div>
-
-  <div class="nav-group" id="grp-plan" data-open="false">
-    <a class="nav-item" href="plan/index.html">企劃</a>
-    <button class="caret" aria-label="展開企劃" aria-expanded="false"></button>
-    <div class="nav-sub"></div>
-  </div>
-
-  <a class="nav-item" href="about.html">關於本網站</a>
-</nav>
-    </aside>
-
-    <main>
-      <section id="bulletins" class="card">
-        <h3>最新公告 · Latest</h3>
-        <p>這裡將顯示最新的公告卡片。之後我們會接上資料來源與後台編輯功能。</p>
-      </section>
-      <section id="search" class="card">
-        <h3>站內搜尋 · Search</h3>
-        <p>日後我們會在此加入全文檢索與篩選。</p>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <div class="footer-inner">
-        <small>Copyright © 2025 DNFK Studios.</small>
+      <div class="glass rounded-2xl p-4 space-y-3">
+        <div class="flex flex-col md:flex-row gap-3">
+          <input id="searchInput" placeholder="輸入關鍵字：標題、描述、標籤…" class="flex-1 px-4 py-3 bg-slate-900/70 rounded-xl outline-none ring-1 ring-white/10 focus:ring-cyan-300/40 transition" />
+          <select id="sortSelect" class="px-3 py-3 bg-slate-900/70 rounded-xl ring-1 ring-white/10">
+            <option value="newest">最新在前</option>
+            <option value="oldest">最舊在前</option>
+            <option value="title">標題（A→Z）</option>
+          </select>
+        </div>
+        <div id="tagChips" class="flex flex-wrap gap-2"></div>
       </div>
-    </footer>
+      <div id="docList" class="grid md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
+      <div id="emptyState" class="hidden text-center text-slate-300/80 py-8">沒有符合的文件。</div>
+    </section>
+  </main>
 
-<script>
-  // ===== 星空粒子基底 =====
-  const cvs = document.getElementById('starfield');
-  const ctx = cvs.getContext('2d');
-  let stars = [], W, H, sidebarPX = 0;
+  <footer class="max-w-6xl mx-auto px-4 py-8 text-xs text-slate-400/80">
+    <div>© <span id="year"></span> 公告與文件搜尋 • Built for Cloudflare + GitHub Pages • PWA-ready</div>
+  </footer>
 
-  function resize(){
-    W = cvs.width = innerWidth;
-    H = cvs.height = innerHeight;
-    sidebarPX = (document.querySelector('.sidebar')?.offsetWidth) || 0;
-  }
-  addEventListener('resize', resize, {passive:true});
-  resize();
-
-  // 隨機星點
-  for(let i=0;i<160;i++){
-    stars.push({ x:Math.random()*W, y:Math.random()*H, r:Math.random()*1.2+0.2, s:Math.random()*0.6+0.2, a:Math.random()*360 });
-  }
-
-  // 1–2 組簡約「星座」
-  const CONSTS = [
-    { points: [[0.58,0.24],[0.63,0.20],[0.68,0.23],[0.72,0.19],[0.77,0.22]] },
-    { points: [[0.32,0.66],[0.36,0.62],[0.41,0.64],[0.45,0.61]] }
-  ];
-  function drawConstellations(t=0){
-    const lineAlpha = 0.28 + 0.12*Math.sin(t/1300);
-    const nodeAlpha = 0.60 + 0.25*Math.sin(t/900);
-    ctx.save();
-    ctx.lineWidth = 1; ctx.lineCap = 'round';
-    ctx.strokeStyle = `rgba(207,225,255,${lineAlpha.toFixed(3)})`;
-    ctx.fillStyle   = `rgba(255,255,255,${nodeAlpha.toFixed(3)})`;
-    for(const c of CONSTS){
-      const pts = c.points.map(([nx,ny])=>[ sidebarPX + nx*(W - sidebarPX), ny*H ]);
-      ctx.beginPath(); ctx.moveTo(pts[0][0], pts[0][1]);
-      for(let i=1;i<pts.length;i++) ctx.lineTo(pts[i][0], pts[i][1]);
-      ctx.stroke();
-      for(const [x,y] of pts){ ctx.beginPath(); ctx.arc(x,y,2.1,0,Math.PI*2); ctx.fill(); }
-    }
-    ctx.restore();
-  }
-
-  function loop(t=0){
-    ctx.clearRect(0,0,W,H);
-    for(const st of stars){
-      st.x += st.s * 0.2; st.y += Math.sin((st.a+=0.02))*0.15;
-      if(st.x>W+4) st.x=-4;
-      ctx.beginPath(); ctx.arc(st.x, st.y, st.r, 0, Math.PI*2);
-      ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.fill();
-    }
-    drawConstellations(t||0);
-    requestAnimationFrame(loop);
-  }
-  requestAnimationFrame(loop);
-
-  // CSS 小星星（前景閃爍點）
-  const tw = document.getElementById('tw');
-  const frag = document.createDocumentFragment();
-  for(let i=0;i<60;i++){
-    const s = document.createElement('span');
-    s.style.left = (Math.random()*100)+'%';
-    s.style.top = (Math.random()*100)+'%';
-    s.style.animationDelay = (Math.random()*6)+'s';
-    s.style.opacity = Math.random()*0.8+0.2;
-    frag.appendChild(s);
-  }
-  tw.appendChild(frag);
-(() => {
-  const canon = (p) => p.replace(/index\.html?$/i, "").replace(/\/+$/, "/");
-  const here  = canon(location.pathname);
-
-  // 1) 目前頁高亮
-  document.querySelectorAll('.sidebar .nav-item[href]').forEach(a => {
-    const path = canon(new URL(a.getAttribute('href'), location.href).pathname);
-    if (path === here) {
-      a.classList.add('active');
-      a.setAttribute('aria-current','page');
-    }
-  });
-
-  // 2) 三角開合 + 所屬自動展開
-  document.querySelectorAll('.sidebar .nav-group').forEach(group => {
-    const parentLink = group.querySelector('.nav-item[href]');
-    const caret      = group.querySelector('.caret');
-    const sub        = group.querySelector('.nav-sub');
-
-    const parentPath = canon(new URL(parentLink.getAttribute('href'), location.href).pathname);
-    const inSection  = here.startsWith(parentPath) && here !== parentPath;
-
-    function setOpen(open){
-      group.dataset.open = open ? 'true' : 'false';
-      caret.setAttribute('aria-expanded', String(open));
-      if (open) {
-        sub.style.maxHeight = sub.scrollHeight + 'px';
-        sub.style.opacity = '1';
-        sub.style.transform = 'translateY(0)';
-      } else {
-        sub.style.maxHeight = '0px';
-        sub.style.opacity = '0';
-        sub.style.transform = 'translateY(-2px)';
-      }
-    }
-    // 初始化：如果當前位於該區的子頁，則自動展開
-    setOpen(inSection);
-
-    caret.addEventListener('click', (e) => {
-      e.preventDefault(); e.stopPropagation();
-      setOpen(group.dataset.open !== 'true');
-    });
-
-    // 視窗改變時，更新展開高度
-    addEventListener('resize', () => {
-      if (group.dataset.open === 'true') sub.style.maxHeight = sub.scrollHeight + 'px';
-    });
-  });
-
-  // 3) 子連結（若有）高亮，並確保群組展開
-  document.querySelectorAll('.sidebar .nav-sub .subbtn[href]').forEach(a => {
-    const path = canon(new URL(a.getAttribute('href'), location.href).pathname);
-    if (path === here) {
-      a.classList.add('active');
-      const group = a.closest('.nav-group');
-      if (group) {
-        group.dataset.open = 'true';
-        const caret = group.querySelector('.caret');
-        const sub   = group.querySelector('.nav-sub');
-        if (caret && sub) {
-          caret.setAttribute('aria-expanded', 'true');
-          sub.style.maxHeight = sub.scrollHeight + 'px';
-          sub.style.opacity = '1';
-          sub.style.transform = 'translateY(0)';
-        }
-      }
-    }
-  });
-})();
-</script>
-  </body>
+  <script src="assets/js/config.js"></script>
+  <script src="assets/js/starfield.js"></script>
+  <script src="assets/js/app.js"></script>
+  <script src="assets/js/sw-register.js"></script>
+  <script>lucide.createIcons(); document.getElementById('year').textContent = new Date().getFullYear()</script>
+</body>
 </html>

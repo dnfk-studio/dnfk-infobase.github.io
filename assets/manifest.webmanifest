@@ -1,0 +1,10 @@
+{
+  "name": "資訊公告與文件搜尋",
+  "short_name": "公告文件",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0ea5b7",
+  "description": "公告欄、PDF 上傳、搜尋與預覽",
+  "icons": []
+}

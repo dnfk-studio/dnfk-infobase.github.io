@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin 上傳 | 公告與文件搜尋</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>tailwind.config = { theme: { extend: { fontFamily: { sans: ['Inter','system-ui','Noto Sans TC','sans-serif'] }}}};</script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .glass { background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.12); }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100">
+  <div class="max-w-3xl mx-auto px-4 py-8 space-y-6">
+    <a href="index.html" class="inline-flex items-center gap-2 text-slate-300 hover:text-white">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i> 返回首頁
+    </a>
+    <h1 class="text-2xl font-semibold">Admin：上傳 PDF 檔案</h1>
+    <p class="text-slate-300/80">此頁面需要先在 <code>assets/js/config.js</code> 設定 Google Apps Script Web App URL。建議用 Cloudflare Access 保護此頁。</p>
+
+    <form id="uploadForm" class="glass rounded-2xl p-5 space-y-4">
+      <div class="grid md:grid-cols-2 gap-4">
+        <div>
+          <label class="text-sm text-slate-300">標題</label>
+          <input required name="title" class="w-full px-3 py-2 rounded-lg bg-slate-900/70 outline-none ring-1 ring-white/10">
+        </div>
+        <div>
+          <label class="text-sm text-slate-300">日期</label>
+          <input required type="date" name="date" class="w-full px-3 py-2 rounded-lg bg-slate-900/70 outline-none ring-1 ring-white/10">
+        </div>
+      </div>
+      <div>
+        <label class="text-sm text-slate-300">標籤（以逗號分隔）</label>
+        <input name="tags" placeholder="例如：校務, 公告, 表單" class="w-full px-3 py-2 rounded-lg bg-slate-900/70 outline-none ring-1 ring-white/10">
+      </div>
+      <div>
+        <label class="text-sm text-slate-300">描述</label>
+        <textarea name="desc" rows="3" class="w-full px-3 py-2 rounded-lg bg-slate-900/70 outline-none ring-1 ring-white/10"></textarea>
+      </div>
+      <div>
+        <label class="text-sm text-slate-300">選擇 PDF 檔案</label>
+        <input required type="file" name="file" accept="application/pdf" class="w-full text-slate-300">
+      </div>
+      <button class="px-4 py-2 rounded-lg bg-cyan-500/20 hover:bg-cyan-500/30" type="submit">上傳</button>
+      <div id="uploadMsg" class="text-sm text-slate-300"></div>
+    </form>
+
+    <div class="glass rounded-2xl p-5">
+      <h2 class="font-semibold mb-2">上傳說明</h2>
+      <ol class="list-decimal pl-5 space-y-1 text-slate-300/90">
+        <li>在 Google 雲端硬碟建立資料夾，取得其 Folder ID。</li>
+        <li>建立 Google 試算表，第一列欄位為：<code>id, title, date, tags, desc, url</code>。</li>
+        <li>佈署 Apps Script（見 <code>apps_script/README_APPS_SCRIPT.md</code>）。</li>
+        <li>將 Web App URL 貼到 <code>assets/js/config.js</code> 的 <code>APPS_SCRIPT_URL</code>。</li>
+      </ol>
+    </div>
+  </div>
+
+  <script src="assets/js/config.js"></script>
+<script>
+  lucide.createIcons();
+  const form = document.getElementById('uploadForm');
+  const msg = document.getElementById('uploadMsg');
+
+  async function fileToBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const res = reader.result.split(',')[1]; // remove data:...;base64,
+        resolve(res);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  }
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!CONFIG.APPS_SCRIPT_URL) { msg.textContent = '尚未設定 APPS_SCRIPT_URL'; return; }
+    const fd = new FormData(form);
+    const file = form.file.files[0];
+    if (!file) { msg.textContent = '請選擇 PDF 檔案'; return; }
+    msg.textContent = '上傳中…';
+
+    try {
+      const base64 = await fileToBase64(file);
+      // 轉為 base64 欄位提交
+      fd.delete('file');
+      fd.append('file', base64);
+      fd.append('filename', file.name);
+      fd.append('mimeType', file.type || 'application/pdf');
+
+      const res = await fetch(CONFIG.APPS_SCRIPT_URL, { method: 'POST', body: fd });
+      const data = await res.json();
+      if (data?.ok) {
+        msg.innerHTML = '✅ 上傳成功：<a class="underline" target="_blank" href="'+data.url+'">檔案連結</a>';
+      } else {
+        msg.textContent = '上傳失敗：' + (data?.error || '未知錯誤');
+      }
+    } catch (err) {
+      console.error(err);
+      msg.textContent = '上傳失敗（可能是 CORS 或權限問題）。';
+    }
+  });
+</script>
+
+</body>
+</html>
