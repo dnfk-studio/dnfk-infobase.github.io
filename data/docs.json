@@ -1,106 +1,26 @@
 [
   {
-    "id": "ANN-2025-001",
-    "title": "網站上線公告",
-    "category": "公告",
-    "tags": [
-      "重要",
-      "網站"
-    ],
-    "uploaded_by": "管理員",
-    "uploaded_at": "2025-10-18",
-    "revised_at": "2025-10-18",
-    "current": "1.0",
-    "properties": {
-      "性質": "一般公文",
-      "標籤": "公告"
-    },
-    "versions": [
-      {
-        "v": "1.0",
-        "file": "pdfs/ANN-2025-001-v1.pdf",
-        "date": "2025-10-18",
-        "note": "初版"
-      }
-    ]
-  },
-  {
-    "id": "RULE-2025-GEN-001",
-    "title": "團體規章範本",
+    "id": "R-251001",
+    "title": "組織規程",
     "category": "規章/團體規章",
     "tags": [
-      "規章",
-      "範本"
+      "組織規程",
+      "規章"
     ],
-    "uploaded_by": "秘書組",
-    "uploaded_at": "2025-10-01",
-    "revised_at": "2025-10-12",
-    "current": "1.1",
+    "uploaded_by": "DNFK Studios",
+    "uploaded_at": "2025-10-18",
+    "revised_at": "2025-10-18",
+    "current": "1.0.0",
     "properties": {
-      "性質": "參考文件",
-      "機密": "否"
+      "性質": "規章",
+      "標籤": "規章"
     },
     "versions": [
       {
-        "v": "1.0",
-        "file": "pdfs/RULE-2025-GEN-001-v1.pdf",
-        "date": "2025-10-01",
-        "note": "初版"
-      },
-      {
-        "v": "1.1",
-        "file": "pdfs/RULE-2025-GEN-001-v1.1.pdf",
-        "date": "2025-10-12",
-        "note": "修訂條文 3.2"
-      }
-    ]
-  },
-  {
-    "id": "PLAN-2025-PROP-002",
-    "title": "活動企劃提案書（示例）",
-    "category": "企劃/企劃提案書",
-    "tags": [
-      "企劃",
-      "提案"
-    ],
-    "uploaded_by": "企劃組",
-    "uploaded_at": "2025-09-20",
-    "revised_at": "2025-09-20",
-    "current": "1.0",
-    "properties": {
-      "性質": "提案",
-      "預算": "TBD"
-    },
-    "versions": [
-      {
-        "v": "1.0",
-        "file": "pdfs/PLAN-2025-PROP-002-v1.pdf",
-        "date": "2025-09-20",
-        "note": "初版"
-      }
-    ]
-  },
-  {
-    "id": "MEET-2025-REC-003",
-    "title": "9月例會會議紀錄（示例）",
-    "category": "會議/會議紀錄",
-    "tags": [
-      "會議",
-      "紀錄"
-    ],
-    "uploaded_by": "紀錄人員",
-    "uploaded_at": "2025-09-10",
-    "revised_at": "2025-09-10",
-    "current": "1.0",
-    "properties": {
-      "性質": "公開"
-    },
-    "versions": [
-      {
-        "v": "1.0",
-        "file": "pdfs/MEET-2025-REC-003-v1.pdf",
-        "date": "2025-09-10",
-        "note": "初版"
+        "v": "1.0.0",
+        "file": "pdfs/OR-2025-10-18-001-v1.0.0.pdf",
+        "date": "2025-10-18",
+        "note": "v1.0.0"
       }
     ]
   }
