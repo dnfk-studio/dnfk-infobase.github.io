@@ -2,48 +2,56 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark light">
   <title>暗夜飛鳶工作室 線上資訊庫</title>
-  <meta name="description" content="暗夜飛鳶工作室 線上資訊庫 | 公告、規章、企劃、會議文件的靜態知識庫" />
-  <link rel="icon" href="img/favicon.svg">
-  <!-- Tailwind via CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <meta name="description" content="公告、規章、企劃、會議文件的靜態資訊庫（GitHub Pages 無後端）" />
+  <link rel="icon" href="img/favicon.svg" />
+  <link rel="preload" href="assets/css/style.css" as="style">
+  <link rel="stylesheet" href="assets/css/style.css" />
 </head>
-<body class="bg-slate-950 text-slate-100">
-  <header class="sticky top-0 z-50 backdrop-blur bg-slate-900/70 border-b border-white/10">
-    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center gap-4">
-      <img src="img/logo.svg" alt="logo" class="w-8 h-8">
-      <div class="flex-1">
-        <h1 class="text-xl md:text-2xl font-semibold tracking-wide">暗夜飛鳶工作室 線上資訊庫</h1>
-        <p class="text-xs text-slate-300/80">GitHub Pages 靜態架站．以檔案與 JSON 管理版本與權限（無後端）</p>
+<body>
+  <header class="topbar" role="banner">
+    <button id="menuBtn" class="icon-btn" aria-label="開啟選單" aria-controls="sidebar" aria-expanded="false">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z"/>
+      </svg>
+    </button>
+    <a href="./" class="brand" aria-label="返回首頁">
+      <img src="img/logo.svg" alt="" class="logo"/>
+      <div class="brand-text">
+        <strong>暗夜飛鳶工作室 線上資訊庫</strong>
+        <span>GitHub Pages · 無後端</span>
       </div>
-      <a id="githubLink" class="text-xs opacity-80 hover:opacity-100 underline" target="_blank">GitHub</a>
-    </div>
+    </a>
+    <a id="githubLink" class="ghost-btn" target="_blank" rel="noopener">在 GitHub 檢視</a>
   </header>
 
-  <main class="max-w-7xl mx-auto px-4 py-6 grid grid-cols-1 md:grid-cols-12 gap-6">
-    <!-- Sidebar filters -->
-    <aside class="md:col-span-3 space-y-6">
-      <section class="card">
-        <h2 class="card-title">搜尋</h2>
-        <input id="q" type="search" placeholder="輸入關鍵字、編號、標籤…" class="input w-full" />
-        <div class="mt-2 text-xs text-slate-300/80">支援即時篩選與網址分享（深連結）。</div>
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar" aria-label="篩選面板">
+      <section class="panel">
+        <h2 class="panel-title">快速搜尋</h2>
+        <div class="input-row">
+          <input id="q" type="search" class="input" placeholder="輸入關鍵字、編號、標籤…" aria-label="搜尋文件" autocomplete="off" />
+          <button id="clearFilters" class="btn ghost" aria-label="清除篩選">清除</button>
+        </div>
+        <div class="hint"><kbd>/</kbd> 聚焦搜尋 · Enter 套用</div>
       </section>
 
-      <section class="card">
-        <h2 class="card-title">分類</h2>
-        <div id="categoryList" class="flex flex-col gap-2"></div>
+      <section class="panel">
+        <h2 class="panel-title">分類</h2>
+        <div id="categoryList" class="chips"></div>
       </section>
 
-      <section class="card">
-        <h2 class="card-title">標籤</h2>
-        <div id="tagCloud" class="flex flex-wrap gap-2"></div>
+      <section class="panel">
+        <h2 class="panel-title">標籤</h2>
+        <div id="tagCloud" class="chips"></div>
       </section>
 
-      <section class="card">
-        <h2 class="card-title">排序</h2>
-        <select id="sortBy" class="select w-full">
+      <section class="panel">
+        <h2 class="panel-title">排序</h2>
+        <select id="sortBy" class="select" aria-label="排序方式">
           <option value="recent">最近更新</option>
           <option value="uploaded">上傳時間（新→舊）</option>
           <option value="title">標題（A→Z）</option>
@@ -51,68 +59,65 @@
         </select>
       </section>
 
-      <section class="card">
-        <h2 class="card-title">說明</h2>
-        <ol class="list-decimal list-inside space-y-1 text-sm text-slate-300/90">
-          <li>新增/修改檔案：直接在 GitHub Repo 內新增 PDF 檔與 <code>data/docs.json</code>。</li>
-          <li>版本：在同一文件的 <code>versions[]</code> 列出不同檔案與日期。</li>
-          <li>線上閱讀：點擊文件後於右側內嵌或新分頁開啟 PDF。</li>
-          <li>深連結：每個文件與版本都有可分享網址。</li>
+      <section class="panel small">
+        <h2 class="panel-title">使用方式</h2>
+        <ol>
+          <li>新增/修改：在程式庫加入 PDF 與編輯 <code>data/docs.json</code>。</li>
+          <li>版本：同一文件的 <code>versions[]</code> 列出各版。</li>
+          <li>閱讀：開啟卡片→選版本→右側即時預覽。</li>
+          <li>分享：網址會帶上目前篩選或文件版本。</li>
         </ol>
       </section>
     </aside>
 
-    <!-- Content -->
-    <section class="md:col-span-9 space-y-4">
-      <div class="flex items-center justify-between gap-4">
-        <div id="activeFilters" class="flex flex-wrap gap-2"></div>
-        <button id="clearFilters" class="btn-secondary hidden">清除篩選</button>
-      </div>
-      <div id="resultsInfo" class="text-sm text-slate-300/80"></div>
-      <div id="cards" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
-    </section>
-  </main>
+    <!-- Main -->
+    <main class="content" id="main">
+      <section class="toolbar">
+        <div id="activeFilters" class="chips"></div>
+        <div class="spacer"></div>
+        <div id="resultsInfo" class="muted"></div>
+      </section>
 
-  <!-- Drawer/Modal for document detail -->
-  <div id="drawer" class="drawer hidden">
+      <section id="cards" class="cards" aria-live="polite"></section>
+    </main>
+  </div>
+
+  <!-- Drawer -->
+  <div id="drawer" class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" hidden>
     <div class="drawer-panel">
-      <div class="flex items-center justify-between">
-        <h3 id="drawerTitle" class="text-lg font-semibold"></h3>
-        <button id="drawerClose" class="icon-btn" title="關閉">✕</button>
+      <div class="drawer-header">
+        <div class="drawer-title">
+          <h3 id="drawerTitle"></h3>
+          <div id="meta" class="muted"></div>
+        </div>
+        <button id="drawerClose" class="icon-btn" aria-label="關閉">
+          ✕
+        </button>
       </div>
-      <div id="meta" class="mt-3 text-sm space-y-1"></div>
-      <div class="mt-4">
-        <h4 class="text-sm font-semibold opacity-80">版本</h4>
-        <div id="versionList" class="mt-2 flex flex-col gap-2"></div>
-      </div>
-      <div class="mt-4">
-        <h4 class="text-sm font-semibold opacity-80">線上閱讀</h4>
-        <div id="viewer" class="mt-2 viewer">
-          <div class="text-sm text-slate-300/80">請選擇一個版本以載入 PDF 檔。</div>
+
+      <div class="drawer-body">
+        <h4 class="section-title">版本</h4>
+        <div id="versionList" class="vlist"></div>
+
+        <h4 class="section-title">線上閱讀</h4>
+        <div id="viewer" class="viewer">
+          <div class="muted pad">請選擇一個版本以載入 PDF。</div>
         </div>
       </div>
     </div>
-    <div class="drawer-mask"></div>
+    <div class="drawer-mask" id="drawerMask"></div>
   </div>
 
-  <footer class="py-10 text-center text-xs text-slate-400/80">
-    <div>© 暗夜飛鳶工作室 | 建置於 GitHub Pages · 最後更新：<span id="lastUpdated"></span></div>
+  <footer class="footer">
+    © 暗夜飛鳶工作室 · <span id="lastUpdated"></span>
   </footer>
 
   <script>
-    // Optional: set GitHub repo link (自動從 window.location 估測)
-    const repoURLGuess = (function(){
-      const h = window.location.hostname;
-      const p = window.location.pathname.replace(/^\//,'').replace(/\/$/,''); // e.g. user.github.io/repo/
-      if(h.endsWith('github.io') && p) return `https://github.com/${h.split('.')[0]}/${p}`;
-      return null;
-    })();
-    if(repoURLGuess) {
-      document.getElementById('githubLink').href = repoURLGuess;
-      document.getElementById('githubLink').textContent = '在 GitHub 檢視此程式庫';
-    } else {
-      document.getElementById('githubLink').classList.add('hidden');
-    }
+    // 推測 repo 連結
+    const h = location.hostname, p = location.pathname.replace(/^\//,'').replace(/\/$/,''); 
+    const gh = h.endsWith('github.io') && p ? `https://github.com/${h.split('.')[0]}/${p}` : null;
+    const a = document.getElementById('githubLink');
+    if(gh){ a.href = gh; a.textContent = '在 GitHub 檢視'; } else { a.hidden = true; }
   </script>
   <script src="assets/js/app.js"></script>
 </body>
