@@ -1,37 +1,55 @@
+# 暗夜飛鳶工作室 線上資訊庫
 
-# 公告與文件搜尋網站（Cloudflare + GitHub Pages + Google Drive 上傳）
+純靜態（無後端）文件資料庫，可部署於 GitHub Pages。  
+以 `data/docs.json` 管理清單與中繼資料；PDF 放在 `pdfs/`，瀏覽器原生內嵌預覽。
 
-本專案提供：
-- 公告欄（從 Google 試算表或本地 JSON 載入）
-- 文件清單與即時搜尋（Fuse.js）
-- PDF 預覽（以 PDF.js viewer 連結開啟）
-- Admin 上傳頁（透過 Google Apps Script -> 儲存到 Google 雲端硬碟資料夾並回寫試算表）
-- PWA 快取（App Shell；資料走網路優先）
-- 星野背景與微動畫、美化樣式（Tailwind CDN + 自訂 CSS + JS）
+## 快速開始
+1. 將整個資料夾上傳到 GitHub Repo。
+2. 開啟 GitHub Pages（Settings → Pages）。
+3. 造訪 `https://<你的帳號>.github.io/<repo>`。
 
-## 快速開始（本地預覽）
-1. 直接打開 `index.html` 可使用 *本地 sample JSON* 模式（搜尋/公告皆可演示）。
-2. 若要啟用雲端上傳與雲端資料來源：
-   - 參考 `apps_script/README_APPS_SCRIPT.md` 佈署 Google Apps Script Web App。
-   - 取得 Web App URL、雲端硬碟資料夾 ID、試算表 ID，填入 `assets/js/config.js`。
-   - 將 `CONFIG.MODE` 設為 `"APPS_SCRIPT"`。
+## 新增文件
+- 將 PDF 複製到 `pdfs/`。
+- 編輯 `data/docs.json`，新增一筆：
+```json
+{
+  "id": "PLAN-2025-NEW-001",
+  "title": "新文件",
+  "category": "企劃/企劃書",
+  "tags": ["企劃","示例"],
+  "uploaded_by": "某某",
+  "uploaded_at": "2025-10-18",
+  "revised_at": "2025-10-18",
+  "current": "1.0",
+  "properties": {"性質":"一般","機密":"否"},
+  "versions": [
+    {"v":"1.0","file":"pdfs/PLAN-2025-NEW-001-v1.pdf","date":"2025-10-18","note":"初版"}
+  ]
+}
+```
+- Commit 後重新整理頁面即可看到。
 
-## GitHub Pages 佈署
-- 將整個資料夾推到 GitHub repository root。
-- 啟用 GitHub Pages（Branch: `main` / root）。
-- `sw.js` 與 `manifest.webmanifest` 會讓網站成為 PWA。
+## 類別規則
+主要支援以下層級：
+- 公告
+- 規章/團體規章
+- 規章/部組規章
+- 企劃/企劃提案書
+- 企劃/企劃書
+- 企劃/職務報告
+- 企劃/財務報告
+- 會議/會議公告
+- 會議/會議紀錄
 
-## Cloudflare 連接自訂網域
-1. 將網域 NS 指到 Cloudflare 或至少把 DNS 託管在 Cloudflare。
-2. 在 Cloudflare DNS 新增 CNAME 指向 `<username>.github.io`（把 Proxy 橙色開啟）。
-3. 回到 GitHub Pages 設定自訂網域（等待 TLS 生效）。
+## 深連結
+- 以查詢參數分享：`?id=ANN-2025-001&v=1.0`、`?q=規章&cat=規章/團體規章`
 
-## 功能自我檢查清單
-- 首頁載入後是否能看到「公告欄」卡片？
-- 搜尋框輸入關鍵字，列表是否即時過濾？
-- 點擊任何文件是否能在新分頁開啟 PDF.js 預覽？
-- 於 `admin.html` 上傳 PDF（在 APPS_SCRIPT 模式且已佈署 Web App），是否成功寫入 Drive 與試算表並立即回傳連結？
-- PWA：重新載入頁面，離線時能否載入 App 外殼（首頁框架）？
+## 標籤與屬性
+- `tags`: 自由增加。
+- `properties`: 任意鍵值對（例如 性質、機密、年度、承辦）。
+
+## 排序
+- 最近更新 / 上傳時間 / 標題 / 編號。
 
 ---
-產生時間：2025-10-10T04:52:39.841353
+最後更新：2025-10-18 14:41:06
