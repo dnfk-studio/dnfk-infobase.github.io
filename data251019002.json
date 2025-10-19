@@ -1,0 +1,38 @@
+{
+  "site": {
+    "title": "DNFk InfoBase"
+  },
+  "announcements": [
+    {
+      "id": "IBA-25101901",
+      "title": "系統公告：網站維護完成",
+      "body": "資訊小組已完成線上資訊庫維修作業，線上資訊庫現已對內開放使用。",
+      "date": "2025-10-19T06:20:03+08:00",
+      "pin": true,
+      "link": ""
+    }
+  ],
+  "docs": [
+    {
+      "id": "dnfk-OR",
+      "title": "暗夜飛鳶工作室 組織規程",
+      "description": "R-251001",
+      "tags": [
+        "規章/團體規章"
+      ],
+      "uploader": "科技部資訊小組 (TIT)",
+      "uploadedAt": "2025-10-19T06:22:18+08:00",
+      "versions": [
+        {
+          "version": "R-251001",
+          "date": "2025-07-01",
+          "file": "assets/R-251001.pdf",
+          "notes": "第8代團體規章體系"
+        }
+      ],
+      "relatedIds": [
+        "dnfk-OR"
+      ]
+    }
+  ]
+}
