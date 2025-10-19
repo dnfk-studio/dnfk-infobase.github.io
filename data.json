@@ -1,0 +1,128 @@
+{
+  "site": {
+    "title": "Nordic InfoBase"
+  },
+  "announcements": [
+    {
+      "id": "ann-20251001",
+      "title": "系統更新：新增『最新公告』專區",
+      "body": "本站現已支援最新公告，重要訊息會置頂顯示。",
+      "date": "2025-10-01T09:00:00Z",
+      "pin": true,
+      "link": ""
+    },
+    {
+      "id": "ann-20250915",
+      "title": "資料結構調整：改用外部 data.json",
+      "body": "所有文件資料改由 data.json 載入。若以本機檔案方式開啟，請以任意靜態伺服器運行。",
+      "date": "2025-09-15T03:00:00Z",
+      "pin": false,
+      "link": ""
+    },
+    {
+      "id": "ann-20250910",
+      "title": "PDF 檔案更新",
+      "body": "DNFK 入門指南與進階技巧已釋出新版本，請至對應卡片預覽。",
+      "date": "2025-09-10T01:00:00Z",
+      "pin": false,
+      "link": ""
+    }
+  ],
+  "docs": [
+    {
+      "id": "dnfk-starter",
+      "title": "DNFK 入門指南",
+      "description": "針對初學者整理的快速上手文件，包含環境設定、術語解釋與常見問題。",
+      "tags": [
+        "DNFK",
+        "入門",
+        "教學"
+      ],
+      "uploader": "Evan",
+      "uploadedAt": "2025-09-12T03:10:00Z",
+      "versions": [
+        {
+          "version": "v1.2",
+          "date": "2025-09-12",
+          "file": "assets/dnfk_starter_v1.2.pdf",
+          "notes": "新增 FAQ 與錯誤排除章節。"
+        },
+        {
+          "version": "v1.1",
+          "date": "2025-08-10",
+          "file": "assets/dnfk_starter_v1.1.pdf",
+          "notes": "調整排版、修正連結。"
+        },
+        {
+          "version": "v1.0",
+          "date": "2025-07-01",
+          "file": "assets/dnfk_starter_v1.0.pdf",
+          "notes": "初版釋出。"
+        }
+      ],
+      "relatedIds": [
+        "dnfk-terms",
+        "dnfk-advanced"
+      ]
+    },
+    {
+      "id": "dnfk-terms",
+      "title": "DNFK 術語彙編",
+      "description": "彙整常見專有名詞、縮寫與概念，附快速搜尋索引。",
+      "tags": [
+        "DNFK",
+        "索引",
+        "參考"
+      ],
+      "uploader": "Mia",
+      "uploadedAt": "2025-08-25T10:00:00Z",
+      "versions": [
+        {
+          "version": "v2.0",
+          "date": "2025-08-25",
+          "file": "assets/dnfk_terms_v2.0.pdf",
+          "notes": "全面更新字彙並補充圖例。"
+        },
+        {
+          "version": "v1.3",
+          "date": "2025-06-20",
+          "file": "assets/dnfk_terms_v1.3.pdf",
+          "notes": "修正錯字與格式。"
+        }
+      ],
+      "relatedIds": [
+        "dnfk-starter"
+      ]
+    },
+    {
+      "id": "dnfk-advanced",
+      "title": "DNFK 進階技巧與最佳實務",
+      "description": "深入探討工作流程最佳化、常見陷阱與效能調校。",
+      "tags": [
+        "DNFK",
+        "進階",
+        "最佳實務"
+      ],
+      "uploader": "Ryan",
+      "uploadedAt": "2025-10-01T02:22:00Z",
+      "versions": [
+        {
+          "version": "v1.1",
+          "date": "2025-10-01",
+          "file": "assets/dnfk_advanced_v1.1.pdf",
+          "notes": "新增效能章與案例研究。"
+        },
+        {
+          "version": "v1.0",
+          "date": "2025-09-05",
+          "file": "assets/dnfk_advanced_v1.0.pdf",
+          "notes": "初版釋出。"
+        }
+      ],
+      "relatedIds": [
+        "dnfk-starter",
+        "dnfk-terms"
+      ]
+    }
+  ]
+}
