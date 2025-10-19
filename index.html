@@ -1,158 +1,108 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-  <meta name="color-scheme" content="dark light">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>暗夜飛鳶工作室 線上資訊庫</title>
-  <meta name="description" content="公告、規章、企劃、會議文件的靜態資訊庫（GitHub Pages 無後端）" />
-  <link rel="icon" href="img/favicon.svg" />
-  <link rel="preload" href="assets/css/style.css" as="style">
-  <link rel="stylesheet" href="assets/css/style.css" />
+  <meta name="description" content="暗夜飛鳶工作室 線上資訊庫 — 公告、規章、企劃、會議等文件的集中索引與版本歷史瀏覽。" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link href="assets/css/style.css" rel="stylesheet" />
+  <!-- Lunr (search) -->
+  <script defer src="https://cdn.jsdelivr.net/npm/lunr/lunr.min.js"></script>
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
 </head>
 <body>
-  <!-- Intro Overlay -->
-  <div id="intro" class="intro" aria-hidden="true">
-    <div class="intro-inner">
-      <div class="intro-logo"><img src="img/logo.svg" alt="" /></div>
-      <div class="intro-title">暗夜飛鳶工作室</div>
-      <div class="intro-sub">線上資訊庫</div>
-      <button id="enterBtn" class="btn enter-btn" aria-label="進入網站首頁">
-        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 4l1.41 1.41L8.83 10H20v2H8.83l4.58 4.59L12 18l-8-8 8-8z"/></svg>
-        進入網站首頁
-      </button>
-      <button id="skipIntro" class="link skip">略過動畫</button>
-    </div>
-    <div class="intro-bg"></div>
-  </div>
-
-  <!-- Topbar -->
-  <header class="topbar" role="banner">
-    <button id="menuBtn" class="icon-btn" aria-label="開啟選單" aria-controls="sidebar" aria-expanded="false">
-      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
-        <path fill="currentColor" d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z"/>
-      </svg>
-    </button>
-    <a href="./" class="brand" aria-label="返回首頁">
-      <img src="img/logo.svg" alt="" class="logo"/>
-      <div class="brand-text">
-        <strong>暗夜飛鳶工作室 線上資訊庫</strong>
-        <span>DNFK Info‑Base · GitHub Pages · 無後端</span>
+  <header class="site-header">
+    <div class="brand">
+      <div class="logo">🜲</div>
+      <div class="titles">
+        <h1>暗夜飛鳶工作室 線上資訊庫</h1>
+        <p>公告‧規章‧企劃‧會議｜可搜尋、分類、標籤、版本歷史與 PDF 閱讀</p>
       </div>
-    </a>
-    <a id="githubLink" class="ghost-btn" target="_blank" rel="noopener">
-      <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M14 3v2h3.59L7 15.59 8.41 17 19 6.41V10h2V3h-7z"/><path fill="currentColor" d="M5 19h14v2H5z"/></svg>
-      <span>在 GitHub 檢視</span>
-    </a>
+    </div>
+    <div class="search-row">
+      <div class="search-box">
+        <i class="ti ti-search"></i>
+        <input id="q" type="search" placeholder="搜尋：標題、編號、作者、標籤、分類… (Ctrl+/ 聚焦)" autocomplete="off" />
+        <button id="clearSearch" class="ghost" aria-label="清除搜尋"><i class="ti ti-x"></i></button>
+      </div>
+      <div class="filters">
+        <select id="filterCategory" aria-label="分類">
+          <option value="">全部分類</option>
+          <option value="公告">公告</option>
+          <optgroup label="規章">
+            <option value="規章/團體規章">規章／團體規章</option>
+            <option value="規章/部組規章">規章／部組規章</option>
+          </optgroup>
+          <optgroup label="企劃">
+            <option value="企劃/企劃提案書">企劃／企劃提案書</option>
+            <option value="企劃/企劃書">企劃／企劃書</option>
+            <option value="企劃/職務報告">企劃／職務報告</option>
+            <option value="企劃/財務報告">企劃／財務報告</option>
+          </optgroup>
+          <optgroup label="會議">
+            <option value="會議/會議公告">會議／會議公告</option>
+            <option value="會議/會議紀錄">會議／會議紀錄</option>
+          </optgroup>
+        </select>
+        <input id="filterTag" type="text" placeholder="標籤過濾（以空白分隔，可多個）" aria-label="標籤過濾" />
+        <select id="sortBy" aria-label="排序">
+          <option value="updated_desc">最近更新優先</option>
+          <option value="uploaded_desc">最近上傳優先</option>
+          <option value="number_asc">編號（升冪）</option>
+          <option value="title_asc">標題（A→Z）</option>
+        </select>
+      </div>
+    </div>
   </header>
 
-  <div class="layout">
-    <!-- Sidebar -->
-    <aside id="sidebar" class="sidebar" aria-label="篩選面板">
-      <section class="panel">
-        <h2 class="panel-title">
-          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 5 1.5-1.5-5-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
-          快速搜尋
-        </h2>
-        <div class="input-row">
-          <input id="q" type="search" class="input" placeholder="輸入關鍵字、編號、標籤…" aria-label="搜尋文件" autocomplete="off" />
-          <button id="clearFilters" class="btn ghost" aria-label="清除篩選">
-            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
-            清除
-          </button>
-        </div>
-        <div class="hint"><kbd>/</kbd> 聚焦搜尋 · Enter 套用</div>
-      </section>
-
-      <section class="panel">
-        <h2 class="panel-title">
-          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M10 3H3v7h7V3zm11 0h-7v7h7V3zM10 14H3v7h7v-7zm11 0h-7v7h7v-7z"/></svg>
-          分類
-        </h2>
-        <div id="categoryList" class="chips"></div>
-      </section>
-
-      <section class="panel">
-        <h2 class="panel-title">
-          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20 6h-5.5l-1-1h-3l-1 1H4v2h16zM5 20q-.825 0-1.412-.587Q3 18.825 3 18V8h18v10q0 .825-.588 1.413Q19.825 20 19 20Zm7-9q-2.075 0-3.537 1.462Q7 13.925 7 16t1.463 3.538Q9.925 21 12 21t3.537-1.462Q17 18.075 17 16t-1.463-3.538Q14.075 11 12 11Zm0 2q1.25 0 2.125.875T15 16q0 1.25-.875 2.125T12 19q-1.25 0-2.125-.875T9 16q0-1.25.875-2.125T12 13Z"/></svg>
-          標籤
-        </h2>
-        <div id="tagCloud" class="chips"></div>
-      </section>
-
-      <section class="panel">
-        <h2 class="panel-title">
-          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>
-          排序
-        </h2>
-        <select id="sortBy" class="select" aria-label="排序方式">
-          <option value="recent">最近更新</option>
-          <option value="uploaded">上傳時間（新→舊）</option>
-          <option value="title">標題（A→Z）</option>
-          <option value="id">編號（A→Z）</option>
-        </select>
-      </section>
-
-      <section class="panel small">
-        <h2 class="panel-title">
-          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
-          使用方式
-        </h2>
-        <ol>
-          <li>新增/修改：在程式庫加入 PDF 與編輯 <code>data/docs.json</code>。</li>
-          <li>版本：同一文件的 <code>versions[]</code> 列出各版。</li>
-          <li>閱讀：開啟卡片→選版本→右側即時預覽。</li>
-          <li>分享：網址會帶上目前篩選或文件版本。</li>
-        </ol>
-      </section>
+  <main class="layout">
+    <aside class="side">
+      <h3>快速分類</h3>
+      <nav id="quickCats" class="chips"></nav>
+      <h3>常用標籤</h3>
+      <div id="hotTags" class="chips"></div>
     </aside>
-
-    <!-- Main -->
-    <main class="content" id="main">
-      <section class="toolbar">
-        <div id="activeFilters" class="chips"></div>
-        <div class="spacer"></div>
-        <div id="resultsInfo" class="muted"></div>
-      </section>
-
-      <section id="cards" class="cards" aria-live="polite"></section>
-    </main>
-  </div>
-
-  <!-- Drawer -->
-  <div id="drawer" class="drawer" role="dialog" aria-modal="true" aria-labelledby="drawerTitle" hidden>
-    <div class="drawer-panel">
-      <div class="drawer-header">
-        <div class="drawer-title">
-          <h3 id="drawerTitle"></h3>
-          <div id="meta" class="muted"></div>
-        </div>
-        <button id="drawerClose" class="icon-btn" aria-label="關閉">✕</button>
+    <section class="content">
+      <div id="stats" class="stats"></div>
+      <ul id="docList" class="cards"></ul>
+      <div id="emptyState" class="empty hidden">
+        <i class="ti ti-inbox"></i>
+        <p>沒有符合條件的文件。</p>
       </div>
+    </section>
+  </main>
 
+  <!-- Document Drawer -->
+  <div id="drawer" class="drawer hidden" role="dialog" aria-modal="true" aria-labelledby="docTitle">
+    <div class="drawer-panel">
+      <button id="drawerClose" class="ghost close" aria-label="關閉面板"><i class="ti ti-x"></i></button>
       <div class="drawer-body">
-        <h4 class="section-title">版本</h4>
-        <div id="versionList" class="vlist"></div>
-
-        <h4 class="section-title">線上閱讀</h4>
-        <div id="viewer" class="viewer">
-          <div class="muted pad">請選擇一個版本以載入 PDF。</div>
+        <h2 id="docTitle">—</h2>
+        <p id="docMeta" class="meta">—</p>
+        <div class="tags" id="docTags"></div>
+        <div class="version-row">
+          <label for="versionSelect">版本：</label>
+          <select id="versionSelect" aria-label="版本"></select>
+          <button id="openPdf" class="primary"><i class="ti ti-file-type-pdf"></i> 開啟 PDF</button>
+          <a id="downloadPdf" class="ghost" download><i class="ti ti-download"></i> 下載</a>
         </div>
+        <details class="history">
+          <summary><i class="ti ti-history"></i> 版本歷史</summary>
+          <ul id="versionTimeline" class="timeline"></ul>
+        </details>
+        <iframe id="pdfFrame" title="PDF 檢視器" class="pdf-frame" loading="lazy"></iframe>
       </div>
     </div>
-    <div class="drawer-mask" id="drawerMask"></div>
+    <div class="backdrop"></div>
   </div>
 
-  <footer class="footer">
-    © 暗夜飛鳶工作室 · <span id="lastUpdated"></span>
+  <footer class="site-footer">
+    <p>© <span id="year"></span> 暗夜飛鳶工作室 · 線上資訊庫｜本網站為純前端、以 GitHub Pages 部署。修改資料：請更新 <code>data/docs.json</code> 與 <code>docs/</code> 內檔案。</p>
   </footer>
 
-  <script>
-    const h = location.hostname, p = location.pathname.replace(/^\//,'').replace(/\/$/,''); 
-    const gh = h.endsWith('github.io') && p ? `https://github.com/${h.split('.')[0]}/${p}` : null;
-    const a = document.getElementById('githubLink');
-    if(gh){ a.href = gh; } else { a.hidden = true; }
-  </script>
-  <script src="assets/js/app.js"></script>
+  <script defer src="assets/js/app.js"></script>
 </body>
 </html>
