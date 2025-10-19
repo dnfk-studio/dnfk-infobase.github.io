@@ -27,7 +27,7 @@ function norm(d){
 
 async function loadDocs(){
   try{
-    const res = await fetch("data/docs.json", {cache:"no-store"});
+    const res = await fetch("data/docs2510190001.json", {cache:"no-store"});
     if(!res.ok) throw new Error("HTTP " + res.status);
     const json = await res.json();
     State.docs = json.map(norm);
