@@ -4,12 +4,11 @@
     "title": "組織規程",
     "category": "規章/團體規章",
     "tags": [
-      "組織規程",
       "規章"
     ],
     "uploaded_by": "DNFK Studios",
-    "uploaded_at": "2025-10-18",
-    "revised_at": "2025-10-18",
+    "uploaded_at": "2025-10-19",
+    "revised_at": "2025-10-19",
     "current": "1.0.0",
     "properties": {
       "性質": "規章",
@@ -19,8 +18,8 @@
       {
         "v": "1.0.0",
         "file": "pdfs/OR-2025-10-18-001-v1.0.0.pdf",
-        "date": "2025-10-18",
-        "note": "v1.0.0"
+        "date": "2025-10-19",
+        "note": "R-251001"
       }
     ]
   }

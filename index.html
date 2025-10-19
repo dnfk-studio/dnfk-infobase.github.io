@@ -11,46 +11,80 @@
   <link rel="stylesheet" href="assets/css/style.css" />
 </head>
 <body>
+  <!-- Intro Overlay -->
+  <div id="intro" class="intro" aria-hidden="true">
+    <div class="intro-inner">
+      <div class="intro-logo"><img src="img/logo.svg" alt="" /></div>
+      <div class="intro-title">暗夜飛鳶工作室</div>
+      <div class="intro-sub">線上資訊庫</div>
+      <button id="enterBtn" class="btn enter-btn" aria-label="進入網站首頁">
+        <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 4l1.41 1.41L8.83 10H20v2H8.83l4.58 4.59L12 18l-8-8 8-8z"/></svg>
+        進入網站首頁
+      </button>
+      <button id="skipIntro" class="link skip">略過動畫</button>
+    </div>
+    <div class="intro-bg"></div>
+  </div>
+
+  <!-- Topbar -->
   <header class="topbar" role="banner">
     <button id="menuBtn" class="icon-btn" aria-label="開啟選單" aria-controls="sidebar" aria-expanded="false">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-        <path d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z"/>
+      <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+        <path fill="currentColor" d="M4 6h16v2H4V6zm0 5h16v2H4v-2zm0 5h16v2H4v-2z"/>
       </svg>
     </button>
     <a href="./" class="brand" aria-label="返回首頁">
       <img src="img/logo.svg" alt="" class="logo"/>
       <div class="brand-text">
         <strong>暗夜飛鳶工作室 線上資訊庫</strong>
-        <span>GitHub Pages · 無後端</span>
+        <span>DNFK Info‑Base · GitHub Pages · 無後端</span>
       </div>
     </a>
-    <a id="githubLink" class="ghost-btn" target="_blank" rel="noopener">在 GitHub 檢視</a>
+    <a id="githubLink" class="ghost-btn" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M14 3v2h3.59L7 15.59 8.41 17 19 6.41V10h2V3h-7z"/><path fill="currentColor" d="M5 19h14v2H5z"/></svg>
+      <span>在 GitHub 檢視</span>
+    </a>
   </header>
 
   <div class="layout">
     <!-- Sidebar -->
     <aside id="sidebar" class="sidebar" aria-label="篩選面板">
       <section class="panel">
-        <h2 class="panel-title">快速搜尋</h2>
+        <h2 class="panel-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0016 9.5 6.5 6.5 0 109.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 5 1.5-1.5-5-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+          快速搜尋
+        </h2>
         <div class="input-row">
           <input id="q" type="search" class="input" placeholder="輸入關鍵字、編號、標籤…" aria-label="搜尋文件" autocomplete="off" />
-          <button id="clearFilters" class="btn ghost" aria-label="清除篩選">清除</button>
+          <button id="clearFilters" class="btn ghost" aria-label="清除篩選">
+            <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+            清除
+          </button>
         </div>
         <div class="hint"><kbd>/</kbd> 聚焦搜尋 · Enter 套用</div>
       </section>
 
       <section class="panel">
-        <h2 class="panel-title">分類</h2>
+        <h2 class="panel-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M10 3H3v7h7V3zm11 0h-7v7h7V3zM10 14H3v7h7v-7zm11 0h-7v7h7v-7z"/></svg>
+          分類
+        </h2>
         <div id="categoryList" class="chips"></div>
       </section>
 
       <section class="panel">
-        <h2 class="panel-title">標籤</h2>
+        <h2 class="panel-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20 6h-5.5l-1-1h-3l-1 1H4v2h16zM5 20q-.825 0-1.412-.587Q3 18.825 3 18V8h18v10q0 .825-.588 1.413Q19.825 20 19 20Zm7-9q-2.075 0-3.537 1.462Q7 13.925 7 16t1.463 3.538Q9.925 21 12 21t3.537-1.462Q17 18.075 17 16t-1.463-3.538Q14.075 11 12 11Zm0 2q1.25 0 2.125.875T15 16q0 1.25-.875 2.125T12 19q-1.25 0-2.125-.875T9 16q0-1.25.875-2.125T12 13Z"/></svg>
+          標籤
+        </h2>
         <div id="tagCloud" class="chips"></div>
       </section>
 
       <section class="panel">
-        <h2 class="panel-title">排序</h2>
+        <h2 class="panel-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M7 10l5 5 5-5z"/></svg>
+          排序
+        </h2>
         <select id="sortBy" class="select" aria-label="排序方式">
           <option value="recent">最近更新</option>
           <option value="uploaded">上傳時間（新→舊）</option>
@@ -60,7 +94,10 @@
       </section>
 
       <section class="panel small">
-        <h2 class="panel-title">使用方式</h2>
+        <h2 class="panel-title">
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg>
+          使用方式
+        </h2>
         <ol>
           <li>新增/修改：在程式庫加入 PDF 與編輯 <code>data/docs.json</code>。</li>
           <li>版本：同一文件的 <code>versions[]</code> 列出各版。</li>
@@ -90,9 +127,7 @@
           <h3 id="drawerTitle"></h3>
           <div id="meta" class="muted"></div>
         </div>
-        <button id="drawerClose" class="icon-btn" aria-label="關閉">
-          ✕
-        </button>
+        <button id="drawerClose" class="icon-btn" aria-label="關閉">✕</button>
       </div>
 
       <div class="drawer-body">
@@ -113,11 +148,10 @@
   </footer>
 
   <script>
-    // 推測 repo 連結
     const h = location.hostname, p = location.pathname.replace(/^\//,'').replace(/\/$/,''); 
     const gh = h.endsWith('github.io') && p ? `https://github.com/${h.split('.')[0]}/${p}` : null;
     const a = document.getElementById('githubLink');
-    if(gh){ a.href = gh; a.textContent = '在 GitHub 檢視'; } else { a.hidden = true; }
+    if(gh){ a.href = gh; } else { a.hidden = true; }
   </script>
   <script src="assets/js/app.js"></script>
 </body>

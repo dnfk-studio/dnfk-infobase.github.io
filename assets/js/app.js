@@ -1,4 +1,4 @@
-/* 前端邏輯（行動優先 + 無後端） */
+/* DNFK Info‑Base (fresh build) — 可用性優先 · 無後端 · 行動先 */
 const state = {
   docs: [], filtered: [],
   q: new URLSearchParams(location.search).get('q') || '',
@@ -9,22 +9,38 @@ const state = {
   sortBy: localStorage.getItem('sortBy') || 'recent',
 };
 
-const $ = (sel)=>document.querySelector(sel);
 const el = (id)=>document.getElementById(id);
 const $cards = el('cards'), $q = el('q'), $categoryList = el('categoryList'), $tagCloud = el('tagCloud');
 const $sortBy = el('sortBy'), $activeFilters = el('activeFilters'), $clearFilters = el('clearFilters'), $resultsInfo = el('resultsInfo');
 const $drawer = el('drawer'), $drawerTitle = el('drawerTitle'), $meta = el('meta'), $versionList = el('versionList'), $viewer = el('viewer');
 const $menuBtn = el('menuBtn'), $sidebar = el('sidebar'), $drawerMask = el('drawerMask');
+const $intro = el('intro'), $enterBtn = el('enterBtn'), $skipIntro = el('skipIntro');
 
-// 初始化
 document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
+
+// Intro overlay
+;(function introBoot(){
+  if(sessionStorage.getItem('dnfk_intro_entered') === '1'){
+    document.body.classList.add('hide-intro');
+  }
+  $enterBtn?.addEventListener('click', ()=>{
+    document.body.classList.add('hide-intro');
+    sessionStorage.setItem('dnfk_intro_entered','1');
+  });
+  $skipIntro?.addEventListener('click', ()=>{
+    document.body.classList.add('hide-intro');
+  });
+})();
+
 init();
 
 async function init(){
   wireGlobalUI();
   try{
     const res = await fetch('data/docs.json?_=' + Date.now(), {cache:'no-store'});
+    if(!res.ok) throw new Error(res.status + ' ' + res.statusText);
     const json = await res.json();
+    if(!Array.isArray(json)) throw new Error('docs.json 應為陣列');
     state.docs = json;
     buildUI();
   }catch(e){
@@ -33,7 +49,7 @@ async function init(){
 }
 
 function wireGlobalUI(){
-  // 側邊開合（手機）
+  // 側欄（手機）
   $menuBtn.addEventListener('click', ()=>{
     const open = !$sidebar.classList.contains('open');
     $sidebar.classList.toggle('open', open);
@@ -68,7 +84,6 @@ function buildUI(){
 }
 
 function renderFilters(){
-  // 類別（依你要求的完整清單）
   const cats = ['公告','規章/團體規章','規章/部組規章','企劃/企劃提案書','企劃/企劃書','企劃/職務報告','企劃/財務報告','會議/會議公告','會議/會議紀錄'];
   $categoryList.innerHTML = '';
   for(const c of cats){
@@ -80,7 +95,6 @@ function renderFilters(){
     $categoryList.appendChild(b);
   }
 
-  // 標籤雲
   const tagCount = new Map();
   for(const d of state.docs){ (d.tags||[]).forEach(t=> tagCount.set(t, (tagCount.get(t)||0)+1)); }
   const tags = [...tagCount.entries()].sort((a,b)=> b[1]-a[1]).map(x=>x[0]).slice(0,50);
@@ -105,7 +119,6 @@ function applyFilters(){
     return catOk && tagOk && qOk;
   });
 
-  // 排序
   const k = state.sortBy, parseDate = s => s ? new Date(s) : new Date(0);
   state.filtered.sort((a,b)=>{
     if(k==='recent') return (parseDate(b.revised_at||b.uploaded_at)) - (parseDate(a.revised_at||a.uploaded_at));
@@ -115,7 +128,6 @@ function applyFilters(){
     return 0;
   });
 
-  // Active chips
   $activeFilters.innerHTML = '';
   if(state.q) addActive(`🔎 ${state.q}`, ()=>{ state.q=''; $q.value=''; syncURL(); applyFilters(); });
   if(state.category) addActive(`📂 ${state.category.replace('/',' › ')}`, ()=>{ state.category=''; syncURL(); applyFilters(); });
@@ -123,13 +135,12 @@ function applyFilters(){
 
   $resultsInfo.textContent = `共 ${state.filtered.length} 筆結果`;
 
-  // Cards
   $cards.innerHTML = '';
   for(const d of state.filtered){
     const card = document.createElement('article');
     card.className = 'card'; card.tabIndex = 0;
     card.innerHTML = `
-      <div class="row" style="justify-content:space-between">
+      <div class="row" style="display:flex; align-items:center; justify-content:space-between; gap:10px">
         <div>
           <h4>${esc(d.title||'(未命名)')}</h4>
           <div class="meta" style="margin-top:4px">
@@ -137,7 +148,10 @@ function applyFilters(){
             <span>${esc(d.category||'未分類')}</span>
           </div>
         </div>
-        <button class="btn" title="開啟" aria-label="開啟 ${esc(d.title||'文件')}">開啟</button>
+        <button class="btn" title="開啟" aria-label="開啟 ${esc(d.title||'文件')}">
+          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 12h14v2H5z"/><path fill="currentColor" d="M12 5l7 7-7 7V5z"/></svg>
+          開啟
+        </button>
       </div>
       <div class="meta">
         上傳：${esc(d.uploaded_by||'未知')} · ${esc(fmtDate(d.uploaded_at))}
@@ -165,12 +179,12 @@ function matchCategory(docCat, selected){
 function addActive(text, onRemove){
   const span = document.createElement('span');
   span.className = 'chip active';
+  span.textContent = text + ' ';
   const btn = document.createElement('button');
   btn.className = 'icon-btn'; btn.textContent = '✕'; btn.style.minHeight='28px'; btn.style.minWidth='28px';
   btn.setAttribute('aria-label', '移除篩選 ' + text);
-  span.textContent = text + ' ';
-  span.appendChild(btn);
   btn.onclick = onRemove;
+  span.appendChild(btn);
   $activeFilters.appendChild(span);
 }
 
@@ -212,19 +226,23 @@ function openDrawer(doc, version){
         <div class="small" style="font-weight:700">v${esc(v.v)} <span class="muted">· ${esc(fmtDate(v.date||''))}</span></div>
         ${v.note? `<div class="small muted">${esc(v.note)}</div>` : ''}
       </div>
-      <div class="row">
-        <a class="btn ghost" href="${encodeURI(v.file)}" target="_blank" rel="noopener" aria-label="下載 v${esc(v.v)}">下載</a>
-        <button class="btn" aria-label="預覽 v${esc(v.v)}">預覽</button>
+      <div style="display:flex; gap:8px">
+        <a class="btn ghost" href="${encodeURI(v.file)}" target="_blank" rel="noopener" aria-label="下載 v${esc(v.v)}">
+          <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5 20h14v-2H5v2zm7-18l-5.5 9h11L12 2z"/></svg>
+          下載
+        </a>
+        <button class="btn" aria-label="預覽 v${esc(v.v)}">
+          <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 5c-7.633 0-11 7-11 7s3.367 7 11 7 11-7 11-7-3.367-7-11-7zm0 12a5 5 0 110-10 5 5 0 010 10z"/></svg>
+          預覽
+        </button>
       </div>
     `;
     row.querySelector('button.btn').onclick = ()=> loadPDF(v.file, doc, v.v);
     $versionList.appendChild(row);
   }
 
-  // 顯示
   $drawer.hidden = false;
   document.body.style.overflow='hidden';
-  // 初始版本
   if(version){
     const vobj = (doc.versions||[]).find(x=>x.v===version);
     if(vobj) loadPDF(vobj.file, doc, version);
@@ -244,7 +262,6 @@ $drawerMask.onclick = closeDrawer;
 function loadPDF(file, doc, v){
   state.v = v || ''; syncURL();
   const url = encodeURI(file);
-  // 盡量相對路徑，GitHub Pages 子路徑也可用
   $viewer.innerHTML = `<embed src="${url}" type="application/pdf" />` +
     `<div class="pad small muted">若未內嵌顯示，請<a class="ghost-btn" style="margin-left:6px" target="_blank" rel="noopener" href="${url}">以新分頁開啟/下載</a>。</div>`;
 }
