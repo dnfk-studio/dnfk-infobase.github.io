@@ -122,6 +122,49 @@
       .related { grid-template-columns: 1fr; }
     }
   </style>
+<link rel="icon" type="image/png" href="assets/favicon.png" sizes="256x256" />
+<link rel="apple-touch-icon" href="assets/favicon.png" />
+<link rel="icon" type="image/svg+xml" href="assets/icon.svg" />
+<meta name="theme-color" content="#80A697" />
+<style>
+
+/* === Mobile Fix Pack (preserve desktop styles) === */
+@media (max-width: 768px){
+  :root{ --vh: 100vh; }
+  .nav-wrap{ grid-template-columns: 1fr !important; gap: 8px !important; }
+  .filters{ padding: 0 12px 8px !important; }
+  .grid{ padding: 0 12px !important; }
+  .card{ grid-column: span 12 !important; }
+  .drawer{ width: 100% !important; }
+  .pdf-frame{ width: 96vw !important; height: calc(var(--vh) - 8vh) !important; max-height: calc(var(--vh) - 24px) !important; }
+  .pdf-iframe{ width: 100% !important; height: 100% !important; display:block; }
+  .pdf-modal{ padding: max(env(safe-area-inset-top, 10px), 10px) 8px max(env(safe-area-inset-bottom, 10px), 10px) 8px; }
+  html, body{ overflow-x: hidden !important; }
+}
+@supports (-webkit-touch-callout: none) {
+  .pdf-frame{ height: calc(var(--vh) - 24px); }
+}
+.ann-collapsed .ann-card:nth-of-type(n+4){ display:none; }
+
+/* Toasts */
+.toast-root{ position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 9999; display:flex; flex-direction:column; gap:10px; pointer-events:none; }
+.toast{ min-width: 220px; max-width: 92vw; background: rgba(34,37,32,0.92); color:#fff; border-radius: 12px; padding: 10px 14px; box-shadow: 0 10px 30px rgba(0,0,0,.25); display:flex; align-items:center; gap:10px; pointer-events:auto;
+  animation: toast-in .28s ease both; }
+.toast.hide{ animation: toast-out .24s ease forwards; }
+.toast .tmsg{ flex:1; font-size: 14px; }
+.toast .tclose{ background: transparent; border: none; color:#fff; opacity:.8; cursor:pointer; font-size:16px; }
+@keyframes toast-in{ from{ transform: translate(-50%, 16px); opacity:0 } to{ transform: translate(-50%, 0); opacity:1 } }
+@keyframes toast-out{ from{ transform: translate(-50%, 0); opacity:1 } to{ transform: translate(-50%, 12px); opacity:0 } }
+
+/* Subtle animations */
+.card{ transition: transform .2s ease, box-shadow .25s ease; }
+.card:hover{ transform: translateY(-2px); box-shadow: 0 16px 40px rgba(0,0,0,.12); }
+.chip{ transition: transform .15s ease, box-shadow .2s ease, background .2s ease; }
+.chip:active{ transform: scale(.98); }
+.btn{ transition: transform .15s ease, box-shadow .2s ease, filter .2s ease; }
+.btn:active{ transform: scale(.98); }
+
+</style>
 </head>
 <body>
   <div class="navbar" role="navigation" aria-label="主選單">
@@ -477,5 +520,74 @@
     })();
   })();
   </script>
+
+<script>
+(function(){
+  var root = document.documentElement;
+  function setVH(){ root.style.setProperty('--vh', window.innerHeight + 'px'); }
+  setVH(); window.addEventListener('resize', setVH); window.addEventListener('orientationchange', setVH);
+
+  var toastRoot = document.querySelector('.toast-root') || (function(){ var d=document.createElement('div'); d.className='toast-root'; document.body.appendChild(d); return d; })();
+  window.showToast = function(msg, opts){
+    opts = opts || {};
+    var t = document.createElement('div'); t.className='toast';
+    var m = document.createElement('div'); m.className='tmsg'; m.textContent = msg || '';
+    var x = document.createElement('button'); x.className='tclose'; x.type='button'; x.setAttribute('aria-label','關閉通知'); x.innerHTML='&times;';
+    x.onclick = function(){ t.classList.add('hide'); setTimeout(function(){ t.remove(); }, 260); };
+    t.appendChild(m); t.appendChild(x); toastRoot.appendChild(t);
+    var ttl = typeof opts.ttl==='number' ? opts.ttl : 2300;
+    if(ttl>0){ setTimeout(function(){ if(document.body.contains(t)){ t.classList.add('hide'); setTimeout(function(){ t.remove(); }, 260); } }, ttl); }
+    return t;
+  };
+
+  var ann = document.getElementById('ann');
+  var annList = document.getElementById('ann-list');
+  function ensureAnnToggle(){
+    if(!ann || !annList) return;
+    if(!ann.classList.contains('ann-collapsed')) ann.classList.add('ann-collapsed');
+    var btn = document.getElementById('ann-toggle');
+    if(!btn){
+      btn = document.createElement('button');
+      btn.id = 'ann-toggle'; btn.className = 'btn secondary small'; btn.type='button';
+      btn.textContent = '展開全部';
+      var wrap = document.createElement('div'); wrap.className = 'ann-actions'; wrap.appendChild(btn);
+      ann.appendChild(wrap);
+    }
+    btn.addEventListener('click', function(){
+      var collapsed = ann.classList.toggle('ann-collapsed');
+      btn.textContent = collapsed ? '展開全部' : '收合';
+      btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+      showToast(collapsed ? '公告已收合' : '顯示全部公告', {ttl:1400});
+    });
+  }
+  ensureAnnToggle();
+
+  document.addEventListener('click', function(e){
+    var el = e.target.closest('[data-action], [data-open-version], [data-rel-detail], [data-rel-preview], a[download]');
+    if(!el) return;
+    if(el.hasAttribute('data-action')){
+      var act = el.getAttribute('data-action');
+      if(act==='preview') showToast('正在開啟 PDF 預覽…');
+      if(act==='detail') showToast('載入詳情…', {ttl:1200});
+    }
+    if(el.hasAttribute('data-open-version')){ showToast('切換版本…', {ttl:1000}); }
+    if(el.hasAttribute('data-rel-detail')){ showToast('開啟相關資料…', {ttl:1200}); }
+    if(el.hasAttribute('data-rel-preview')){ showToast('預覽相關文件…', {ttl:1200}); }
+    if(el.tagName==='A' && el.hasAttribute('download')){ showToast('開始下載…', {ttl:1000}); }
+  }, true);
+
+  try {
+    if(typeof window.openPdf === 'function'){
+      var _openPdf = window.openPdf;
+      window.openPdf = function(){ showToast('正在載入 PDF…'); return _openPdf.apply(this, arguments); };
+    }
+    if(typeof window.closePdf === 'function'){
+      var _closePdf = window.closePdf;
+      window.closePdf = function(){ showToast('已關閉預覽', {ttl:1200}); return _closePdf.apply(this, arguments); };
+    }
+  } catch(e){}
+})();
+</script>
+
 </body>
 </html>
