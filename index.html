@@ -165,6 +165,44 @@
 .btn:active{ transform: scale(.98); }
 
 </style>
+<style>
+
+/* === Patch: Mobile PDF modal usability === */
+@media (max-width: 768px){
+  .pdf-modal{ align-items: flex-start !important; justify-content: center !important; overflow: auto !important; }
+  .pdf-frame{ width: 96vw !important; max-width: 96vw !important; height: calc(var(--vh) - 32px) !important; max-height: calc(var(--vh) - 16px) !important; margin-top: 8px; margin-bottom: 8px; }
+  .pdf-bar{ position: sticky; top: 0; z-index: 2; }
+  .pdf-fab-close{ display: inline-flex; position: absolute; right: 8px; top: 8px; z-index: 3; border: none; border-radius: 999px; padding: 8px; background: rgba(46,47,44,0.92); color:#fff; cursor:pointer; box-shadow: 0 8px 24px rgba(0,0,0,.25); align-items:center; justify-content:center; }
+}
+
+</style>
+<style>
+
+/* === Footer (minimal & nordic) === */
+.site-footer{ background:#fff; border-top:1px solid rgba(0,0,0,.06); margin-top:40px; }
+.site-footer .foot-wrap{ max-width:1200px; margin:0 auto; padding:14px 18px; display:flex; align-items:center; justify-content:space-between; color:#6f6a61; font-size:14px; }
+.site-footer a{ color:#2e2f2c; text-decoration:none; border-bottom:1px dashed rgba(0,0,0,.2); }
+.site-footer a:hover{ opacity:.85; }
+@media (max-width:768px){ .site-footer .foot-wrap{ padding:12px 14px; font-size:13px; } }
+
+</style>
+<style>
+
+/* === Toast restyle (elegant) === */
+.toast{ background: linear-gradient(180deg, rgba(46,47,44,0.95), rgba(28,30,26,0.95)); border:1px solid rgba(255,255,255,.08); backdrop-filter: blur(4px); }
+.toast .tmsg:before{ content:"⬇️"; margin-right:6px; }
+
+</style>
+<style>
+
+/* === Additional subtle animations === */
+@keyframes rise{ from{ transform: translateY(8px); opacity: 0 } to{ transform: translateY(0); opacity:1 } }
+.card{ will-change: transform, box-shadow; }
+.card.reveal{ animation: rise .38s ease both; }
+.chip{ transition: transform .15s ease, box-shadow .2s ease, background .2s ease; }
+.chip:focus-visible{ outline: 2px solid rgba(128,166,151,.5); outline-offset: 2px; }
+
+</style>
 </head>
 <body>
   <div class="navbar" role="navigation" aria-label="主選單">
@@ -205,7 +243,8 @@
   </section>
 
 
-  <div class="filters" id="filters" aria-label="標籤篩選"></div>
+  <div class="filters" id="filters"
+     ><div class="active-cat" style="margin-right:auto;font-size:13px;color:#6f6a61;">目前類別：<span id="activeCat" style="font-weight:700">全部</span></div> aria-label="標籤篩選"></div>
 
 
   <section class="grid" id="grid" aria-live="polite" aria-busy="false"></section>
@@ -586,6 +625,106 @@
       window.closePdf = function(){ showToast('已關閉預覽', {ttl:1200}); return _closePdf.apply(this, arguments); };
     }
   } catch(e){}
+})();
+</script>
+
+
+<footer class="site-footer" role="contentinfo">
+  <div class="foot-wrap">
+    <div class="foot-left">© <span id="footYear"></span> Nordic InfoBase</div>
+    <div class="foot-right"><a href="#" id="backTop" aria-label="回到頂部">回到頂部 ↑</a></div>
+  </div>
+</footer>
+
+
+<script>
+(function(){
+  // Beautified: only show toast on explicit downloads
+  if (window.__DL_TOAST_BOUND__) return; window.__DL_TOAST_BOUND__ = true;
+  document.addEventListener('click', function(e){
+    var a = e.target.closest('a[download]');
+    if(!a) return;
+    var name = a.getAttribute('download') || (a.getAttribute('href')||'').split('/').pop();
+    if(typeof window.showToast === 'function'){
+      window.showToast('已開始下載 ' + (name||'檔案') + '…', {ttl:2000});
+    }
+  }, true);
+})();
+</script>
+
+
+<script>
+(function(){
+  // Active category indicator (works with .chip buttons in #filters)
+  function updateActiveCat(){
+    var filters = document.getElementById('filters');
+    var label = document.getElementById('activeCat');
+    if(!filters || !label) return;
+    var active = filters.querySelector('.chip.active');
+    var name = active ? active.textContent.trim() : '全部';
+    label.textContent = name || '全部';
+  }
+  updateActiveCat();
+  var filtersEl = document.getElementById('filters');
+  if(filtersEl){
+    filtersEl.addEventListener('click', function(e){
+      var b = e.target.closest('.chip');
+      if(!b) return;
+      // Slight defer to wait any existing JS to toggle active state
+      setTimeout(updateActiveCat, 10);
+    });
+    // Observe class changes in case your code toggles active elsewhere
+    var mo = new MutationObserver(function(){ updateActiveCat(); });
+    mo.observe(filtersEl, { attributes:true, subtree:true, attributeFilter:['class'] });
+  }
+
+  // Footer year
+  var y = document.getElementById('footYear'); if(y){ y.textContent = new Date().getFullYear(); }
+  var bt = document.getElementById('backTop'); if(bt){ bt.addEventListener('click', function(e){ e.preventDefault(); window.scrollTo({top:0, behavior:'smooth'}); }); }
+
+  // Mobile PDF Close FAB: ensure always visible
+  function ensurePdfFab(){
+    var modal = document.getElementById('pdfModal');
+    var frame = document.querySelector('#pdfModal .pdf-frame');
+    if(!modal || !frame) return;
+    if(document.getElementById('pdfFab')) return;
+    var btn = document.createElement('button');
+    btn.id = 'pdfFab'; btn.className = 'pdf-fab-close'; btn.type='button'; btn.innerHTML = '✕';
+    btn.addEventListener('click', function(){ try{ window.closePdf && window.closePdf(); }catch(e){} });
+    frame.appendChild(btn);
+  }
+
+  // Hook openPdf() if present, else fallback when modal opens
+  var tryHooked = false;
+  function hookOpenPdf(){
+    if(tryHooked) return; tryHooked = true;
+    if(typeof window.openPdf === 'function'){
+      var _openPdf = window.openPdf;
+      window.openPdf = function(){
+        var r = _openPdf.apply(this, arguments);
+        setTimeout(ensurePdfFab, 0);
+        return r;
+      };
+    } else {
+      // Observe modal open
+      var modal = document.getElementById('pdfModal');
+      if(modal){
+        var mo = new MutationObserver(function(muts){
+          muts.forEach(function(m){
+            if(m.attributeName==='class' && modal.classList.contains('open')){
+              setTimeout(ensurePdfFab, 0);
+            }
+          });
+        });
+        mo.observe(modal, { attributes:true });
+      }
+    }
+  }
+  hookOpenPdf();
+
+  // iOS viewport height fix
+  function setVH(){ document.documentElement.style.setProperty('--vh', window.innerHeight + 'px'); }
+  setVH(); window.addEventListener('resize', setVH); window.addEventListener('orientationchange', setVH);
 })();
 </script>
 
