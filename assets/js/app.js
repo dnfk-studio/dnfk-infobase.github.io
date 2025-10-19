@@ -76,7 +76,6 @@ function buildUI(){
   $q.addEventListener('input', ()=>{ state.q=$q.value; syncURL(); applyFilters(); });
   $sortBy.addEventListener('change', ()=>{ state.sortBy=$sortBy.value; localStorage.setItem('sortBy', state.sortBy); applyFilters(); });
 
-  // 若網址帶 id/v，直接開啟
   if(state.id){
     const d = state.docs.find(x=>x.id===state.id);
     if(d) openDrawer(d, state.v || d.current || (d.versions?.[0]?.v));
@@ -216,7 +215,6 @@ function openDrawer(doc, version){
     ${(doc.tags||[]).length? `<div class="chips" style="margin-top:6px">${(doc.tags||[]).map(t=>`<span class="chip">#${esc(t)}</span>`).join(' ')}</div>`:''}
   `;
 
-  // 版本列表
   $versionList.innerHTML='';
   for(const v of (doc.versions||[])){
     const row = document.createElement('div');
