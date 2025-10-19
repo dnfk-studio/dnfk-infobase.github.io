@@ -4,32 +4,26 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>暗夜飛鳶工作室 線上資訊庫</title>
-  <meta name="description" content="暗夜飛鳶工作室 線上資訊庫 — 公告、規章、企劃、會議等文件的集中索引與版本歷史瀏覽。" />
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
-  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <meta name="description" content="暗夜飛鳶工作室 線上資訊庫 — 公告、規章、企劃、會議文件的集中索引與版本歷史瀏覽。" />
   <link href="assets/css/style.css" rel="stylesheet" />
-  <!-- Lunr (search) -->
-  <script defer src="https://cdn.jsdelivr.net/npm/lunr/lunr.min.js"></script>
-  <!-- Icons -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.47.0/tabler-icons.min.css">
 </head>
 <body>
-  <header class="site-header">
+  <header class="header">
     <div class="brand">
-      <div class="logo">🜲</div>
-      <div class="titles">
+      <div class="logo">✦</div>
+      <div class="title">
         <h1>暗夜飛鳶工作室 線上資訊庫</h1>
-        <p>公告‧規章‧企劃‧會議｜可搜尋、分類、標籤、版本歷史與 PDF 閱讀</p>
+        <p>公告・規章・企劃・會議｜搜尋、分類、標籤、版本歷史、PDF 閱讀</p>
       </div>
     </div>
-    <div class="search-row">
-      <div class="search-box">
-        <i class="ti ti-search"></i>
-        <input id="q" type="search" placeholder="搜尋：標題、編號、作者、標籤、分類… (Ctrl+/ 聚焦)" autocomplete="off" />
-        <button id="clearSearch" class="ghost" aria-label="清除搜尋"><i class="ti ti-x"></i></button>
+
+    <div class="toolbar">
+      <div class="search">
+        <input id="q" type="search" placeholder="搜尋：標題、編號、作者、分類、標籤（Ctrl+/ 聚焦）" autocomplete="off">
+        <button id="clear">清除</button>
       </div>
       <div class="filters">
-        <select id="filterCategory" aria-label="分類">
+        <select id="category">
           <option value="">全部分類</option>
           <option value="公告">公告</option>
           <optgroup label="規章">
@@ -47,8 +41,8 @@
             <option value="會議/會議紀錄">會議／會議紀錄</option>
           </optgroup>
         </select>
-        <input id="filterTag" type="text" placeholder="標籤過濾（以空白分隔，可多個）" aria-label="標籤過濾" />
-        <select id="sortBy" aria-label="排序">
+        <input id="tagFilter" type="text" placeholder="標籤（空白分隔）">
+        <select id="sort">
           <option value="updated_desc">最近更新優先</option>
           <option value="uploaded_desc">最近上傳優先</option>
           <option value="number_asc">編號（升冪）</option>
@@ -58,51 +52,49 @@
     </div>
   </header>
 
-  <main class="layout">
-    <aside class="side">
+  <main class="container">
+    <aside class="sidebar" aria-label="快速分類與常用標籤">
       <h3>快速分類</h3>
-      <nav id="quickCats" class="chips"></nav>
+      <div id="quickCats" class="chips"></div>
       <h3>常用標籤</h3>
       <div id="hotTags" class="chips"></div>
     </aside>
+
     <section class="content">
       <div id="stats" class="stats"></div>
-      <ul id="docList" class="cards"></ul>
-      <div id="emptyState" class="empty hidden">
-        <i class="ti ti-inbox"></i>
-        <p>沒有符合條件的文件。</p>
-      </div>
+      <ul id="list" class="grid"></ul>
+      <div id="empty" class="empty hidden">沒有符合條件的文件。</div>
     </section>
   </main>
 
-  <!-- Document Drawer -->
-  <div id="drawer" class="drawer hidden" role="dialog" aria-modal="true" aria-labelledby="docTitle">
+  <!-- Drawer -->
+  <div id="drawer" class="drawer" aria-hidden="true">
     <div class="drawer-panel">
-      <button id="drawerClose" class="ghost close" aria-label="關閉面板"><i class="ti ti-x"></i></button>
-      <div class="drawer-body">
-        <h2 id="docTitle">—</h2>
-        <p id="docMeta" class="meta">—</p>
-        <div class="tags" id="docTags"></div>
-        <div class="version-row">
-          <label for="versionSelect">版本：</label>
-          <select id="versionSelect" aria-label="版本"></select>
-          <button id="openPdf" class="primary"><i class="ti ti-file-type-pdf"></i> 開啟 PDF</button>
-          <a id="downloadPdf" class="ghost" download><i class="ti ti-download"></i> 下載</a>
-        </div>
-        <details class="history">
-          <summary><i class="ti ti-history"></i> 版本歷史</summary>
-          <ul id="versionTimeline" class="timeline"></ul>
-        </details>
-        <iframe id="pdfFrame" title="PDF 檢視器" class="pdf-frame" loading="lazy"></iframe>
+      <button class="close" id="drawerClose" aria-label="關閉">×</button>
+      <h2 id="dTitle">—</h2>
+      <p id="dMeta" class="muted">—</p>
+      <div id="dTags" class="chips"></div>
+      <div class="row">
+        <label for="version">版本：</label>
+        <select id="version"></select>
+        <button id="open" class="primary">開啟 PDF</button>
+        <a id="download" class="ghost" download>下載</a>
       </div>
+      <details class="history">
+        <summary>版本歷史</summary>
+        <ul id="timeline"></ul>
+      </details>
+      <iframe id="frame" title="PDF 檢視器" class="frame" loading="lazy"></iframe>
     </div>
     <div class="backdrop"></div>
   </div>
 
-  <footer class="site-footer">
-    <p>© <span id="year"></span> 暗夜飛鳶工作室 · 線上資訊庫｜本網站為純前端、以 GitHub Pages 部署。修改資料：請更新 <code>data/docs.json</code> 與 <code>docs/</code> 內檔案。</p>
+  <footer class="footer">
+    © <span id="year"></span> 暗夜飛鳶工作室 · 線上資訊庫（純前端 / GitHub Pages）。
   </footer>
 
-  <script defer src="assets/js/app.js"></script>
+  <!-- Inline fallback for file:// usage -->
+  <script id="docs-data" type="application/json"></script>
+  <script src="assets/js/app.js"></script>
 </body>
 </html>
