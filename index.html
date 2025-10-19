@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Nordic InfoBase｜靜態線上資訊庫</title>
-  <meta name="description" content="純前端、零後端的線上資訊庫。支援搜尋、版本歷史、相關資料、上傳者/時間、PDF 線上預覽與檔案介紹。" />
+  <title>InfoBase｜DNFK Studios</title>
+  <meta name="description" content="暗夜飛鳶工作室線上資訊庫" />
   <style>
     *, *::before, *::after { box-sizing: border-box; }
     html, body { margin: 0; padding: 0; }
@@ -26,9 +26,9 @@
       --shadow-1: 0 10px 30px rgba(0,0,0,.08);
       --shadow-2: 0 16px 40px rgba(0,0,0,.12);
       --card-gap: clamp(14px, 2vw, 20px);
-      --frost: rgba(255,255,255,0.7); /* 取代 color-mix 以提高相容性 */
-      --chip-active: #e7f0ec;        /* 取代 color-mix */
-      --pin-bg: #e6f2ed;             /* 取代 color-mix */
+      --frost: rgba(255,255,255,0.7); 
+      --chip-active: #e7f0ec;        
+      --pin-bg: #e6f2ed;             
     }
     html { color: var(--ink); background: var(--bg); font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif; letter-spacing: .2px; }
     body::before {
@@ -39,7 +39,6 @@
       backdrop-filter: none;
     }
 
-    /* 導覽與搜尋 */
     .navbar { position: sticky; top: 0; z-index: 20; backdrop-filter: blur(8px); background: var(--frost); border-bottom: 1px solid rgba(0,0,0,.04); }
     .nav-wrap { max-width: 1200px; margin: 0 auto; padding: 14px 18px; display: grid; grid-template-columns: 180px 1fr; align-items: center; gap: 14px; }
     .brand { display:flex; align-items:center; gap:10px; }
@@ -51,7 +50,7 @@
     .searchbar .input input { flex:1; border: none; outline: none; background: transparent; }
     .kbd { font-size: 12px; padding: 3px 6px; border-radius: 6px; border: 1px solid rgba(0,0,0,.15); background: #fff; color: #555; }
 
-    /* 最新公告 */
+
     .ann { max-width: 1200px; margin: 14px auto 0; padding: 0 18px; display:flex; flex-direction:column; gap:10px; }
     .ann-title { font-weight: 800; font-size: 16px; letter-spacing: .3px; display:flex; align-items:center; gap:8px; }
     .ann-list { display:grid; grid-template-columns: repeat(12, 1fr); gap: var(--card-gap); }
@@ -66,7 +65,7 @@
     .btn.secondary { background: linear-gradient(180deg, #ffffff, #f1ede6); border: 1px solid rgba(0,0,0,.06); color: #2e2f2c; }
     .btn.small { padding: 6px 10px; font-size: 14px; border-radius: 12px; }
 
-    /* 篩選與清單 */
+
     .filters { max-width: 1200px; margin: 8px auto 0; padding: 0 18px 8px; display:flex; align-items:center; gap:10px; flex-wrap: wrap; }
     .chip { display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius: 999px; background:#fff; border:1px solid rgba(0,0,0,.08); box-shadow: var(--shadow-1); cursor: pointer; transition: transform .15s ease, box-shadow .2s ease, background .2s ease; }
     .chip:hover { transform: translateY(-1px); box-shadow: var(--shadow-2); }
@@ -87,7 +86,7 @@
     .meta .dot { width: 4px; height: 4px; border-radius: 999px; background: currentColor; opacity: .5; }
     .card .cta { display:flex; gap: 8px; margin-top: 6px; }
 
-    /* 詳情抽屜與 PDF 預覽 */
+
     .drawer { position: fixed; inset: 0 0 0 auto; width: min(560px, 100%); background: var(--paper); box-shadow: -20px 0 50px rgba(0,0,0,.15); transform: translateX(102%); transition: transform .35s ease; z-index: 50; display:flex; flex-direction:column; }
     .drawer.open { transform: translateX(0); }
     .drawer-header { padding: 16px; display:flex; align-items:center; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,.06); }
@@ -139,36 +138,36 @@
             </defs>
           </svg>
         </div>
-        <h1>Nordic InfoBase</h1>
+        <h1>DNFK InfoBase</h1>
       </div>
 
       <div class="searchbar" role="search">
         <div class="input" aria-label="搜尋輸入">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.3-4.3" stroke="#6b6f68" stroke-width="2" stroke-linecap="round"/><circle cx="11" cy="11" r="7" stroke="#6b6f68" stroke-width="2"/></svg>
-          <input id="q" type="search" placeholder="搜尋標題、描述或標籤（按 / 快速聚焦）" autocomplete="off" />
+          <input id="q" type="search" placeholder="搜尋標題、描述或標籤（按 / 快速開啟搜尋）" autocomplete="off" />
           <span class="kbd" aria-hidden="true">/</span>
         </div>
-        <span class="tip">支援即時篩選與版本預覽</span>
+        <span class="tip">暗夜飛鳶工作室 線上資訊庫</span>
       </div>
     </div>
   </div>
 
-  <!-- 最新公告 -->
+
   <section class="ann" id="ann" aria-label="最新公告">
-    <div class="ann-title">📢 最新公告</div>
+    <div class="ann-title">最新公告 The Latest Announcement</div>
     <div class="ann-list" id="ann-list"></div>
     <div class="ann-actions">
       <button class="btn secondary small" id="ann-toggle" aria-expanded="false" type="button">展開全部</button>
     </div>
   </section>
 
-  <!-- 篩選列 -->
+
   <div class="filters" id="filters" aria-label="標籤篩選"></div>
 
-  <!-- 卡片網格 -->
+
   <section class="grid" id="grid" aria-live="polite" aria-busy="false"></section>
 
-  <!-- 詳情抽屜 -->
+
   <aside class="drawer" id="drawer" aria-hidden="true" aria-label="文件詳情">
     <div class="drawer-header">
       <strong id="drawer-title">—</strong>
@@ -177,7 +176,7 @@
     <div class="drawer-body" id="drawer-body"></div>
   </aside>
 
-  <!-- PDF 預覽 Modal -->
+
   <div class="pdf-modal" id="pdfModal" role="dialog" aria-modal="true" aria-label="PDF 預覽">
     <div class="pdf-frame" role="document">
       <div class="pdf-bar">
@@ -197,7 +196,7 @@
   </div>
 
   <div class="inline-error" id="inline-error" hidden>
-    <div class="box">讀取 <code>data.json</code> 失敗。若你是直接用檔案開啟（檔案路徑為 <code>file://</code>），請改用任何靜態伺服器或部署到相同網域的主機後再試。</div>
+    <div class="box">讀取 <code>data.json</code> 失敗。</div>
   </div>
 
   <script>
@@ -441,9 +440,9 @@
       btn.setAttribute('aria-expanded', state.annExpanded?'true':'false');
     }
 
-    // 啟動
+
     (function init(){
-      // 搜尋（localStorage 容錯）
+
       var safeKey = 'nib.q';
       try { var saved = localStorage.getItem(safeKey); if (saved) { state.q = saved; } } catch(e){}
       try { qInput.value = state.q; } catch(e){}
@@ -451,8 +450,8 @@
       document.getElementById('ann-toggle').addEventListener('click', function(){ state.annExpanded = !state.annExpanded; renderAnnouncements(); });
       window.addEventListener('keydown', function(e){ if(e.key === '/'){ e.preventDefault(); qInput.focus(); qInput.select(); } if(e.key==='Escape'){ closeDrawer(); closePdf(); } });
 
-      // 載入外部資料
-      fetch('./data.json', { cache: 'no-store' })
+
+      fetch('./data251019001.json', { cache: 'no-store' })
         .then(function(res){ if(!res.ok) throw new Error(res.status+' '+res.statusText); return res.json(); })
         .then(function(json){
           DB = json || { announcements:[], docs:[] };
@@ -467,7 +466,7 @@
           renderFilters(); renderDocs();
         });
 
-      // 深連結
+
       function tryOpenFromHash(){
         var h = location.hash;
         var m = h.match(/^#doc\/(.+)$/);
