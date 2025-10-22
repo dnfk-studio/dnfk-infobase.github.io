@@ -58,6 +58,7 @@
         }
       ],
       "relatedIds": [
+        ""
       ]
     },
     {
@@ -78,6 +79,7 @@
         }
       ],
       "relatedIds": [
+        ""
       ]
     },
     {
@@ -98,6 +100,7 @@
         }
       ],
       "relatedIds": [
+        ""
       ]
     },
     {
@@ -140,6 +143,7 @@
         }
       ],
       "relatedIds": [
+        ""
       ]
     },
     {
@@ -160,6 +164,28 @@
         }
       ],
       "relatedIds": [
+        ""
+      ]
+    },
+    {
+      "id": "info-base-WR",
+      "title": "暗夜飛鳶工作室  工作室線上資料庫網站使用辦法",
+      "description": "RS-251001",
+      "tags": [
+        "規章/部組規章"
+      ],
+      "uploader": "科技部資訊小組 (TIT)",
+      "uploadedAt": "2025-10-22T20:32:17+08:00",
+      "versions": [
+        {
+          "version": "RS-251001",
+          "date": "2025-10-22",
+          "file": "assets/RS-251001.pdf",
+          "notes": "制定本辦法。"
+        }
+      ],
+      "relatedIds": [
+        ""
       ]
     }
   ]
