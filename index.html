@@ -605,7 +605,7 @@
       window.addEventListener('keydown', function(e){ if(e.key === '/'){ e.preventDefault(); qInput.focus(); qInput.select(); } if(e.key==='Escape'){ closeDrawer(); closePdf(); } });
 
 
-      fetch('./data251022001.json', { cache: 'no-store' })
+      fetch('./data251022002.json', { cache: 'no-store' })
         .then(function(res){ if(!res.ok) throw new Error(res.status+' '+res.statusText); return res.json(); })
         .then(function(json){
           DB = json || { announcements:[], docs:[] };
@@ -1022,67 +1022,6 @@
       mo.observe(filters, { childList:true, subtree:true });
     }
   })();
-})();
-</script>
-
-
-<script>
-(function(){
-  if (window.__REL_FIX_APPLIED__) return; window.__REL_FIX_APPLIED__ = true;
-  function findDocs(){
-    try {
-      if (Array.isArray(window.DOCS)) return window.DOCS;
-      if (window.DB && Array.isArray(window.DB.docs)) return window.DB.docs;
-    } catch(e){}
-    return [];
-  }
-  function escapeHTML(s){ s = (s==null?'':String(s)); return s.replace(/[&<>"']/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',\"'\":'&#039;'}[c]); }); }
-  function buildRelCard(r){
-    var hasVersions = Array.isArray(r.versions) && r.versions.length > 0;
-    var html = ''
-      + '<div class="rel-card">'
-      +   '<div style="font-weight:700">' + escapeHTML(r.title || '') + '</div>'
-      +   '<div style="color:var(--muted); font-size:13px;">' + escapeHTML(r.description || '') + '</div>'
-      +   '<div class="badges" style="margin-top:6px;">' + (Array.isArray(r.tags) ? r.tags.slice(0,3).map(function(t){ return '<span class="badge">' + escapeHTML(t) + '</span>'; }).join('') : '') + '</div>'
-      +   '<div style="display:flex; gap:8px; margin-top:8px;">'
-      +     '<button class="btn secondary small" data-rel-detail="' + escapeHTML(r.id) + '">詳情</button>'
-      +     (hasVersions ? '<button class="btn small" data-rel-preview="' + escapeHTML(r.id) + '">預覽</button>' : '')
-      +   '</div>'
-      + '</div>';
-    return html;
-  }
-  function renderRelatedFor(docId){
-    var DOCS = findDocs();
-    var doc = DOCS.find(function(d){ return d && d.id === docId; });
-    if (!doc) return;
-    var ids = Array.isArray(doc.relatedIds) ? doc.relatedIds : [];
-    var related = ids.map(function(x){ return DOCS.find(function(d){ return d && d.id === x; }); }).filter(Boolean);
-    var container = document.querySelector('#drawer-body .related');
-    if (!container) return;
-    if (related.length === 0) {
-      container.innerHTML = '<div class="rel-card" style="color:var(--muted);">尚無相關資料</div>';
-    } else {
-      container.innerHTML = related.map(buildRelCard).join('');
-    }
-  }
-  if (typeof window.openDetail === 'function' && !window.openDetail.__relfix__) {
-    var _open = window.openDetail;
-    window.openDetail = function(id){
-      var ret = _open.apply(this, arguments);
-      try { renderRelatedFor(id); } catch(e){}
-      return ret;
-    };
-    window.openDetail.__relfix__ = true;
-  } else {
-    var tried = false;
-    function tryRender(){
-      if (tried) return; tried = true;
-      var m = (location.hash||'').match(/^#doc\/(.+)$/);
-      if (m) renderRelatedFor(decodeURIComponent(m[1]));
-    }
-    document.addEventListener('DOMContentLoaded', tryRender);
-    window.addEventListener('hashchange', function(){ tried = false; tryRender(); });
-  }
 })();
 </script>
 

@@ -187,6 +187,27 @@
       "relatedIds": [
         ""
       ]
+    },
+    {
+      "id": "info-base-WR",
+      "title": "暗夜飛鳶工作室  第0001號公告",
+      "description": "A-251001",
+      "tags": [
+        "公文/公告"
+      ],
+      "uploader": "科技部資訊小組 (TIT)",
+      "uploadedAt": "2025-10-22T21:52:03+08:00",
+      "versions": [
+        {
+          "version": "A-251001",
+          "date": "2025-10-22",
+          "file": "assets/A-251001.pdf",
+          "notes": "原始檔案。"
+        }
+      ],
+      "relatedIds": [
+        ""
+      ]
     }
   ]
 }
