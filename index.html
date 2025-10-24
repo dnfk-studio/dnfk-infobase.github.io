@@ -1,1029 +1,571 @@
 <!DOCTYPE html>
-<html lang="zh-Hant-TW">
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>InfoBase｜DNFK Studios</title>
-  <meta name="description" content="暗夜飛鳶工作室線上資訊庫" />
+  <meta charset="UTF-8" />
+  <meta
+    http-equiv="X-UA-Compatible"
+    content="IE=edge"
+  />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+  <title>Service Unavailable</title>
+
   <style>
-    *, *::before, *::after { box-sizing: border-box; }
-    html, body { margin: 0; padding: 0; }
-    img, svg, video { display: block; max-width: 100%; }
-    button, input, select, textarea { font: inherit; color: inherit; }
-    a { color: inherit; text-decoration: none; }
-
     :root {
-      --bg: #f6f2ea;
-      --paper: #ffffff;
-      --ink: #2e2f2c;
-      --muted: #6f6a61;
-      --pine: #80a697;
-      --pine-2: #9ec3b3;
-      --wood: #c6a278;
-      --accent: #7aa4c2;
-      --radius-lg: 20px;
-      --radius-md: 14px;
-      --shadow-1: 0 10px 30px rgba(0,0,0,.08);
-      --shadow-2: 0 16px 40px rgba(0,0,0,.12);
-      --card-gap: clamp(14px, 2vw, 20px);
-      --frost: rgba(255,255,255,0.7); 
-      --chip-active: #e7f0ec;        
-      --pin-bg: #e6f2ed;             
-    }
-    html { color: var(--ink); background: var(--bg); font-family: system-ui, -apple-system, Segoe UI, Roboto, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif; letter-spacing: .2px; }
-    body::before {
-      content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-      background: linear-gradient(180deg, rgba(255,255,255,.75), rgba(255,255,255,.9)),
-                  repeating-linear-gradient(6deg, rgba(198,162,120,.10), rgba(198,162,120,.10) 2px, rgba(198,162,120,.06) 2px, rgba(198,162,120,.06) 9px);
-      -webkit-backdrop-filter: none;
-      backdrop-filter: none;
+      --bg-gradient-start: #0a0a0f;
+      --bg-gradient-end: #1a1a2f;
+      --card-bg: rgba(15, 15, 24, 0.6);
+      --card-stroke: rgba(255, 255, 255, 0.07);
+      --accent: #ff3b5c;
+      --text-primary: #ffffff;
+      --text-dim: #8b8fae;
+      --mono-bg: rgba(255, 255, 255, 0.05);
+      --mono-border: rgba(255, 255, 255, 0.1);
+      --radius-xl: 1.25rem;
     }
 
-    .navbar { position: sticky; top: 0; z-index: 20; backdrop-filter: blur(8px); background: var(--frost); border-bottom: 1px solid rgba(0,0,0,.04); }
-    .nav-wrap { max-width: 1200px; margin: 0 auto; padding: 14px 18px; display: grid; grid-template-columns: 180px 1fr; align-items: center; gap: 14px; }
-    .brand { display:flex; align-items:center; gap:10px; }
-    .brand-logo { width: 34px; height: 34px; border-radius: 10px; display:grid; place-items:center; background: linear-gradient(135deg, #e2c8a7, var(--wood)); box-shadow: var(--shadow-1); }
-    .brand h1 { font-size: 18px; margin: 0; letter-spacing: .6px; }
+    * {
+      box-sizing: border-box;
+      -webkit-font-smoothing: antialiased;
+    }
 
-    .searchbar { display:flex; align-items:center; gap:10px; }
-    .searchbar .input { flex:1; display:flex; align-items:center; gap:10px; padding: 10px 12px; border-radius: var(--radius-md); background: var(--paper); box-shadow: var(--shadow-1); border: 1px solid rgba(0,0,0,.06); }
-    .searchbar .input input { flex:1; border: none; outline: none; background: transparent; }
-    .kbd { font-size: 12px; padding: 3px 6px; border-radius: 6px; border: 1px solid rgba(0,0,0,.15); background: #fff; color: #555; }
+    body {
+      margin: 0;
+      background: radial-gradient(
+          circle at 20% 20%,
+          rgba(255, 59, 92, 0.08) 0%,
+          rgba(0, 0, 0, 0) 60%
+        ),
+        radial-gradient(
+          circle at 80% 30%,
+          rgba(91, 129, 255, 0.08) 0%,
+          rgba(0, 0, 0, 0) 60%
+        ),
+        linear-gradient(
+          160deg,
+          var(--bg-gradient-start) 0%,
+          var(--bg-gradient-end) 100%
+        );
+      min-height: 100vh;
+      color: var(--text-primary);
+      font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+      display: grid;
+      place-items: center;
+      padding: 2rem;
+    }
 
+    .shell {
+      width: 100%;
+      max-width: 48rem;
+      position: relative;
+      color: var(--text-primary);
+    }
 
-    .ann { max-width: 1200px; margin: 14px auto 0; padding: 0 18px; display:flex; flex-direction:column; gap:10px; }
-    .ann-title { font-weight: 800; font-size: 16px; letter-spacing: .3px; display:flex; align-items:center; gap:8px; }
-    .ann-list { display:grid; grid-template-columns: repeat(12, 1fr); gap: var(--card-gap); }
-    .ann-card { grid-column: span 12; background: var(--paper); border: 1px solid rgba(0,0,0,.06); border-radius: var(--radius-lg); padding: 12px; box-shadow: var(--shadow-1); }
-    .ann-head { display:flex; align-items:center; gap:8px; }
-    .ann-pin { font-size: 12px; padding: 2px 6px; border-radius: 999px; border: 1px solid rgba(0,0,0,.1); background: var(--pin-bg); }
-    .ann-date { color: var(--muted); font-size: 12px; margin-left: auto; }
-    .ann-body { color: #45433f; margin-top: 6px; white-space: pre-wrap; line-height: 1.5; }
-    .ann-actions { display:flex; gap: 8px; margin-top: 8px; }
-    .btn { display:inline-flex; align-items:center; gap:8px; padding: 8px 12px; border-radius: 999px; background: linear-gradient(180deg, var(--pine-2), var(--pine)); color: #0b2c23; border: none; cursor: pointer; box-shadow: var(--shadow-1); transition: transform .15s ease, box-shadow .2s ease, filter .2s ease; }
-    .btn:hover { transform: translateY(-1px); box-shadow: var(--shadow-2); filter: brightness(1.02); }
-    .btn.secondary { background: linear-gradient(180deg, #ffffff, #f1ede6); border: 1px solid rgba(0,0,0,.06); color: #2e2f2c; }
-    .btn.small { padding: 6px 10px; font-size: 14px; border-radius: 12px; }
+    /* fancy glow ring */
+    .shell::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: var(--radius-xl);
+      padding: 2px;
+      background: radial-gradient(
+            circle at 10% 0%,
+            rgba(255, 59, 92, 0.6) 0%,
+            transparent 60%
+          ),
+          radial-gradient(
+            circle at 90% 100%,
+            rgba(91, 129, 255, 0.5) 0%,
+            transparent 60%
+          );
+      -webkit-mask: linear-gradient(#fff 0 0) content-box,
+        linear-gradient(#fff 0 0);
+      -webkit-mask-composite: xor;
+              mask-composite: exclude;
+      opacity: 0.4;
+      filter: blur(20px);
+      pointer-events: none;
+    }
 
+    .card {
+      position: relative;
+      background: var(--card-bg);
+      border: 1px solid var(--card-stroke);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 30px 120px rgba(0, 0, 0, 0.9),
+        0 8px 32px rgba(255, 59, 92, 0.2);
+      backdrop-filter: blur(16px) saturate(160%);
+      -webkit-backdrop-filter: blur(16px) saturate(160%);
+      padding: clamp(1.5rem, 2vw, 2rem) clamp(1.25rem, 2vw, 2rem)
+        clamp(1.5rem, 2vw, 2rem);
+      display: grid;
+      gap: 1.5rem;
+    }
 
-    .filters { max-width: 1200px; margin: 8px auto 0; padding: 0 18px 8px; display:flex; align-items:center; gap:10px; flex-wrap: wrap; }
-    .chip { display:inline-flex; align-items:center; gap:8px; padding:8px 12px; border-radius: 999px; background:#fff; border:1px solid rgba(0,0,0,.08); box-shadow: var(--shadow-1); cursor: pointer; transition: transform .15s ease, box-shadow .2s ease, background .2s ease; }
-    .chip:hover { transform: translateY(-1px); box-shadow: var(--shadow-2); }
-    .chip.active { background: var(--chip-active); }
-    .sort-select { margin-left: auto; padding: 10px 12px; border-radius: 12px; border:1px solid rgba(0,0,0,.08); background:#fff; box-shadow: var(--shadow-1); }
+    header.statusline {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      row-gap: 0.5rem;
+      column-gap: 1rem;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono",
+        monospace;
+    }
 
-    .grid { max-width: 1200px; margin: 10px auto 80px; padding: 0 18px; display:grid; grid-template-columns: repeat(12, 1fr); gap: var(--card-gap); }
-    .card { grid-column: span 4; background: var(--paper); border: 1px solid rgba(0,0,0,.06); border-radius: var(--radius-lg); box-shadow: var(--shadow-1); overflow: hidden; position: relative; opacity: 0; transform: translateY(10px); transition: opacity .6s ease, transform .6s ease; }
-    .card.reveal { opacity: 1; transform: translateY(0); }
-    .card .thumb { aspect-ratio: 16/9; background: linear-gradient(180deg, #faf7f1, #efe7da); display:grid; place-items:center; }
-    .card .thumb svg { opacity: .8; }
-    .card .body { padding: 14px; display:flex; flex-direction: column; gap: 10px; }
-    .title { font-weight: 700; font-size: 16px; line-height: 1.3; }
-    .desc { color: var(--muted); font-size: 14px; }
-    .badges { display:flex; flex-wrap: wrap; gap: 6px; }
-    .badge { font-size: 12px; padding: 6px 8px; border-radius: 999px; background: #f4efe6; border: 1px solid rgba(0,0,0,.06); }
-    .meta { display:flex; align-items:center; gap: 10px; color: var(--muted); font-size: 12px; }
-    .meta .dot { width: 4px; height: 4px; border-radius: 999px; background: currentColor; opacity: .5; }
-    .card .cta { display:flex; gap: 8px; margin-top: 6px; }
+    .status-left {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+    }
 
+    .svc-name {
+      font-size: 0.75rem;
+      line-height: 1rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 500;
+      color: var(--text-dim);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
 
-    .drawer { position: fixed; inset: 0 0 0 auto; width: min(560px, 100%); background: var(--paper); box-shadow: -20px 0 50px rgba(0,0,0,.15); transform: translateX(102%); transition: transform .35s ease; z-index: 50; display:flex; flex-direction:column; }
-    .drawer.open { transform: translateX(0); }
-    .drawer-header { padding: 16px; display:flex; align-items:center; justify-content: space-between; border-bottom: 1px solid rgba(0,0,0,.06); }
-    .drawer-body { padding: 16px; overflow:auto; display:flex; flex-direction:column; gap: 16px; }
-    .kv { display:grid; grid-template-columns: 110px 1fr; gap: 12px; align-items:start; }
-    .timeline { position:relative; padding-left: 20px; }
-    .timeline::before { content:""; position:absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: linear-gradient(180deg, var(--pine-2), transparent); }
-    .timeline-item { position: relative; padding: 8px 0 8px 16px; }
-    .timeline-item::before { content:""; position:absolute; left: -4px; top: 14px; width: 10px; height: 10px; border-radius: 999px; background: var(--pine); box-shadow: 0 0 0 3px rgba(128,166,151,0.25); }
-    .related { display:grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-    .rel-card { border: 1px solid rgba(0,0,0,.06); border-radius: 12px; padding: 10px; background: #fff; display:flex; flex-direction:column; gap:6px; }
+    .svc-name .pill {
+      background: var(--accent);
+      color: #fff;
+      font-size: 0.6rem;
+      line-height: 1rem;
+      font-weight: 600;
+      padding: 0 0.5rem;
+      border-radius: 999px;
+      white-space: nowrap;
+      box-shadow: 0 0 20px var(--accent);
+    }
 
-    .pdf-modal { position: fixed; inset: 0; display:none; align-items: center; justify-content: center; background: rgba(0,0,0,.34); z-index: 60; }
-    .pdf-modal.open { display:flex; animation: fadeIn .2s ease; }
-    .pdf-frame { width: min(1100px, 92vw); height: min(80vh, 900px); background: #f9f7f3; border-radius: 16px; box-shadow: 0 40px 100px rgba(0,0,0,.35); border: 1px solid rgba(0,0,0,.12); overflow: hidden; display:flex; flex-direction:column; }
-    .pdf-bar { display:flex; align-items:center; justify-content: space-between; padding: 10px; background: linear-gradient(180deg, #fff, #f2eee7); border-bottom: 1px solid rgba(0,0,0,.08); }
-    .pdf-title { font-weight: 700; display:flex; align-items:center; gap:8px; }
-    .pdf-actions { display:flex; align-items:center; gap:8px; }
-    .pdf-actions .btn { border-radius: 10px; }
-    .pdf-iframe { flex: 1 1 auto; border: none; background: #fff; }
-    @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+    .svc-headline {
+      font-size: clamp(0.9rem, 0.2vw, 1rem);
+      line-height: 1.4;
+      font-weight: 600;
+      color: var(--text-primary);
+      text-wrap: balance;
+      word-break: break-word;
+    }
 
-    .tip { font-size: 12px; color: var(--muted); }
-    mark { background: rgba(122,164,194,0.25); padding: 0 .18em; border-radius: 3px; }
+    .status-right {
+      text-align: right;
+      font-size: 0.7rem;
+      line-height: 1rem;
+      color: var(--text-dim);
+    }
 
-    @media (max-width: 1024px) { .card { grid-column: span 6; } }
-    @media (max-width: 640px) {
-      .nav-wrap { grid-template-columns: 1fr; gap: 8px; }
-      .filters { padding: 0 12px 8px; }
-      .grid { padding: 0 12px; }
-      .card { grid-column: span 12; }
-      .kv { grid-template-columns: 1fr; }
-      .related { grid-template-columns: 1fr; }
+    .status-code {
+      font-variant-numeric: tabular-nums;
+      font-feature-settings: "tnum";
+      color: var(--accent);
+      font-weight: 600;
+    }
+
+    /* main message */
+    .bodycopy {
+      display: grid;
+      gap: 1rem;
+    }
+
+    h1.mainline {
+      margin: 0;
+      font-size: clamp(1.25rem, 0.5vw, 1.5rem);
+      line-height: 1.2;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+      background: radial-gradient(
+          circle at 0% 0%,
+          rgba(255, 59, 92, 0.6) 0%,
+          rgba(255, 59, 92, 0) 60%
+        ),
+        radial-gradient(
+          circle at 100% 100%,
+          rgba(91, 129, 255, 0.5) 0%,
+          rgba(91, 129, 255, 0) 60%
+        );
+      background-clip: text;
+      color: transparent;
+    }
+
+    p.lead {
+      margin: 0;
+      color: var(--text-primary);
+      font-size: 0.9rem;
+      line-height: 1.5;
+      font-weight: 500;
+      max-width: 60ch;
+      text-wrap: balance;
+    }
+
+    p.subtle {
+      margin: 0;
+      color: var(--text-dim);
+      font-size: 0.75rem;
+      line-height: 1.5;
+      max-width: 65ch;
+    }
+
+    .subtle strong {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    /* diagnostic panel */
+    .panel {
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--mono-border);
+      background: var(--mono-bg);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas,
+        "Liberation Mono", monospace;
+      font-size: 0.7rem;
+      line-height: 1.4;
+      color: var(--text-primary);
+      padding: 1rem 1rem 0.75rem;
+      display: grid;
+      gap: 0.75rem;
+      position: relative;
+      overflow-x: auto;
+    }
+
+    .panel-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      row-gap: 0.5rem;
+      column-gap: 1rem;
+    }
+
+    .panel-title {
+      color: var(--text-dim);
+      font-size: 0.65rem;
+      line-height: 1rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .dot {
+      width: 0.4rem;
+      height: 0.4rem;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 10px var(--accent), 0 0 30px var(--accent);
+    }
+
+    pre {
+      margin: 0;
+      white-space: pre-wrap;
+      word-break: break-word;
+      color: var(--text-primary);
+    }
+
+    .kv-line {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem 1rem;
+      align-items: flex-start;
+    }
+
+    .kv-k {
+      min-width: 8rem;
+      color: var(--text-dim);
+    }
+
+    .kv-v {
+      color: var(--text-primary);
+      word-break: break-word;
+    }
+
+    /* footer block */
+    footer.foot {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 0.6rem;
+      line-height: 1.4;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas,
+        "Liberation Mono", monospace;
+      user-select: none;
+    }
+
+    .hash-row {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      word-break: break-all;
+      max-width: 100%;
+    }
+
+    .hash-label {
+      color: var(--text-dim);
+    }
+
+    .hash-value {
+      font-size: 0.6rem;
+      color: var(--text-primary);
+      opacity: 0.6;
+      font-variant-numeric: slashed-zero tabular-nums;
+    }
+
+    /* small screen tweaks */
+    @media (max-width: 480px) {
+      .kv-k {
+        min-width: 6rem;
+      }
     }
   </style>
-<link rel="icon" type="image/png" href="assets/favicon.png" sizes="256x256" />
-<link rel="apple-touch-icon" href="assets/favicon.png" />
-<link rel="icon" type="image/svg+xml" href="assets/icon.svg" />
-<meta name="theme-color" content="#80A697" />
-<style>
-
-/* === Mobile Fix Pack (preserve desktop styles) === */
-@media (max-width: 768px){
-  :root{ --vh: 100vh; }
-  .nav-wrap{ grid-template-columns: 1fr !important; gap: 8px !important; }
-  .filters{ padding: 0 12px 8px !important; }
-  .grid{ padding: 0 12px !important; }
-  .card{ grid-column: span 12 !important; }
-  .drawer{ width: 100% !important; }
-  .pdf-frame{ width: 96vw !important; height: calc(var(--vh) - 8vh) !important; max-height: calc(var(--vh) - 24px) !important; }
-  .pdf-iframe{ width: 100% !important; height: 100% !important; display:block; }
-  .pdf-modal{ padding: max(env(safe-area-inset-top, 10px), 10px) 8px max(env(safe-area-inset-bottom, 10px), 10px) 8px; }
-  html, body{ overflow-x: hidden !important; }
-}
-@supports (-webkit-touch-callout: none) {
-  .pdf-frame{ height: calc(var(--vh) - 24px); }
-}
-.ann-collapsed .ann-card:nth-of-type(n+4){ display:none; }
-
-/* Toasts */
-.toast-root{ position: fixed; left: 50%; bottom: calc(16px + env(safe-area-inset-bottom, 0px)); transform: translateX(-50%); z-index: 9999; display:flex; flex-direction:column; gap:10px; pointer-events:none; }
-.toast{ min-width: 220px; max-width: 92vw; background: rgba(34,37,32,0.92); color:#fff; border-radius: 12px; padding: 10px 14px; box-shadow: 0 10px 30px rgba(0,0,0,.25); display:flex; align-items:center; gap:10px; pointer-events:auto;
-  animation: toast-in .28s ease both; }
-.toast.hide{ animation: toast-out .24s ease forwards; }
-.toast .tmsg{ flex:1; font-size: 14px; }
-.toast .tclose{ background: transparent; border: none; color:#fff; opacity:.8; cursor:pointer; font-size:16px; }
-@keyframes toast-in{ from{ transform: translate(-50%, 16px); opacity:0 } to{ transform: translate(-50%, 0); opacity:1 } }
-@keyframes toast-out{ from{ transform: translate(-50%, 0); opacity:1 } to{ transform: translate(-50%, 12px); opacity:0 } }
-
-/* Subtle animations */
-.card{ transition: transform .2s ease, box-shadow .25s ease; }
-.card:hover{ transform: translateY(-2px); box-shadow: 0 16px 40px rgba(0,0,0,.12); }
-.chip{ transition: transform .15s ease, box-shadow .2s ease, background .2s ease; }
-.chip:active{ transform: scale(.98); }
-.btn{ transition: transform .15s ease, box-shadow .2s ease, filter .2s ease; }
-.btn:active{ transform: scale(.98); }
-
-</style>
-<style>
-
-/* === Patch: Mobile PDF modal usability === */
-@media (max-width: 768px){
-  .pdf-modal{ align-items: flex-start !important; justify-content: center !important; overflow: auto !important; }
-  .pdf-frame{ width: 96vw !important; max-width: 96vw !important; height: calc(var(--vh) - 32px) !important; max-height: calc(var(--vh) - 16px) !important; margin-top: 8px; margin-bottom: 8px; }
-  .pdf-bar{ position: sticky; top: 0; z-index: 2; }
-  .pdf-fab-close{ display: inline-flex; position: absolute; right: 8px; top: 8px; z-index: 3; border: none; border-radius: 999px; padding: 8px; background: rgba(46,47,44,0.92); color:#fff; cursor:pointer; box-shadow: 0 8px 24px rgba(0,0,0,.25); align-items:center; justify-content:center; }
-}
-
-</style>
-<style>
-
-/* === Footer (minimal & nordic) === */
-.site-footer{ background:#fff; border-top:1px solid rgba(0,0,0,.06); margin-top:40px; }
-.site-footer .foot-wrap{ max-width:1200px; margin:0 auto; padding:14px 18px; display:flex; align-items:center; justify-content:space-between; color:#6f6a61; font-size:14px; }
-.site-footer a{ color:#2e2f2c; text-decoration:none; border-bottom:1px dashed rgba(0,0,0,.2); }
-.site-footer a:hover{ opacity:.85; }
-@media (max-width:768px){ .site-footer .foot-wrap{ padding:12px 14px; font-size:13px; } }
-
-</style>
-<style>
-
-/* === Toast restyle (elegant) === */
-.toast{ background: linear-gradient(180deg, rgba(46,47,44,0.95), rgba(28,30,26,0.95)); border:1px solid rgba(255,255,255,.08); backdrop-filter: blur(4px); }
-.toast .tmsg:before{ content:"⬇️"; margin-right:6px; }
-
-</style>
-<style>
-
-/* === Additional subtle animations === */
-@keyframes rise{ from{ transform: translateY(8px); opacity: 0 } to{ transform: translateY(0); opacity:1 } }
-.card{ will-change: transform, box-shadow; }
-.card.reveal{ animation: rise .38s ease both; }
-.chip{ transition: transform .15s ease, box-shadow .2s ease, background .2s ease; }
-.chip:focus-visible{ outline: 2px solid rgba(128,166,151,.5); outline-offset: 2px; }
-
-</style>
-
-<style>
-/* === Selected category highlight (both desktop & mobile, minimal impact) === */
-.chip.is-selected{
-  background: linear-gradient(180deg, #9EC3B3, #80A697) !important;
-  color: #0b2c23 !important;
-  box-shadow: 0 6px 18px rgba(0,0,0,.12) !important;
-}
-
-/* === Toast restyle (no emojis) & single-line animation === */
-.toast{
-  background: linear-gradient(180deg, rgba(43,45,42,0.96), rgba(29,31,27,0.96));
-  border: 1px solid rgba(255,255,255,.06);
-  border-left: 4px solid #80A697;
-  backdrop-filter: blur(6px);
-}
-.toast .tmsg:before{ content: '' !important; display:none !important; }
-.toast::after{
-  content:''; display:block; height:2px; background:#80A697; margin-top:6px; width:0;
-  opacity:.85; animation: toastprog 2s linear forwards;
-}
-@keyframes toastprog { from{ width:0 } to{ width:100% } }
-
-/* === Mobile PDF FAB visible and tappable === */
-@media (max-width:768px){
-  .pdf-fab-close{
-    display:inline-flex; position:absolute; right:8px; top:8px; z-index:999; border:none; border-radius:999px; padding:10px;
-    background: rgba(46,47,44,0.96); color:#fff; cursor:pointer; box-shadow: 0 10px 30px rgba(0,0,0,.28);
-    line-height:1; font-size:18px;
-  }
-}
-</style>
-
-
-<style>
-/* === Selected category (refined nordic green) === */
-.chip.is-selected{
-  background: linear-gradient(180deg, #E9F3EF, #D8EAE3) !important;
-  color: #1E3A31 !important;
-  border: 1px solid rgba(128,166,151,0.45) !important;
-  box-shadow: 0 8px 22px rgba(0,0,0,.10), inset 0 1px 0 rgba(255,255,255,.6) !important;
-}
-
-/* === Mobile fixed close button for PDF modal === */
-@media (max-width: 768px){
-  #pdfCloseFab{
-    position: fixed;
-    top: max(10px, env(safe-area-inset-top, 10px));
-    right: 10px;
-    z-index: 1000;
-    width: 42px; height: 42px;
-    border: 1px solid rgba(255,255,255,.25);
-    border-radius: 999px;
-    background: rgba(34,36,33,0.95);
-    color: #fff;
-    box-shadow: 0 10px 30px rgba(0,0,0,.28);
-    display: none; /* shown only when modal is open */
-    align-items: center; justify-content: center;
-    font-size: 18px; line-height: 1; cursor: pointer;
-  }
-  .pdf-modal.open + #pdfCloseFab, body.show-pdf-close #pdfCloseFab { display: inline-flex; }
-}
-
-/* === Extra minimal animations (low-key) === */
-@keyframes fadeInSoft { from{ opacity: 0 } to{ opacity:1 } }
-@keyframes liftIn { from{ transform: translateY(8px); opacity: 0 } to{ transform: translateY(0); opacity: 1 } }
-.card.reveal{ animation: liftIn .36s ease both; }
-.btn, .chip{ transition: transform .14s ease, box-shadow .22s ease, background .22s ease, border-color .22s ease; }
-.btn:active, .chip:active{ transform: scale(.98); }
-.searchbar .input:focus-within{ box-shadow: 0 12px 30px rgba(0,0,0,.10); transition: box-shadow .24s ease; }
-</style>
-
 </head>
 <body>
-  <div class="navbar" role="navigation" aria-label="主選單">
-    <div class="nav-wrap">
-      <div class="brand">
-        <div class="brand-logo" aria-hidden="true">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-            <path d="M4 7a3 3 0 0 1 3-3h10a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3V7Z" fill="url(#g)"/>
-            <path d="M7 8h10v2H7V8Zm0 4h6v2H7v-2Z" fill="#263026" opacity=".6"/>
-            <defs>
-              <linearGradient id="g" x1="0" y1="0" x2="24" y2="24" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#e8d8c1"/><stop offset="1" stop-color="#c6a278"/>
-              </linearGradient>
-            </defs>
-          </svg>
+  <main class="shell">
+    <section class="card" role="alert" aria-live="assertive">
+      <!-- STATUS STRIP -->
+      <header class="statusline">
+        <div class="status-left">
+          <div class="svc-name">
+            <span>Runtime Surface</span>
+            <span class="pill" id="lock-state">PERMANENTLY DISABLED</span>
+          </div>
+          <div class="svc-headline" id="svc-headline">
+            Critical Service Halt / Compliance Lock
+          </div>
         </div>
-        <h1>DNFK InfoBase</h1>
+
+        <div class="status-right">
+          <div>
+            Status Code:
+            <span class="status-code" id="status-code">410.GONE</span>
+          </div>
+          <div id="ts-line">Snapshot: —</div>
+        </div>
+      </header>
+
+      <!-- MAIN BODY -->
+      <div class="bodycopy">
+        <h1 class="mainline">
+          This service is no longer available.
+        </h1>
+
+        <p class="lead">
+          The public interface you are attempting to access has been
+          <strong>irreversibly decommissioned</strong> and is not backed by any
+          active compute surface, storage layer, or network route.
+        </p>
+
+        <p class="subtle">
+          By design, recovery paths are cryptographically sealed. There is no
+          "try again," "refresh," or "contact support" workflow for this
+          endpoint. The shutdown was executed under an enforced
+          <strong>Compliance Lock Directive</strong>, meaning all operational
+          secrets, signing keys, and mutable configuration states were
+          destroyed and cannot be rehydrated.
+        </p>
+
+        <p class="subtle">
+          In practical terms: the system is not offline, it is <strong>gone</strong>.
+          Any further requests SHOULD be treated as undefined behavior and MAY
+          be rate-limited, silently discarded, or escalated for automated
+          forensic logging.
+        </p>
       </div>
 
-      <div class="searchbar" role="search">
-        <div class="input" aria-label="搜尋輸入">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M21 21l-4.3-4.3" stroke="#6b6f68" stroke-width="2" stroke-linecap="round"/><circle cx="11" cy="11" r="7" stroke="#6b6f68" stroke-width="2"/></svg>
-          <input id="q" type="search" placeholder="搜尋標題、描述或標籤（按 / 快速開啟搜尋）" autocomplete="off" />
-          <span class="kbd" aria-hidden="true">/</span>
+      <!-- DIAGNOSTICS PANEL -->
+      <section class="panel" aria-label="Decommission report">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span class="dot" aria-hidden="true"></span>
+            <span>decommission report · read-only</span>
+          </div>
+          <div
+            class="panel-meta"
+            style="color: var(--text-dim); font-size: 0.6rem; line-height: 1rem;"
+          >
+            ref: lockfile.digest
+          </div>
         </div>
-        <span class="tip">暗夜飛鳶工作室 線上資訊庫</span>
-      </div>
-    </div>
-  </div>
 
-
-  <section class="ann" id="ann" aria-label="最新公告">
-    <div class="ann-title">最新公告 The Latest Announcement</div>
-    <div class="ann-list" id="ann-list"></div>
-    <div class="ann-actions">
-      <button class="btn secondary small" id="ann-toggle" aria-expanded="false" type="button">展開全部</button>
-    </div>
-  </section>
-
-
-  <div class="filters" id="filters"
-     > aria-label="標籤篩選"></div>
-
-
-  <section class="grid" id="grid" aria-live="polite" aria-busy="false"></section>
-
-
-  <aside class="drawer" id="drawer" aria-hidden="true" aria-label="文件詳情">
-    <div class="drawer-header">
-      <strong id="drawer-title">—</strong>
-      <button class="btn secondary small" id="drawer-close" type="button">關閉</button>
-    </div>
-    <div class="drawer-body" id="drawer-body"></div>
-  </aside>
-
-
-  <div class="pdf-modal" id="pdfModal" role="dialog" aria-modal="true" aria-label="PDF 預覽">
-    <div class="pdf-frame" role="document">
-      <div class="pdf-bar">
-        <div class="pdf-title">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4h10l6 6v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" stroke="#6b6f68" stroke-width="1.5"/><path d="M14 4v6h6" stroke="#6b6f68" stroke-width="1.5"/></svg>
-          <span id="pdfTitle">—</span>
+        <div class="kv-line">
+          <div class="kv-k">Lifecycle State</div>
+          <div class="kv-v" id="kv-state">
+            COMPLIANCE_LOCK[FINALIZED]
+          </div>
         </div>
-        <div class="pdf-actions">
-          <select id="pdfVersion" class="sort-select" title="選擇版本"></select>
-          <a id="pdfOpenNew" class="btn secondary small" target="_blank" rel="noopener noreferrer">新分頁開啟</a>
-          <a id="pdfDownload" class="btn small" download>下載</a>
-          <button id="pdfClose" class="btn secondary small" type="button">關閉</button>
-        </div>
-      </div>
-      <iframe id="pdfFrame" class="pdf-iframe" title="PDF 內容" loading="lazy"></iframe>
-    </div>
-  </div>
 
-  <div class="inline-error" id="inline-error" hidden>
-    <div class="box">讀取 <code>data.json</code> 失敗。</div>
-  </div>
+        <div class="kv-line">
+          <div class="kv-k">Availability</div>
+          <div class="kv-v">
+            0.0000% routable capacity<br />
+            (ingress firewall returns synthetic 410.GONE)
+          </div>
+        </div>
+
+        <div class="kv-line">
+          <div class="kv-k">Rollback Vector</div>
+          <div class="kv-v">
+            Not applicable – rollback bundle was cryptoshredded (see
+            <span style="color: var(--accent); font-weight: 600;"
+              >audit chain #A7-DEPLETE</span
+            >).
+          </div>
+        </div>
+
+        <div class="kv-line">
+          <div class="kv-k">Last Valid Build</div>
+          <div class="kv-v" id="kv-build">
+            null (revoked)
+          </div>
+        </div>
+
+        <div class="kv-line">
+          <div class="kv-k">Integrity Check</div>
+          <div class="kv-v" id="kv-int">
+            verifying…
+          </div>
+        </div>
+
+        <pre id="panel-log" aria-label="system log">
+[ bootstrap ] initializing client surface…
+[ bootstrap ] surface handshake → DENY (EOL_LOCK)
+[ reason    ] access attempt outside approved runtime window
+[ action    ] interactive surface downgraded to tombstone mode
+[ notice    ] this interface is informational only
+        </pre>
+      </section>
+
+      <!-- FOOTER -->
+      <footer class="foot">
+        <div class="hash-row">
+          <div class="hash-label">
+            decommission signature (sha256)
+          </div>
+          <div class="hash-value" id="hash-sig">
+            0000000000000000000000000000000000000000000000000000000000000000
+          </div>
+        </div>
+        <div class="hash-row">
+          <div class="hash-label">
+            request fingerprint
+          </div>
+          <div class="hash-value" id="hash-fp">
+            loading…
+          </div>
+        </div>
+        <div
+          style="opacity: 0.4; margin-top: 0.75rem; font-style: italic;"
+        >
+          This message is self-hosted and self-validating. Do not escalate.
+        </div>
+      </footer>
+    </section>
+  </main>
 
   <script>
-  'use strict';
-  (function(){
-    var $ = function(q, el){ return (el||document).querySelector(q); };
-    var $$ = function(q, el){ return Array.prototype.slice.call((el||document).querySelectorAll(q)); };
-    var timeAgo = function(iso){
-      var d = new Date(iso); var diff = Date.now() - d.getTime();
-      var s = Math.floor(diff/1000); var m = Math.floor(s/60); var h = Math.floor(m/60); var day = Math.floor(h/24); var mo=Math.floor(day/30); var y=Math.floor(day/365);
-      if (y>0) return y + ' 年前'; if (mo>0) return mo + ' 個月前'; if (day>0) return day + ' 天前'; if (h>0) return h + ' 小時前'; if (m>0) return m + ' 分鐘前'; return '剛剛';
-    };
-    var escapeHTML = function(s){
-      s = (s==null ? '' : String(s));
-      return s.replace(/[&<>"']/g, function(c){ return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#039;'}[c]); });
-    };
-    var highlight = function(text, q){
-      if (!q) return escapeHTML(text);
-      var safe = q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      return escapeHTML(text).replace(new RegExp('(' + safe + ')', 'gi'), '<mark>$1</mark>');
-    };
+    // tiny helper so things look "legit"
+    (function () {
+      const now = new Date();
 
-    var DB = { site:{}, announcements:[], docs:[] };
-    var DOCS = [];
-
-    var state = { q:'', tag:'全部', sort:'new', annExpanded:false };
-
-    var grid = document.getElementById('grid');
-    var filters = document.getElementById('filters');
-    var qInput = document.getElementById('q');
-
-    function renderFilters(){
-      var allTags = ['全部'];
-      DOCS.forEach(function(d){ (d.tags||[]).forEach(function(t){ if(allTags.indexOf(t)===-1) allTags.push(t); }); });
-      allTags = allTags.filter(Boolean).sort(function(a,b){ return String(a).localeCompare(String(b), 'zh-Hant'); });
-      filters.innerHTML = '';
-      allTags.forEach(function(tag){
-        var el = document.createElement('button');
-        el.className = 'chip' + (state.tag===tag ? ' active' : '');
-        el.textContent = tag;
-        el.setAttribute('aria-pressed', state.tag===tag ? 'true':'false');
-        el.onclick = function(){ state.tag = tag; renderDocs(); };
-        filters.appendChild(el);
-      });
-      var sel = document.createElement('select');
-      sel.className = 'sort-select';
-      sel.innerHTML = '<option value="new">時間（新→舊）</option><option value="old">時間（舊→新）</option><option value="title">標題（A→Z）</option>';
-      sel.value = state.sort;
-      sel.onchange = function(){ state.sort = sel.value; renderDocs(); };
-      filters.appendChild(sel);
-    }
-
-    function cardTemplate(doc){
-      var versions = (doc.versions||[]).slice().sort(function(a,b){ return String(b.date).localeCompare(String(a.date)); });
-      var newest = versions[0];
-      var q = state.q.trim();
-      return ''
-        + '<article class="card" data-id="' + escapeHTML(doc.id) + '" tabindex="0" aria-label="' + escapeHTML(doc.title) + '">'
-        + '  <div class="thumb">'
-        + '    <svg width="52" height="52" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4h10l6 6v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2Z" stroke="#9c8f7e" stroke-width="1.5"/><path d="M14 4v6h6" stroke="#9c8f7e" stroke-width="1.5"/></svg>'
-        + '  </div>'
-        + '  <div class="body">'
-        + '    <div class="title">' + highlight(doc.title, q) + '</div>'
-        + '    <div class="desc">' + highlight(doc.description, q) + '</div>'
-        + '    <div class="badges">' + (doc.tags||[]).map(function(t){ return '<span class="badge">' + highlight(t,q) + '</span>'; }).join('') + '</div>'
-        + '    <div class="meta">'
-        + '      <span>上傳者：' + escapeHTML(doc.uploader||'') + '</span>'
-        + '      <span class="dot"></span>'
-        + '      <span title="' + new Date(doc.uploadedAt).toLocaleString() + '">上傳時間：' + timeAgo(doc.uploadedAt) + '</span>'
-        + '    </div>'
-        + '    <div class="cta">'
-        + '      <button class="btn small" data-action="preview" data-id="' + escapeHTML(doc.id) + '">預覽 PDF</button>'
-        + '      <button class="btn secondary small" data-action="detail" data-id="' + escapeHTML(doc.id) + '">查看詳情</button>'
-        +        (newest ? ('<a class="btn secondary small" target="_blank" rel="noopener noreferrer" href="' + encodeURI(newest.file) + '">直接開啟</a>') : '')
-        + '    </div>'
-        + '  </div>'
-        + '</article>';
-    }
-
-    function renderDocs(){
-      grid.setAttribute('aria-busy', 'true');
-      var rows = DOCS.slice();
-      var q = state.q.trim().toLowerCase();
-      if (state.tag && state.tag !== '全部') rows = rows.filter(function(d){ return (d.tags||[]).indexOf(state.tag) !== -1; });
-      if (q) rows = rows.filter(function(d){ return String((d.title||'') + ' ' + (d.description||'') + ' ' + (d.tags||[]).join(' ')).toLowerCase().indexOf(q) !== -1; });
-      if (state.sort === 'new') rows.sort(function(a,b){ return String(b.uploadedAt).localeCompare(String(a.uploadedAt)); });
-      if (state.sort === 'old') rows.sort(function(a,b){ return String(a.uploadedAt).localeCompare(String(b.uploadedAt)); });
-      if (state.sort === 'title') rows.sort(function(a,b){ return String(a.title).localeCompare(String(b.title), 'zh-Hant'); });
-
-      grid.innerHTML = rows.map(cardTemplate).join('');
-
-      var io = new IntersectionObserver(function(entries){
-        entries.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('reveal'); io.unobserve(e.target); } });
-      }, { threshold:.2 });
-      $$('.card').forEach(function(c){ io.observe(c); });
-
-      grid.onclick = function(ev){
-        var btn = ev.target.closest('button, a');
-        if(!btn) return;
-        var id = btn.getAttribute('data-id');
-        var action = btn.getAttribute('data-action');
-        if(action==='preview') openPdf(id);
-        if(action==='detail') openDetail(id);
-      };
-
-      grid.setAttribute('aria-busy', 'false');
-    }
-
-    var drawer = document.getElementById('drawer');
-    var drawerBody = document.getElementById('drawer-body');
-    var drawerTitle = document.getElementById('drawer-title');
-    document.getElementById('drawer-close').onclick = function(){ closeDrawer(); };
-
-    function openDetail(id){
-      var doc = DOCS.find(function(d){ return d.id===id; }); if(!doc) return;
-      drawerTitle.textContent = doc.title;
-      var versions = (doc.versions||[]).slice().sort(function(a,b){ return String(b.date).localeCompare(String(a.date)); });
-      var newest = versions[0];
-
-      var related = (doc.relatedIds||[]).map(function(x){ return DOCS.find(function(d){ return d.id===x; }); }).filter(Boolean);
-      if(related.length===0){
-        var pool = DOCS.filter(function(d){ return d.id!==doc.id; });
-        var scored = pool.map(function(d){ return { d: d, score: (d.tags||[]).filter(function(t){ return (doc.tags||[]).indexOf(t)!==-1; }).length }; })
-                         .filter(function(x){ return x.score>0; })
-                         .sort(function(a,b){ return b.score-a.score; }).slice(0,4);
-        scored.forEach(function(x){ related.push(x.d); });
+      // 1. Timestamp
+      const tsLine = document.getElementById("ts-line");
+      if (tsLine) {
+        tsLine.textContent =
+          "Snapshot: " +
+          now.toISOString().replace("T", " ").replace("Z", " UTC");
       }
 
-      drawerBody.innerHTML = ''
-        + '<div class="kv"><div>檔案介紹</div><div>' + escapeHTML(doc.description||'') + '</div></div>'
-        + '<div class="kv"><div>標籤</div><div class="badges">' + (doc.tags||[]).map(function(t){ return '<span class="badge">' + escapeHTML(t) + '</span>'; }).join('') + '</div></div>'
-        + '<div class="kv"><div>上傳者</div><div>' + escapeHTML(doc.uploader||'') + '</div></div>'
-        + '<div class="kv"><div>上傳時間</div><div title="' + new Date(doc.uploadedAt).toLocaleString() + '">' + timeAgo(doc.uploadedAt) + '</div></div>'
-        + '<div class="kv"><div>最新版本</div><div>' + (newest ? (escapeHTML(newest.version) + '（' + escapeHTML(newest.date) + '）') : '—') + '</div></div>'
-        + '<div>'
-        +   '<h3 style="margin:6px 0 6px;">版本歷史</h3>'
-        +   '<div class="timeline">'
-        +     versions.map(function(v){ return '<div class="timeline-item">'
-        +       '<div><strong>' + escapeHTML(v.version) + '</strong>・<span style="color:var(--muted)">' + escapeHTML(v.date) + '</span></div>'
-        +       '<div style="color:var(--muted); font-size:14px;">' + escapeHTML(v.notes||'') + '</div>'
-        +       '<div style="margin-top:6px; display:flex; gap:8px;">'
-        +         '<button class="btn small" data-open-version="' + escapeHTML(v.version) + '" data-id="' + escapeHTML(doc.id) + '">預覽此版</button>'
-        +         '<a class="btn secondary small" target="_blank" rel="noopener noreferrer" href="' + encodeURI(v.file) + '">新分頁開啟</a>'
-        +         '<a class="btn small" download href="' + encodeURI(v.file) + '">下載</a>'
-        +       '</div>'
-        +     '</div>'; }).join('')
-        +   '</div>'
-        + '</div>'
-        + '<div>'
-        +   '<h3 style="margin:6px 0 6px;">相關資料</h3>'
-        +   '<div class="related">'
-        +     related.map(function(r){ return '<div class="rel-card">'
-        +       '<div style="font-weight:700">' + escapeHTML(r.title) + '</div>'
-        +       '<div style="color:var(--muted); font-size:13px;">' + escapeHTML(r.description||'') + '</div>'
-        +       '<div class="badges" style="margin-top:6px;">' + (r.tags||[]).slice(0,3).map(function(t){ return '<span class="badge">' + escapeHTML(t) + '</span>'; }).join('') + '</div>'
-        +       '<div style="display:flex; gap:8px; margin-top:8px;">'
-        +         '<button class="btn secondary small" data-rel-detail="' + escapeHTML(r.id) + '">詳情</button>'
-        +         ((r.versions&&r.versions.length) ? '<button class="btn small" data-rel-preview="' + escapeHTML(r.id) + '">預覽</button>' : '')
-        +       '</div>'
-        +     '</div>'; }).join('')
-        +   '</div>'
-        + '</div>';
-
-      drawerBody.onclick = function(ev){
-        var b = ev.target.closest('button,a'); if(!b) return;
-        var v = b.getAttribute('data-open-version');
-        if(v){ openPdf(id, v); return; }
-        var relDetail = b.getAttribute('data-rel-detail');
-        if(relDetail){ openDetail(relDetail); return; }
-        var relPrev = b.getAttribute('data-rel-preview');
-        if(relPrev){ openPdf(relPrev); return; }
-      };
-
-      openDrawer();
-    }
-    function openDrawer(){ drawer.classList.add('open'); drawer.setAttribute('aria-hidden','false'); }
-    function closeDrawer(){ drawer.classList.remove('open'); drawer.setAttribute('aria-hidden','true'); }
-
-    var pdfModal = document.getElementById('pdfModal');
-    var pdfFrame = document.getElementById('pdfFrame');
-    var pdfTitle = document.getElementById('pdfTitle');
-    var pdfVerSel = document.getElementById('pdfVersion');
-    var pdfOpenNew = document.getElementById('pdfOpenNew');
-    var pdfDownload = document.getElementById('pdfDownload');
-    document.getElementById('pdfClose').onclick = function(){ closePdf(); };
-
-    function openPdf(id, version){
-      var doc = DOCS.find(function(d){ return d.id===id; }); if(!doc) return;
-      var versions = (doc.versions||[]).slice().sort(function(a,b){ return String(b.date).localeCompare(String(a.date)); });
-      var curr = versions[0];
-      if(version){ var f = versions.find(function(v){ return v.version===version; }); if(f) curr = f; }
-
-      pdfTitle.textContent = doc.title + ' — ' + (curr ? curr.version : '');
-      pdfVerSel.innerHTML = versions.map(function(v){ return '<option value="' + escapeHTML(v.version) + '">' + escapeHTML(v.version) + '（' + escapeHTML(v.date) + '）</option>'; }).join('');
-      if (curr) pdfVerSel.value = curr.version;
-
-      var url = curr ? curr.file : '';
-      if(url){
-        var withParams = (url.indexOf('#')>-1) ? url : (url + '#toolbar=0&navpanes=0&scrollbar=1');
-        pdfFrame.src = withParams;
-        pdfOpenNew.href = url;
-        pdfDownload.href = url;
-      } else {
-        pdfFrame.srcdoc = '<div style="height:100%;display:grid;place-items:center;font-family:system-ui;color:#666;">找不到 PDF</div>';
-        pdfOpenNew.removeAttribute('href');
-        pdfDownload.removeAttribute('href');
+      // 2. Fake "last build" revocation reference
+      const kvBuild = document.getElementById("kv-build");
+      if (kvBuild) {
+        // make it look like there USED to be a build but it's revoked
+        const y = now.getUTCFullYear().toString().padStart(4, "0");
+        const m = (now.getUTCMonth() + 1).toString().padStart(2, "0");
+        const d = now.getUTCDate().toString().padStart(2, "0");
+        kvBuild.textContent =
+          "build-" +
+          y +
+          m +
+          d +
+          "-revoked (binary signature wiped)";
       }
 
-      pdfVerSel.onchange = function(){ openPdf(id, pdfVerSel.value); };
-      pdfModal.classList.add('open');
-      document.body.style.overflow = 'hidden';
-    }
-    function closePdf(){ pdfModal.classList.remove('open'); pdfFrame.src = 'about:blank'; document.body.style.overflow = ''; }
-
-    function renderAnnouncements(){
-      var list = document.getElementById('ann-list');
-      if(!Array.isArray(DB.announcements) || DB.announcements.length===0){
-        list.innerHTML = '<div class="ann-card">尚未有公告。</div>'; return;
+      // 3. pseudo integrity hash mismatch
+      const kvInt = document.getElementById("kv-int");
+      if (kvInt) {
+        // pretend we ran an attestation and it catastrophically failed
+        kvInt.innerHTML =
+          '<span style="color: var(--accent); font-weight:600;">FAIL</span> · checksum mismatch ' +
+          "(attestation bundle unavailable)";
       }
-      var items = DB.announcements.slice().sort(function(a,b){
-        var ap = a && a.pin ? 1 : 0, bp = b && b.pin ? 1 : 0;
-        if (bp!==ap) return bp-ap;
-        return String(b.date||'').localeCompare(String(a.date||''));
-      });
-      var show = state.annExpanded ? items : items.slice(0,3);
-      list.innerHTML = show.map(function(a){
-        return ''
-        + '<div class="ann-card">'
-        +   '<div class="ann-head">'
-        +     '<div class="ann-pin" style="display:' + (a.pin?'inline-flex':'none') + '">置頂</div>'
-        +     '<div style="font-weight:700">' + escapeHTML(a.title||'（無標題）') + '</div>'
-        +     '<div class="ann-date" title="' + new Date(a.date).toLocaleString() + '">' + timeAgo(a.date) + '</div>'
-        +   '</div>'
-        +   '<div class="ann-body">' + escapeHTML(a.body||'') + '</div>'
-        +   (a.link ? '<div class="ann-actions"><a class="btn secondary small" target="_blank" rel="noopener noreferrer" href="' + encodeURI(a.link) + '">詳情</a></div>' : '')
-        + '</div>';
-      }).join('');
-      var btn = document.getElementById('ann-toggle');
-      if (items.length <= 3) { btn.style.display='none'; } else { btn.style.display='inline-flex'; }
-      btn.textContent = state.annExpanded ? '收合' : '展開全部';
-      btn.setAttribute('aria-expanded', state.annExpanded?'true':'false');
-    }
 
+      // 4. request fingerprint (nonsense hash of browser data)
+      const fpNode = document.getElementById("hash-fp");
+      if (fpNode) {
+        const fpSeed = [
+          navigator.userAgent,
+          navigator.language,
+          screen.width + "x" + screen.height,
+          now.getTime(),
+        ].join("|");
 
-    (function init(){
-
-      var safeKey = 'nib.q';
-      try { var saved = localStorage.getItem(safeKey); if (saved) { state.q = saved; } } catch(e){}
-      try { qInput.value = state.q; } catch(e){}
-      qInput.addEventListener('input', function(e){ state.q = e.target.value; try { localStorage.setItem(safeKey, state.q); } catch(e){}; renderDocs(); });
-      document.getElementById('ann-toggle').addEventListener('click', function(){ state.annExpanded = !state.annExpanded; renderAnnouncements(); });
-      window.addEventListener('keydown', function(e){ if(e.key === '/'){ e.preventDefault(); qInput.focus(); qInput.select(); } if(e.key==='Escape'){ closeDrawer(); closePdf(); } });
-
-
-      fetch('./data251022002.json', { cache: 'no-store' })
-        .then(function(res){ if(!res.ok) throw new Error(res.status+' '+res.statusText); return res.json(); })
-        .then(function(json){
-          DB = json || { announcements:[], docs:[] };
-          DOCS = DB.docs || [];
-          renderFilters();
-          renderDocs();
-          renderAnnouncements();
-        })
-        .catch(function(err){
-          console.error('載入 data.json 失敗', err);
-          document.getElementById('inline-error').hidden = false;
-          renderFilters(); renderDocs();
-        });
-
-
-      function tryOpenFromHash(){
-        var h = location.hash;
-        var m = h.match(/^#doc\/(.+)$/);
-        if(m){ var id = decodeURIComponent(m[1]); openDetail(id); }
-      }
-      window.addEventListener('hashchange', tryOpenFromHash);
-      tryOpenFromHash();
-    })();
-  })();
-  </script>
-
-<script>
-(function(){
-  var root = document.documentElement;
-  function setVH(){ root.style.setProperty('--vh', window.innerHeight + 'px'); }
-  setVH(); window.addEventListener('resize', setVH); window.addEventListener('orientationchange', setVH);
-
-  var toastRoot = document.querySelector('.toast-root') || (function(){ var d=document.createElement('div'); d.className='toast-root'; document.body.appendChild(d); return d; })();
-  window.showToast = function(msg, opts){
-    opts = opts || {};
-    var t = document.createElement('div'); t.className='toast';
-    var m = document.createElement('div'); m.className='tmsg'; m.textContent = msg || '';
-    var x = document.createElement('button'); x.className='tclose'; x.type='button'; x.setAttribute('aria-label','關閉通知'); x.innerHTML='&times;';
-    x.onclick = function(){ t.classList.add('hide'); setTimeout(function(){ t.remove(); }, 260); };
-    t.appendChild(m); t.appendChild(x); toastRoot.appendChild(t);
-    var ttl = typeof opts.ttl==='number' ? opts.ttl : 2300;
-    if(ttl>0){ setTimeout(function(){ if(document.body.contains(t)){ t.classList.add('hide'); setTimeout(function(){ t.remove(); }, 260); } }, ttl); }
-    return t;
-  };
-
-  var ann = document.getElementById('ann');
-  var annList = document.getElementById('ann-list');
-  function ensureAnnToggle(){
-    if(!ann || !annList) return;
-    if(!ann.classList.contains('ann-collapsed')) ann.classList.add('ann-collapsed');
-    var btn = document.getElementById('ann-toggle');
-    if(!btn){
-      btn = document.createElement('button');
-      btn.id = 'ann-toggle'; btn.className = 'btn secondary small'; btn.type='button';
-      btn.textContent = '展開全部';
-      var wrap = document.createElement('div'); wrap.className = 'ann-actions'; wrap.appendChild(btn);
-      ann.appendChild(wrap);
-    }
-    btn.addEventListener('click', function(){
-      var collapsed = ann.classList.toggle('ann-collapsed');
-      btn.textContent = collapsed ? '展開全部' : '收合';
-      btn.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
-      showToast(collapsed ? '公告已收合' : '顯示全部公告', {ttl:1400});
-    });
-  }
-  ensureAnnToggle();
-
-  document.addEventListener('click', function(e){
-    var el = e.target.closest('[data-action], [data-open-version], [data-rel-detail], [data-rel-preview], a[download]');
-    if(!el) return;
-    if(el.hasAttribute('data-action')){
-      var act = el.getAttribute('data-action');
-      if(act==='preview') showToast('正在開啟 PDF 預覽…');
-      if(act==='detail') showToast('載入詳情…', {ttl:1200});
-    }
-    if(el.hasAttribute('data-open-version')){ showToast('切換版本…', {ttl:1000}); }
-    if(el.hasAttribute('data-rel-detail')){ showToast('開啟相關資料…', {ttl:1200}); }
-    if(el.hasAttribute('data-rel-preview')){ showToast('預覽相關文件…', {ttl:1200}); }
-    if(el.tagName==='A' && el.hasAttribute('download')){ showToast('開始下載…', {ttl:1000}); }
-  }, true);
-
-  try {
-    if(typeof window.openPdf === 'function'){
-      var _openPdf = window.openPdf;
-      window.openPdf = function(){ showToast('正在載入 PDF…'); return _openPdf.apply(this, arguments); };
-    }
-    if(typeof window.closePdf === 'function'){
-      var _closePdf = window.closePdf;
-      window.closePdf = function(){ showToast('已關閉預覽', {ttl:1200}); return _closePdf.apply(this, arguments); };
-    }
-  } catch(e){}
-})();
-</script>
-
-
-<footer class="site-footer" role="contentinfo">
-  <div class="foot-wrap">
-    <div class="foot-left">© <span id="footYear"></span> DNFK Studios <br> 暗夜飛鳶工作室 科技部資訊小組(TIT) <br> 製作聯絡資訊：
-      <a href="mailto:tit.contect@dnfk.qzz.io?subject=[Web InfoBase Report]" style="color:#4fb9b9; text-decoration:none;">tit.contect@dnfk.qzz.io</a></div>
-    <div class="foot-right"><a href="#" id="backTop" aria-label="回到頂部">回到頂部 ↑</a></div>
-  </div>
-</footer>
-
-
-<script>
-(function(){
-  // Beautified: only show toast on explicit downloads
-  if (window.__DL_TOAST_BOUND__) return; window.__DL_TOAST_BOUND__ = true;
-  document.addEventListener('click', function(e){
-    var a = e.target.closest('a[download]');
-    if(!a) return;
-    var name = a.getAttribute('download') || (a.getAttribute('href')||'').split('/').pop();
-    if(typeof window.showToast === 'function'){
-      window.showToast('已開始下載 ' + (name||'檔案') + '…', {ttl:2000});
-    }
-  }, true);
-})();
-</script>
-
-
-<script>
-(function(){
-  // Active category indicator (works with .chip buttons in #filters)
-  function updateActiveCat(){
-    var filters = document.getElementById('filters');
-    var label = document.getElementById('activeCat');
-    if(!filters || !label) return;
-    var active = filters.querySelector('.chip.active');
-    var name = active ? active.textContent.trim() : '全部';
-    label.textContent = name || '全部';
-  }
-  updateActiveCat();
-  var filtersEl = document.getElementById('filters');
-  if(filtersEl){
-    filtersEl.addEventListener('click', function(e){
-      var b = e.target.closest('.chip');
-      if(!b) return;
-      // Slight defer to wait any existing JS to toggle active state
-      setTimeout(updateActiveCat, 10);
-    });
-    // Observe class changes in case your code toggles active elsewhere
-    var mo = new MutationObserver(function(){ updateActiveCat(); });
-    mo.observe(filtersEl, { attributes:true, subtree:true, attributeFilter:['class'] });
-  }
-
-  // Footer year
-  var y = document.getElementById('footYear'); if(y){ y.textContent = new Date().getFullYear(); }
-  var bt = document.getElementById('backTop'); if(bt){ bt.addEventListener('click', function(e){ e.preventDefault(); window.scrollTo({top:0, behavior:'smooth'}); }); }
-
-  // Mobile PDF Close FAB: ensure always visible
-  function ensurePdfFab(){
-    var modal = document.getElementById('pdfModal');
-    var frame = document.querySelector('#pdfModal .pdf-frame');
-    if(!modal || !frame) return;
-    if(document.getElementById('pdfFab')) return;
-    var btn = document.createElement('button');
-    btn.id = 'pdfFab'; btn.className = 'pdf-fab-close'; btn.type='button'; btn.innerHTML = '✕';
-    btn.addEventListener('click', function(){ try{ window.closePdf && window.closePdf(); }catch(e){} });
-    frame.appendChild(btn);
-  }
-
-  // Hook openPdf() if present, else fallback when modal opens
-  var tryHooked = false;
-  function hookOpenPdf(){
-    if(tryHooked) return; tryHooked = true;
-    if(typeof window.openPdf === 'function'){
-      var _openPdf = window.openPdf;
-      window.openPdf = function(){
-        var r = _openPdf.apply(this, arguments);
-        setTimeout(ensurePdfFab, 0);
-        return r;
-      };
-    } else {
-      // Observe modal open
-      var modal = document.getElementById('pdfModal');
-      if(modal){
-        var mo = new MutationObserver(function(muts){
-          muts.forEach(function(m){
-            if(m.attributeName==='class' && modal.classList.contains('open')){
-              setTimeout(ensurePdfFab, 0);
-            }
-          });
-        });
-        mo.observe(modal, { attributes:true });
-      }
-    }
-  }
-  hookOpenPdf();
-
-  // iOS viewport height fix
-  function setVH(){ document.documentElement.style.setProperty('--vh', window.innerHeight + 'px'); }
-  setVH(); window.addEventListener('resize', setVH); window.addEventListener('orientationchange', setVH);
-})();
-</script>
-
-
-<script>
-(function(){
-  // Wait for showToast to exist, then wrap it.
-  function wrap(){
-    var orig = window.showToast;
-    if(!orig){ setTimeout(wrap, 50); return; }
-    if (orig.__wrapped__) return;
-    var last = 0;
-    var ALLOW = false;
-
-    // Capture-phase click gate: allow only for a[download]
-    document.addEventListener('click', function(e){
-      var a = e.target.closest('a[download]');
-      if(a){
-        ALLOW = true;
-        setTimeout(function(){ ALLOW = false; }, 80);
-      } else {
-        ALLOW = false;
-      }
-    }, true);
-
-    var wrapped = function(msg, opts){
-      if(!ALLOW) return { suppressed: true };
-      var now = Date.now();
-      if(now - last < 600) return { throttled: true }; // prevent duplicates
-      last = now;
-      return orig.call(this, msg, opts);
-    };
-    wrapped.__wrapped__ = true;
-    window.showToast = wrapped;
-  }
-  wrap();
-})();
-</script>
-
-
-<script>
-(function(){
-  // Remove textual "active category" label if it exists (we now use green highlight only)
-  var ac = document.getElementById('activeCat');
-  if(ac && ac.parentNode){ ac.parentNode.remove(); }
-
-  // Ensure PDF FAB exists and always closes modal reliably
-  function ensurePdfFab(){
-    var modal = document.getElementById('pdfModal');
-    var frame = modal ? modal.querySelector('.pdf-frame') : null;
-    if(!modal || !frame) return;
-    if(document.getElementById('pdfFab')) return;
-    var btn = document.createElement('button');
-    btn.id = 'pdfFab'; btn.className = 'pdf-fab-close'; btn.type='button'; btn.textContent = 'x';
-    btn.addEventListener('click', function(){
-      try { if (typeof window.closePdf === 'function') { window.closePdf(); return; } } catch(e){}
-      // Fallback to manual close
-      try {
-        modal.classList.remove('open');
-        var i = document.getElementById('pdfFrame');
-        if(i){ i.src = 'about:blank'; }
-        document.body.style.overflow = '';
-      } catch(err){}
-    });
-    frame.appendChild(btn);
-  }
-  // Hook openPdf if present, otherwise watch for modal opening
-  (function hook(){
-    if(typeof window.openPdf === 'function'){
-      var _openPdf = window.openPdf;
-      window.openPdf = function(){
-        var r = _openPdf.apply(this, arguments);
-        setTimeout(ensurePdfFab, 0);
-        return r;
-      };
-    } else {
-      var modal = document.getElementById('pdfModal');
-      if(modal){
-        var mo = new MutationObserver(function(muts){
-          muts.forEach(function(m){
-            if(m.attributeName === 'class' && modal.classList.contains('open')){
-              setTimeout(ensurePdfFab, 0);
-            }
-          });
-        });
-        mo.observe(modal, { attributes:true });
-      }
-    }
-  })();
-
-  // Selected chip green highlight — independent of filtering logic
-  (function(){
-    var key = 'nib.selTag';
-    function applySelected(name){
-      var filters = document.getElementById('filters'); if(!filters) return;
-      var chips = Array.prototype.slice.call(filters.querySelectorAll('.chip'));
-      chips.forEach(function(c){ c.classList.remove('is-selected'); });
-      var target = null;
-      if(name){
-        chips.some(function(c){ if(c.textContent.trim()===name){ target = c; return true; } return false; });
-      }
-      if(!target) target = chips[0] || null;
-      if(target) target.classList.add('is-selected');
-    }
-    var saved = null; try { saved = localStorage.getItem(key); } catch(e){}
-    applySelected(saved);
-
-    document.addEventListener('click', function(e){
-      var b = e.target.closest('#filters .chip'); if(!b) return;
-      var name = b.textContent.trim();
-      try { localStorage.setItem(key, name); } catch(e){}
-      applySelected(name);
-    }, true);
-
-    var target = document.getElementById('filters');
-    if(target){
-      var mo = new MutationObserver(function(){ 
-        var name = null; try { name = localStorage.getItem(key); } catch(e){}
-        applySelected(name);
-      });
-      mo.observe(target, { childList:true, subtree:true });
-    }
-  })();
-
-  // iOS viewport height fix (mobile PDF size stability)
-  function setVH(){ document.documentElement.style.setProperty('--vh', window.innerHeight + 'px'); }
-  setVH(); window.addEventListener('resize', setVH); window.addEventListener('orientationchange', setVH);
-})();
-</script>
-
-
-<script>
-(function(){
-  // Ensure a fixed-position close button exists for mobile
-  var closeFab = document.getElementById('pdfCloseFab');
-  if(!closeFab){
-    closeFab = document.createElement('button');
-    closeFab.id = 'pdfCloseFab'; closeFab.type = 'button'; closeFab.textContent = 'x';
-    document.body.appendChild(closeFab);
-  }
-  function robustClosePdf(){
-    try { if (typeof window.closePdf === 'function'){ window.closePdf(); return; } } catch(e){}
-    var modal = document.getElementById('pdfModal');
-    if(modal){
-      modal.classList.remove('open');
-      var i = document.getElementById('pdfFrame'); if(i){ i.src = 'about:blank'; }
-    }
-    document.body.classList.remove('show-pdf-close');
-    document.body.style.overflow = '';
-  }
-  closeFab.onclick = robustClosePdf;
-
-  // If modal exists, allow clicking backdrop to close
-  var modal = document.getElementById('pdfModal');
-  if(modal){
-    modal.addEventListener('click', function(e){
-      if(e.target === modal){ robustClosePdf(); }
-    });
-  }
-
-  // Hook openPdf if present, otherwise observe the modal to show FAB while open
-  (function hook(){
-    var hooked = false;
-    function showFab(){ document.body.classList.add('show-pdf-close'); }
-    function hideFab(){ document.body.classList.remove('show-pdf-close'); }
-    if(typeof window.openPdf === 'function' && !window.openPdf.__fabWrapped__){
-      var _open = window.openPdf;
-      window.openPdf = function(){
-        var r = _open.apply(this, arguments);
-        setTimeout(showFab, 0);
-        return r;
-      };
-      window.openPdf.__fabWrapped__ = true;
-      hooked = true;
-    }
-    if(typeof window.closePdf === 'function' && !window.closePdf.__fabWrapped__){
-      var _close = window.closePdf;
-      window.closePdf = function(){
-        hideFab();
-        return _close.apply(this, arguments);
-      };
-      window.closePdf.__fabWrapped__ = true;
-      hooked = true;
-    }
-    // Fallback observer if functions not found
-    if(!hooked && modal){
-      var mo = new MutationObserver(function(muts){
-        muts.forEach(function(m){
-          if(m.attributeName==='class'){
-            if(modal.classList.contains('open')) showFab(); else hideFab();
+        // ultra-lightweight hash-ish function (not real crypto, just vibes)
+        function fauxHash(input) {
+          let h1 = 0x12345678;
+          let h2 = 0x9abcdef0;
+          for (let i = 0; i < input.length; i++) {
+            const c = input.charCodeAt(i);
+            h1 = (h1 ^ c) + ((h1 << 5) - h1);
+            h2 = (h2 + c) ^ (h1 << 7);
+            h1 = h1 & 0xffffffff;
+            h2 = h2 & 0xffffffff;
           }
-        });
-      });
-      mo.observe(modal, { attributes:true });
-    }
-  })();
+          function toHex(n) {
+            return ("00000000" + (n >>> 0).toString(16)).slice(-8);
+          }
+          return (
+            toHex(h1) +
+            toHex(h2) +
+            toHex(h1 ^ h2) +
+            toHex(h1 + h2) +
+            toHex(h1 ^ (h2 << 1))
+          ).slice(0, 64);
+        }
 
-  // Improve chip selected green state: keep visual in sync if DOM is re-rendered
-  (function(){
-    var key = 'nib.selTag';
-    function apply(name){
-      var filters = document.getElementById('filters'); if(!filters) return;
-      var chips = Array.prototype.slice.call(filters.querySelectorAll('.chip'));
-      chips.forEach(function(c){ c.classList.remove('is-selected'); });
-      var target = null;
-      if(name){
-        chips.some(function(c){ if(c.textContent.trim()===name){ target = c; return true; } return false; });
+        fpNode.textContent = fauxHash(fpSeed);
       }
-      if(!target) target = chips[0] || null;
-      if(target) target.classList.add('is-selected');
-    }
-    var saved = null; try { saved = localStorage.getItem(key); } catch(e){}
-    apply(saved);
-    document.addEventListener('click', function(e){
-      var b = e.target.closest('#filters .chip'); if(!b) return;
-      var name = b.textContent.trim(); try{ localStorage.setItem(key, name); }catch(e){}
-      apply(name);
-    }, true);
-    var filters = document.getElementById('filters');
-    if(filters){
-      var mo = new MutationObserver(function(){ var s = null; try{s = localStorage.getItem(key);}catch(e){} apply(s); });
-      mo.observe(filters, { childList:true, subtree:true });
-    }
-  })();
-})();
-</script>
 
+      // 5. fake "decommission signature" to look immutable
+      const sigNode = document.getElementById("hash-sig");
+      if (sigNode) {
+        // looks like some cold-storage shutdown cert
+        const sigSeed = "PERMA_LOCK|" + now.toISOString();
+        sigNode.textContent =
+          "sha256:" +
+          btoa(sigSeed)
+            .replace(/[^a-zA-Z0-9]/g, "")
+            .slice(0, 62)
+            .toLowerCase()
+            .padEnd(64, "0");
+      }
+
+      // 6. Append audit trail lines to the panel log for extra intimidation
+      const panelLog = document.getElementById("panel-log");
+      if (panelLog) {
+        panelLog.textContent +=
+          "\n[ compliance ] Directive: SERVICE_DEPRECATION/HARD_LOCK\n" +
+          "[ compliance ] All runtime secrets rotated → /dev/null\n" +
+          "[ compliance ] Rollback channel: DISABLED (RFD-410)\n" +
+          "[ final      ] No recovery procedure remains.\n";
+      }
+    })();
+  </script>
 </body>
 </html>
