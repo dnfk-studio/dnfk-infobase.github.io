@@ -74,6 +74,27 @@
           ]
         }
       ]
+    },{
+      "id": "PA-260103",
+      "title": "主角設定[CDA]",
+      "category": [
+        "校園偵探社"
+      ],
+      "tags": [
+        "CDA",
+        "企劃"
+      ],
+      "versions": [
+        {
+          "version": "第01版",
+          "content": "校園偵探社遊戲製作特別專案 主角人設",
+          "pdf": "assets/pdfs/PA-260103.pdf",
+          "uploader": "科技部資訊小組(T.I.T.)",
+          "uploadTime": "2026-01-25",
+          "description": "2026/01/25 制第01版",
+          "related": []
+        }
+      ]
     }
   ]
 }
