@@ -418,7 +418,7 @@ export async function bootCDA(){
   }catch{
     notices = [];
   }
-  const tagNeedle = String(projectJson?.project?.docTagWhitelist?.[0] || projectJson?.docTag || "cda").toLowerCase();
+  const tagNeedle = String(projectJson?.project?.docTagWhitelist?.[0] || projectJson?.docTag || "CDA").toLowerCase();
 
   // docs filtered by tag (never block tasks/calendar if docs have bad data)
   let docs = [];
