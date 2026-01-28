@@ -62,7 +62,7 @@ function inRange(day, s, e){
 }
 
 async function loadProject(){
-  const res = await fetch("/assets/data/cda-project.json", {cache:"no-store"});
+  const res = await fetch("../assets/data/cda-project.json", {cache:"no-store"});
   if(!res.ok) throw new Error("無法載入 cda-project.json");
   return await res.json();
 }

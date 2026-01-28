@@ -25,7 +25,7 @@ export function applyTheme(){
   // swap logos (if exist) — update all occurrences (topbar, drawer, sidebar)
   const logos = document.querySelectorAll('img[data-role="logo"]');
   if(logos && logos.length){
-    const src = mode === "light" ? "/assets/img/logo-dark.png" : "/assets/img/logo-light.png";
+    const src = mode === "light" ? "../assets/img/logo-dark.png" : "../assets/img/logo-light.png";
     logos.forEach(img=>{
       img.src = src;
       img.alt = "暗夜飛鳶工作室 DNFK Studio";
@@ -34,7 +34,7 @@ export function applyTheme(){
   // favicon
   const fav = document.querySelector('link[rel="icon"]');
   if(fav){
-    fav.href = mode === "light" ? "/assets/img/logo-dark.png" : "/assets/img/logo-light.png";
+    fav.href = mode === "light" ? "../assets/img/logo-dark.png" : "../assets/img/logo-light.png";
   }
 }
 
@@ -121,7 +121,7 @@ function setupDrawer(){
 }
 
 function setupActiveNav(){
-  const path = location.pathname.split("/").pop() || "index.html";
+  const path = location.pathname.split("/").pop() || "/";
   $$(".nav a").forEach(a=>{
     const href = (a.getAttribute("href")||"").split("#")[0];
     if(href === path) a.classList.add("active");
