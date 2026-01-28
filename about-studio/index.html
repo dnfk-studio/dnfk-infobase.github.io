@@ -7,7 +7,7 @@
 	<meta content="dark light" name="color-scheme"/>
 	<link href="assets/img/logo-dark.png" rel="icon"/>
 	<link href="assets/css/style.css" rel="stylesheet"/>
-	<title>文書詳情｜DNFK Info-Base</title>
+	<title>關於本工作室｜DNFK Info-Base</title>
 	<script defer="" src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 </head>
 
@@ -17,10 +17,9 @@
 		<div class="blob b2" style="right:-16%; bottom:-18%"></div>
 	</div>
 	<canvas aria-hidden="true" id="starfield"></canvas>
-
 	<div class="shell">
 		<aside class="sidebar">
-			<a class="brand" href="index.html" aria-label="回到首頁">
+			<a class="brand" href="/" aria-label="回到首頁">
 				<img alt="暗夜飛鳶工作室 DNFK Studio" data-role="logo" src="assets/img/logo-dark.png"/>
 				<div class="title">
 					<b>暗夜飛鳶工作室</b>
@@ -28,13 +27,13 @@
 				</div>
 			</a>
 			<nav aria-label="導覽" class="nav">
-				<a href="search.html"><span class="dot"></span>文書查詢</a>
-				<a href="about-site.html"><span class="dot"></span>關於本網站</a>
-				<a href="about-studio.html"><span class="dot"></span>關於本工作室</a>
-				<a href="cda-project.html"><span class="dot"></span>校園偵探社特別專案</a>
+				<a href="search"><span class="dot"></span>文書查詢</a>
+				<a href="about-site"><span class="dot"></span>關於本網站</a>
+				<a href="about-studio"><span class="dot"></span>關於本工作室</a>
+				<a href="cda-project"><span class="dot"></span>校園偵探社特別專案</a>
 			</nav>
 			<div class="side-actions">
-				<button class="textbtn" data-action="theme-toggle">主題：<span data-theme-label="">系統</span></button>
+			<button class="textbtn" data-action="theme-toggle">主題：<span data-theme-label="">系統</span></button>
 			</div>
 		</aside>
 		<main class="main">
@@ -42,13 +41,14 @@
 				<div class="left">
 				
 					<button class="hamburger" id="hamburger"><span aria-hidden="true" class="burger"><i></i><i></i><i></i></span><span class="sr-only">選單</span></button>
-					<nav class="crumbs" aria-label="位置導覽"><a href="index.html">首頁</a><span class="sep">/</span><a href="search.html">文書查詢</a><span class="sep">/</span><span id="crumbTitle">文書詳情</span></nav>
+					<nav class="crumbs" aria-label="位置導覽"><a href="/">首頁</a><span class="sep">/</span><span class="current">關於本工作室</span></nav>
 				</div>
+				<div style="display:flex;gap:10px;align-items:center"></div>
 			</header>
 			<div class="overlay" id="overlay"></div>
 			<aside aria-label="手機導覽" class="drawer" id="drawer">
 				<div style="display:flex;align-items:center;gap:10px">
-					<a class="brand" href="index.html" aria-label="回到首頁" style="padding:0">
+					<a class="brand" href="/" aria-label="回到首頁" style="padding:0">
 						<img alt="暗夜飛鳶工作室 DNFK Studio" data-role="logo" src="assets/img/logo-dark.png"/>
 						<div class="title">
 							<b>暗夜飛鳶工作室</b>
@@ -61,10 +61,10 @@
 					</button>
 				<div class="hr"></div>
 				<nav aria-label="導覽" class="nav">
-					<a href="search.html"><span class="dot"></span>文書查詢</a>
-					<a href="about-site.html"><span class="dot"></span>關於本網站</a>
-					<a href="about-studio.html"><span class="dot"></span>關於本工作室</a>
-					<a href="cda-project.html"><span class="dot"></span>校園偵探社特別專案</a>
+					<a href="search"><span class="dot"></span>文書查詢</a>
+					<a href="about-site"><span class="dot"></span>關於本網站</a>
+					<a href="about-studio"><span class="dot"></span>關於本工作室</a>
+					<a href="cda-project"><span class="dot"></span>校園偵探社特別專案</a>
 				</nav>
 				<div class="side-actions" style="margin-top:18px">
 					<button class="textbtn" data-action="theme-toggle">主題：<span data-theme-label="">系統</span></button>
@@ -73,45 +73,23 @@
 			<div class="container">
 				<div class="section-title reveal">
 					<div>
-						<h1 id="postTitle">—</h1>
-						<p>請注意，文書皆為內部閱覽，非經授權請勿隨意公開傳播。</p>
+						<h1>關於本工作室</h1>
+						<p>暗夜飛鳶工作室 DNFK Studio</p>
 					</div>
-					<button class="btn backbtn" id="backBtn">返回</button>
 				</div>
 				<section class="card reveal">
-					<div class="inner">
-						<div class="meta" id="postMeta"></div>
-						<div class="hr"></div>
-						<div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-							<span class="meta-line" style="font-size:12px"><strong>版本</strong></span>
-							<select class="verSelect" id="versionSelect"></select>
-							<span class="meta-line" style="font-size:12px">請注意不要錯誤引用舊版本文書。</span>
+					<div class="inner" style="display:flex;gap:18px;align-items:flex-start;flex-wrap:wrap">
+						<img alt="暗夜飛鳶工作室 DNFK Studio" data-role="logo" src="assets/img/logo-dark.png" style="width:110px;height:110px;border-radius:30px;box-shadow:var(--shadow2);padding:12px;box-sizing:border-box;"/>
+						<div style="flex:1 1 320px">
+							<h3 style="margin-top:0">暗夜飛鳶工作室 DNFK Studio</h3>
+							<p>成立於2020年7月15日，非常高級，許多（不重要的）密碼都是「DNFKILOVEYOU」，代表了對公司的熱愛。</p>
+							<div class="actions">
+								<a class="btn primary" href="mailto:dnfkayfu@gmail.com">聯繫我們（gmail）</a>
+								<a class="btn primary" href="https://www.instagram.com/dnfk_studio">官方Instagram</a>
+							</div>
 						</div>
-						<div class="hr"></div>
-						<h3>上傳說明</h3>
-						<p id="postDesc">—</p>
-						<div class="hr"></div>
-						<h3>文字敘述</h3>
-						<p id="postContent" style="white-space:pre-wrap">—</p>
 					</div>
 				</section>
-				<div class="section-title reveal" style="margin-top:22px">
-					<div>
-						<h2>PDF內容</h2>
-						<p>請注意，文書皆為內部閱覽，非經授權請勿隨意公開傳播。</p>
-					</div>
-					<a class="btn primary" href="#" id="pdfDownload">下載 PDF</a>
-				</div>
-					<section class="pdfbox reveal">
-					<iframe id="pdfIframe" style="display:block;width:100%;height:70vh;border:0" title="PDF Preview"></iframe>
-					</section>
-				<div class="section-title reveal" style="margin-top:22px">
-					<div>
-						<h2>相關資料</h2>
-						<p>與本文書相關資料。</p>
-					</div>
-				</div>
-				<section class="reveal" id="relatedList"></section>
 			</div>
 			<footer class="footer">
 				<div class="container">
@@ -124,6 +102,6 @@
 		</main>
 	</div>
 	<div class="toast" id="toast"></div>
-	<script src="assets/js/post.js" type="module"></script>
+	<script src="assets/js/about.js" type="module"></script>
 </body>
 </html>

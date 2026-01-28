@@ -1,7 +1,7 @@
 {
   "site": {
     "name": "暗夜飛鳶工作室 DNFK Studio",
-    "defaultPdf": "assets/pdfs/503.pdf"
+    "defaultPdf": "document/503.pdf"
   },
   "notices": [
     {
@@ -17,7 +17,7 @@
         {
           "version": "第01版",
           "content": "校園偵探社遊戲製作特別專案 工作分配與執行順序表",
-          "pdf": "assets/pdfs/PA-260101.pdf",
+          "pdf": "document/PA-260101.pdf",
           "uploader": "科技部資訊小組(T.I.T.)",
           "uploadTime": "2026-01-25",
           "description": "2026/01/25 制第01版",
@@ -37,7 +37,7 @@
         {
           "version": "第01版",
           "content": "校園偵探社遊戲製作特別專案 執行時程表",
-          "pdf": "assets/pdfs/PA-260102.pdf",
+          "pdf": "document/PA-260102.pdf",
           "uploader": "科技部資訊小組(T.I.T.)",
           "uploadTime": "2026-01-25",
           "description": "2026/01/25 制第01版",
@@ -58,18 +58,18 @@
         {
           "version": "第01版",
           "content": "校園偵探社遊戲製作特別專案 第01次會議紀錄",
-          "pdf": "assets/pdfs/PM-260101.pdf",
+          "pdf": "document/PM-260101.pdf",
           "uploader": "科技部資訊小組(T.I.T.)",
           "uploadTime": "2026-01-25",
           "description": "2026/01/25 制第01版",
           "related": [
             {
               "title": "附件1、工作分配與執行順序表",
-              "url": "post.html?id=PA-260101"
+              "url": "document?id=PA-260101"
             },
             {
               "title": "附件2、工作分配與執行順序表",
-              "url": "post.html?id=PA-260102"
+              "url": "document?id=PA-260102"
             }
           ]
         }
@@ -88,7 +88,7 @@
         {
           "version": "第01版",
           "content": "校園偵探社遊戲製作特別專案 主角人設",
-          "pdf": "assets/pdfs/PA-260103.pdf",
+          "pdf": "document/PA-260103.pdf",
           "uploader": "科技部資訊小組(T.I.T.)",
           "uploadTime": "2026-01-25",
           "description": "2026/01/25 制第01版",

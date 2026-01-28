@@ -19,7 +19,7 @@
       "start": "2026-01-25",
       "end": "2026-01-25",
       "summary": "無敘述。",
-      "relatedDocs": [],
+      "relatedDocs": ["PA-260103"],
       "relatedLinks": []
     },{
       "id": "p2",
@@ -515,7 +515,7 @@
       "end": "2026-01-25",
       "time": "整日",
       "desc": "截止日。",
-      "relatedDocs": []
+      "relatedDocs": ["PA-260103"]
     },{
       "id": "d2",
       "title": "第一程式基礎",

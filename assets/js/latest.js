@@ -44,12 +44,12 @@ export async function bootLatest(){
   $$(".card.clickable", el).forEach(c=>{
     c.addEventListener("click", ()=>{
       const id = c.getAttribute("data-id");
-      location.href = `post.html?id=${encodeURIComponent(id)}`;
+      location.href = `document?id=${encodeURIComponent(id)}`;
     });
     c.querySelector("[data-open]")?.addEventListener("click", (e)=>{
       e.stopPropagation();
       const id = c.getAttribute("data-open");
-      location.href = `post.html?id=${encodeURIComponent(id)}`;
+      location.href = `document?id=${encodeURIComponent(id)}`;
     });
   });
 }
