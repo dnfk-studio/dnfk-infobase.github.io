@@ -199,7 +199,7 @@ export async function bootSearch(){
   }
 
   function openNotice(id){
-    location.href = `document?id=${encodeURIComponent(id)}`;
+    location.href = `/document?id=${encodeURIComponent(id)}`;
   }
 
   function wireClicks(root){

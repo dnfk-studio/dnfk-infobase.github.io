@@ -50,13 +50,13 @@ export async function bootPost(){
   const id = url.searchParams.get("id");
   if(!id){
     toast("缺少公告 id，將回到搜尋頁");
-    setTimeout(()=> location.href="search", 700);
+    setTimeout(()=> location.href="/search", 700);
     return;
   }
   const notice = notices.find(n=>n.id===id);
   if(!notice){
     toast("找不到公告，將回到搜尋頁");
-    setTimeout(()=> location.href="search", 800);
+    setTimeout(()=> location.href="/search", 800);
     return;
   }
 
@@ -98,7 +98,7 @@ export async function bootPost(){
   }
 
   // pdf links
-  const pdfUrl = v.pdf || json.site?.defaultPdf || "document/503.pdf";
+  const pdfUrl = v.pdf || json.site?.defaultPdf || "/document/503.pdf";
   const dl = $("#pdfDownload");
   if(dl){ dl.href = pdfUrl; dl.setAttribute("download",""); }
 
@@ -109,7 +109,7 @@ export async function bootPost(){
   buildRelated(v.related || []);
 
   // back
-  $("#backBtn")?.addEventListener("click", ()=> history.length>1 ? history.back() : (location.href="search"));
+  $("#backBtn")?.addEventListener("click", ()=> history.length>1 ? history.back() : (location.href="/search"));
 }
 
 export function boot(){

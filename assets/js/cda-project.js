@@ -62,7 +62,7 @@ function inRange(day, s, e){
 }
 
 async function loadProject(){
-  const res = await fetch("assets/data/cda-project.json", {cache:"no-store"});
+  const res = await fetch("/assets/data/cda-project.json", {cache:"no-store"});
   if(!res.ok) throw new Error("無法載入 cda-project.json");
   return await res.json();
 }
@@ -84,7 +84,7 @@ function buildDocCard(n){
           <div class="meta-line">${meta}</div>
           <h3 class="result-title">${title}</h3>
         </div>
-        <a class="detailbtn" href="document?id=${id}">查看詳情</a>
+        <a class="detailbtn" href="/document?id=${id}">查看詳情</a>
       </div>
     </article>
   `;
@@ -111,7 +111,7 @@ function buildTaskCard(t){
     return [x];
   }).map(String).map(s=>s.trim()).filter(Boolean);
 
-  const relDocs = relDocsArr.map(id=>`<a href="document?id=${encodeURIComponent(id)}">${esc(id)}</a>`).join("、");
+  const relDocs = relDocsArr.map(id=>`<a href="/document?id=${encodeURIComponent(id)}">${esc(id)}</a>`).join("、");
 
   const relLinksArr = normArr(t.relatedLinks).flatMap(x=>{
     if(!x) return [];
@@ -153,7 +153,7 @@ function openModal(ev){
     .flatMap(x=> Array.isArray(x) ? x : [x])
     .map(x=> String(x ?? "").trim())
     .filter(Boolean)
-    .map(id=>`<a href="document?id=${encodeURIComponent(id)}">${esc(id)}</a>`)
+    .map(id=>`<a href="/document?id=${encodeURIComponent(id)}">${esc(id)}</a>`)
     .join("、");
   $("#eventBody").innerHTML = `
     ${ev.desc?`<p style="margin:0 0 10px">${esc(ev.desc)}</p>`:""}

@@ -1,6 +1,6 @@
 // Data helpers
 export async function loadNotices(){
-  const res = await fetch("assets/data/notices.json", {cache:"no-store"});
+  const res = await fetch("/assets/data/notices.json", {cache:"no-store"});
   if(!res.ok) throw new Error("無法載入資料 notices.json");
   return await res.json();
 }
