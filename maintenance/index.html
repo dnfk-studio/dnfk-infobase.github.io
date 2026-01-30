@@ -1,6 +1,17 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
+    <script src="../maintenance/config.js"></script>
+    <script>
+        try {
+            if (!window.__DNFK_MAINTENANCE__) {
+                if (location.pathname.includes("/maintenance/")) {
+                    location.replace("/");
+                }
+            }
+        } catch (e) {}
+    </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>系統維護中 | DNFK Info Base</title>
