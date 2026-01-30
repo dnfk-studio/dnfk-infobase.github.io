@@ -17,12 +17,13 @@
             padding: 0;
             width: 100%;
             height: 100%;
-            overflow: hidden;
+            overflow: hidden; 
             background-color: var(--bg-color);
             color: var(--text-color);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             display: flex;
             flex-direction: column;
+            position: fixed; 
         }
 
         
@@ -34,7 +35,9 @@
             background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
                               linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
             background-size: 40px 40px;
-            animation: flickerBg 30s infinite alternate steps(10);
+            
+            animation: breatheBg 10s infinite alternate ease-in-out;
+            will-change: opacity;
         }
 
         
@@ -59,16 +62,17 @@
             animation: floatParticle linear infinite;
             z-index: 5;
         }
+
         @keyframes floatParticle {
             0% { transform: translate(var(--x-start), var(--y-start)) scale(0); opacity: 0; }
-            10% { opacity: 1; }
-            90% { opacity: 1; }
+            10% { opacity: 0.8; }
+            90% { opacity: 0.8; }
             100% { transform: translate(var(--x-end), var(--y-end)) scale(1); opacity: 0; }
         }
 
-        @keyframes flickerBg {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.95; }
+        @keyframes breatheBg {
+            0% { opacity: 0.8; }
+            100% { opacity: 1; }
         }
 
         
@@ -84,38 +88,56 @@
             animation: fadeIn 1.5s ease-out forwards;
             animation-delay: 0.5s;
             position: relative; 
+            padding: 20px;
+            width: 100%;
+            box-sizing: border-box;
         }
         
         
         main::before, main::after, .status-text::before, .status-text::after {
             content: '';
             position: absolute;
-            width: 20px;
-            height: 20px;
+            width: 15px;
+            height: 15px;
             border: 1px solid transparent;
+            transition: all 0.3s ease;
         }
         main::before { top: 0; left: 0; border-top-color: var(--line-strong); border-left-color: var(--line-strong); }
         main::after { top: 0; right: 0; border-top-color: var(--line-strong); border-right-color: var(--line-strong); }
         
-        main > div::before { bottom: 0; left: 0; border-bottom-color: var(--line-strong); border-left-color: var(--line-strong); top: auto; width: 10px; height: 10px;}
-        main > div::after { bottom: 0; right: 0; border-bottom-color: var(--line-strong); border-right-color: var(--line-strong); top: auto; width: 10px; height: 10px;}
-
+        
+        main > div.status-container {
+            position: relative;
+            display: inline-block;
+            max-width: 100%;
+        }
+        
+        main .status-text::before { bottom: 0; left: 0; border-bottom-color: var(--line-strong); border-left-color: var(--line-strong); top: auto; width: 10px; height: 10px;}
+        main .status-text::after { bottom: 0; right: 0; border-bottom-color: var(--line-strong); border-right-color: var(--line-strong); top: auto; width: 10px; height: 10px;}
 
         h1 {
-            font-size: 3rem;
+            
+            font-size: clamp(1.8rem, 5vw, 3rem);
             margin: 0;
-            letter-spacing: 8px;
+            letter-spacing: clamp(2px, 1vw, 8px);
+            line-height: 1.2;
+            margin-bottom: 10px;
         }
 
         .status-text {
-            font-size: 1.5rem;
-            margin-top: 20px;
+            
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            margin-top: 10px;
             opacity: 0.7;
             border-top: 1px solid var(--line-color);
             border-bottom: 1px solid var(--line-color);
-            padding: 10px 0;
-            width: 400px;
+            padding: 15px 0;
+            
+            
+            width: 100%; 
+            max-width: 400px;
             position: relative; 
+            box-sizing: border-box;
         }
 
         
@@ -127,6 +149,9 @@
             left: 50%;
             transform: translate(-50%, -50%) rotate(0deg);
             box-sizing: border-box;
+            pointer-events: none;
+            
+            
         }
 
         .full-circle { border: 1px dashed var(--line-strong); animation: rotateCW linear infinite; }
@@ -135,30 +160,55 @@
         .arc-bottom-right { border-bottom-color: var(--line-strong); border-right-color: var(--line-strong); animation-duration: 55s;}
         .arc-left-only { border-left-color: var(--line-strong); animation-duration: 25s;}
 
-
-        
         header, footer {
             z-index: 20;
-            padding: 20px 40px;
+            padding: 15px 20px;
             font-size: 12px;
             opacity: 0.8;
             border-top: 1px solid var(--line-color);
             width: 100%;
             box-sizing: border-box;
             animation: fadeIn 1s ease-out forwards;
+            background: rgba(0,0,0,0.3);
+            backdrop-filter: blur(2px);
         }
 
-        header { border-bottom: 1px solid var(--line-color); text-align: center; }
-        footer { display: flex; justify-content: space-between; align-items: center; border-top: none; border-bottom: 1px solid var(--line-color); }
-        .contact-info { text-align: right; }
-        .contact-link { color: var(--text-color); text-decoration: none; border-bottom: 1px solid var(--text-color); padding-bottom: 2px; }
-        .tit-info { font-size: 10px; margin-top: 5px; opacity: 0.5; }
-        #live-clock { font-size: 14px; opacity: 0.9; }
-
+        header { border-bottom: 1px solid var(--line-color); text-align: center; line-height: 1.6; }
         
+        footer { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-top: none; 
+            border-bottom: 1px solid var(--line-color); 
+        }
+
+        .contact-info { text-align: right; }
+        .contact-link { color: var(--text-color); text-decoration: none; border-bottom: 1px solid var(--text-color); padding-bottom: 2px; display: inline-block;}
+        .tit-info { font-size: 10px; margin-top: 5px; opacity: 0.5; }
+        #live-clock { font-size: 13px; opacity: 0.9; font-family: monospace; }
+
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes rotateCW { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
         @keyframes rotateCCW { from { transform: translate(-50%, -50%) rotate(360deg); } to { transform: translate(-50%, -50%) rotate(0deg); } }
+
+        
+        @media screen and (max-width: 768px) {
+            
+            footer {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+                padding-bottom: 30px;
+            }
+            .contact-info { text-align: center; }
+            
+            
+            .orbit { border-width: 1px; opacity: 0.6; }
+            
+            
+            h1 { margin-bottom: 15px; }
+        }
     </style>
 </head>
 <body>
@@ -166,14 +216,12 @@
     <div class="background-lines"></div>
     <div class="diagonal-overlay"></div>
 
-
-    <div class="orbit full-circle" style="width: 400px; height: 400px; animation-duration: 40s;"></div>
-    <div class="orbit full-circle" style="width: 700px; height: 700px; animation-duration: 60s; opacity: 0.5;"></div>
-    <div class="orbit partial-arc arc-top-left" style="width: 550px; height: 550px;"></div>
-    <div class="orbit partial-arc arc-bottom-right" style="width: 850px; height: 850px;"></div>
-    <div class="orbit partial-arc arc-left-only" style="width: 250px; height: 250px;"></div>
+    <div class="orbit full-circle" style="width: 45vmin; height: 45vmin; animation-duration: 40s;"></div>
+    <div class="orbit full-circle" style="width: 80vmin; height: 80vmin; animation-duration: 60s; opacity: 0.3;"></div>
+    <div class="orbit partial-arc arc-top-left" style="width: 60vmin; height: 60vmin;"></div>
+    <div class="orbit partial-arc arc-bottom-right" style="width: 95vmin; height: 95vmin;"></div>
+    <div class="orbit partial-arc arc-left-only" style="width: 30vmin; height: 30vmin;"></div>
     
-    <!-- 增加 10 個浮動粒子 -->
     <div class="particle" style="--x-start: 10vw; --y-start: 20vh; --x-end: 90vw; --y-end: 80vh; animation-duration: 25s; animation-delay: 0s;"></div>
     <div class="particle" style="--x-start: 80vw; --y-start: 10vh; --x-end: 10vw; --y-end: 90vh; animation-duration: 30s; animation-delay: 2s;"></div>
     <div class="particle" style="--x-start: 30vw; --y-start: 90vh; --x-end: 70vw; --y-end: 10vh; animation-duration: 20s; animation-delay: 5s;"></div>
@@ -191,8 +239,10 @@
     </header>
 
     <main>
-        <h1>系統維護中</h1>
-        <div class="status-text">The System Is Under Maintenance.</div>
+        <div class="status-container">
+            <h1>系統維護中</h1>
+            <div class="status-text">The System Is Under Maintenance.</div>
+        </div>
     </main>
 
     <footer>
