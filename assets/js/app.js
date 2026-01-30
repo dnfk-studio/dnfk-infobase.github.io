@@ -6,6 +6,9 @@ export function clamp(n, a, b){ return Math.max(a, Math.min(b, n)); }
 
 const THEME_KEY = "dnfk-theme";
 const DEFAULT_THEME = "system";
+const LOGO_DARK  = new URL("../img/logo-dark.png", import.meta.url).href;
+const LOGO_LIGHT = new URL("../img/logo-light.png", import.meta.url).href;
+
 
 export function getThemePref(){
   return localStorage.getItem(THEME_KEY) || DEFAULT_THEME;
@@ -25,7 +28,7 @@ export function applyTheme(){
   // swap logos (if exist) — update all occurrences (topbar, drawer, sidebar)
   const logos = document.querySelectorAll('img[data-role="logo"]');
   if(logos && logos.length){
-    const src = mode === "light" ? "../assets/img/logo-dark.png" : "../assets/img/logo-light.png";
+    const src = mode === "light" ? LOGO_DARK : LOGO_LIGHT;
     logos.forEach(img=>{
       img.src = src;
       img.alt = "暗夜飛鳶工作室 DNFK Studio";
@@ -34,7 +37,7 @@ export function applyTheme(){
   // favicon
   const fav = document.querySelector('link[rel="icon"]');
   if(fav){
-    fav.href = mode === "light" ? "../assets/img/logo-dark.png" : "../assets/img/logo-light.png";
+    fav.href = mode === "light" ? "LOGO_DARK" : "LOGO_LIGHT";
   }
 }
 
