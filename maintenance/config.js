@@ -1,0 +1,1 @@
+window.__DNFK_MAINTENANCE__ = true;

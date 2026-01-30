@@ -9,9 +9,9 @@ function escapeHtml(s){
 function escapeAttr(s){ return escapeHtml(s).replaceAll("`","&#096;"); }
 
 async function renderPdf(url){
-	const iframe = $("#pdfIframe");
-	if(!iframe) return;
-	iframe.src = url;
+  const iframe = $("#pdfIframe");
+  if(!iframe) return;
+  iframe.src = url;
 }
 
 function buildRelated(list){
@@ -21,13 +21,13 @@ function buildRelated(list){
     el.innerHTML = `<p style="margin:0;color:var(--muted)">（無）</p>`;
     return;
   }
-	el.innerHTML = list.map(r=>{
+  el.innerHTML = list.map(r=>{
     const url = r.url || "#";
     const ext = /^https?:\/\//i.test(url);
     return `
       <div class="card clickable" style="margin-top:10px" data-url="${escapeAttr(url)}">
         <div class="inner">
-	        <div class="meta-line"><span><strong>相關資料</strong> ${ext ? "外部連結" : "站內頁面"}</span></div>
+          <div class="meta-line"><span><strong>相關資料</strong> ${ext ? "外部連結" : "站內頁面"}</span></div>
           <h3>${escapeHtml(r.title||url)}</h3>
           <p>${escapeHtml(url)}</p>
         </div>

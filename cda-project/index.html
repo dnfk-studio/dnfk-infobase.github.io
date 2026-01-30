@@ -2,6 +2,17 @@
 <html lang="zh-Hant">
 
 <head>
+  <script src="../maintenance/config.js"></script>
+  <script>
+    try {
+      if (window.__DNFK_MAINTENANCE__) {
+        if (!location.pathname.includes("/maintenance/")) {
+          location.replace("maintenance/");
+        }
+      }
+    } catch (e) {}
+  </script>
+
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1" name="viewport"/>
   <meta content="dark light" name="color-scheme"/>
@@ -39,7 +50,7 @@
     <main class="main">
       <header class="topbar">
         <div class="left">
-				
+        
           <button class="hamburger" id="hamburger"><span aria-hidden="true" class="burger"><i></i><i></i><i></i></span><span class="sr-only">選單</span></button>
           <nav class="crumbs" aria-label="位置導覽"><a href="/">首頁</a><span class="sep">/</span><span class="current">校園偵探社特別專案</span></nav>
         </div>
@@ -57,8 +68,8 @@
           </a>
         </div>
         <button class="drawerClose" id="drawerClose" aria-label="關閉">
-						<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-					</button>
+            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
         <div class="hr"></div>
         <nav aria-label="導覽" class="nav">
           <a href="/search"><span class="dot"></span>文書查詢</a>
