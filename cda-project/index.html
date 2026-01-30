@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+<head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width, initial-scale=1" name="viewport"/>
+  <meta content="dark light" name="color-scheme"/>
+  <link href="../assets/img/logo-dark.png" rel="icon"/>
+  <link href="../assets/css/style.css" rel="stylesheet"/>
+  <title>校園偵探社特別專案｜DNFK Info-Base</title>
+  <script defer="" src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+</head>
+
+<body data-pagefade="1">
+  <div aria-hidden="true" class="bg-blobs">
+    <div class="blob" style="left:-18%; top:-20%"></div>
+    <div class="blob b2" style="right:-16%; bottom:-18%"></div>
+  </div>
+  <canvas aria-hidden="true" id="starfield"></canvas>
+  <div class="shell">
+    <aside class="sidebar">
+      <a class="brand" href="/" aria-label="回到首頁">
+        <img alt="暗夜飛鳶工作室 DNFK Studio" data-role="logo" src="../assets/img/logo-dark.png"/>
+        <div class="title">
+          <b>暗夜飛鳶工作室</b>
+          <span>DNFK Studio</span>
+        </div>
+      </a>
+      <nav aria-label="導覽" class="nav">
+        <a href="/search"><span class="dot"></span>文書查詢</a>
+        <a href="/about-site"><span class="dot"></span>關於本網站</a>
+        <a href="/about-studio"><span class="dot"></span>關於本工作室</a>
+        <a href="/cda-project"><span class="dot"></span>校園偵探社特別專案</a>
+      </nav>
+      <div class="side-actions">
+        <button class="textbtn" data-action="theme-toggle">主題：<span data-theme-label="">系統</span></button>
+      </div>
+    </aside>
+    <main class="main">
+      <header class="topbar">
+        <div class="left">
+				
+          <button class="hamburger" id="hamburger"><span aria-hidden="true" class="burger"><i></i><i></i><i></i></span><span class="sr-only">選單</span></button>
+          <nav class="crumbs" aria-label="位置導覽"><a href="/">首頁</a><span class="sep">/</span><span class="current">校園偵探社特別專案</span></nav>
+        </div>
+        <div style="display:flex;gap:10px;align-items:center"></div>
+      </header>
+      <div class="overlay" id="overlay"></div>
+      <aside aria-label="手機導覽" class="drawer" id="drawer">
+        <div style="display:flex;align-items:center;gap:10px">
+          <a class="brand" href="/" aria-label="回到首頁" style="padding:0">
+            <img alt="暗夜飛鳶工作室 DNFK Studio" data-role="logo" src="../assets/img/logo-dark.png"/>
+            <div class="title">
+              <b>暗夜飛鳶工作室</b>
+              <span>DNFK Studio</span>
+            </div>
+          </a>
+        </div>
+        <button class="drawerClose" id="drawerClose" aria-label="關閉">
+						<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+					</button>
+        <div class="hr"></div>
+        <nav aria-label="導覽" class="nav">
+          <a href="/search"><span class="dot"></span>文書查詢</a>
+          <a href="/about-site"><span class="dot"></span>關於本網站</a>
+          <a href="/about-studio"><span class="dot"></span>關於本工作室</a>
+          <a href="/cda-project"><span class="dot"></span>校園偵探社特別專案</a>
+        </nav>
+        <div class="side-actions" style="margin-top:18px">
+          <button class="textbtn" data-action="theme-toggle">主題：<span data-theme-label="">系統</span></button>
+        </div>
+      </aside>
+      <div class="container">
+        <div class="section-title reveal">
+          <div>
+            <h1>校園偵探社遊戲製作特別專案</h1>
+            <p>Campus Detective Agency Game Development Special Project</p>
+          </div>
+        </div>
+
+        <section class="card reveal">
+          <div class="inner">
+            <h2 style="margin:0 0 8px;font-size:18px">專案說明</h2>
+            <p style="margin:0;color:var(--muted);font-size:13px">本專案成立於2025年7月23日，並於2026年1月2日改列特別執行專案，預計於2026年5月12日結案。本專案意在製作遊戲校園偵探社（Campus Detective Agency），詳情請見專案文書。</p>
+          </div>
+        </section>
+
+        <section class="card reveal" id="projectDocs">
+          <div class="inner">
+            <div class="collapse-head">
+              <div class="collapse-left">
+                <h2 style="margin:0;font-size:18px">專案文書</h2>
+                <p style="margin:6px 0 0;color:var(--muted);font-size:13px">專案相關文書。</p>
+              </div>
+              <div class="collapse-right">
+                <div class="meta-line" id="docStats">文件：—</div>
+                <button class="collapse-toggle" type="button" data-collapse="projectDocs"><span class="sr-only">收合</span><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              </div>
+            </div>
+            <div class="collapse-body"><div class="list scrollbox" id="docList" style="margin-top:12px"></div></div>
+          </div>
+        </section>
+
+        <section class="card reveal" id="projectTasks">
+          <div class="inner">
+            <div class="collapse-head">
+              <div class="collapse-left">
+                <h2 style="margin:0;font-size:18px">專案事務與進度</h2>
+                <p style="margin:6px 0 0;color:var(--muted);font-size:13px">專案相關事務。</p>
+              </div>
+              <div class="collapse-right">
+                <div class="meta-line" id="taskStats">事務：—</div>
+                <button class="collapse-toggle" type="button" data-collapse="projectTasks"><span class="sr-only">收合</span><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+              </div>
+            </div>
+            <div class="collapse-body"><div class="task-grid scrollbox" id="taskList" style="margin-top:12px"></div></div>
+          </div>
+        </section>
+
+        <section class="card reveal" id="projectCalendar">
+          <div class="inner">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+              <div>
+                <h2 style="margin:0;font-size:18px">專案行事曆</h2>
+                <p style="margin:6px 0 0;color:var(--muted);font-size:13px">就是個行事曆。</p>
+              </div>
+              <div class="cal-controls">
+                <button class="iconbtn" id="calPrev" type="button" aria-label="上一個">
+                  <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6l-6 6 6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <button class="btn" id="calToday" type="button">回到今天</button>
+                <button class="iconbtn" id="calNext" type="button" aria-label="下一個">
+                  <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6l6 6-6 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </button>
+                <select class="select" id="calView" aria-label="檢視模式">
+                  <option value="month">月份</option>
+                  <option value="week">星期</option>
+                  <option value="list">選單</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="cal-header" id="calTitle" style="margin-top:10px">—</div>
+            <div class="calendar" id="calendarWrap" style="margin-top:10px"></div>
+            <div class="cal-list" id="calendarList" style="margin-top:10px;display:none"></div>
+          </div>
+        </section>
+
+        <div class="modal" id="eventModal" aria-hidden="true">
+          <div class="modal-backdrop" data-close="1"></div>
+          <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="eventTitle">
+            <div class="modal-head">
+              <div>
+                <div class="modal-title" id="eventTitle">—</div>
+                <div class="meta-line" id="eventMeta">—</div>
+              </div>
+              <button class="iconbtn" type="button" data-close="1" aria-label="關閉">
+                <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M6 6l12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M18 6l-12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </button>
+            </div>
+            <div class="modal-body" id="eventBody"></div>
+          </div>
+        </div>
+
+      </div>
+      <footer class="footer">
+        <div class="container">
+          <div class="row">
+            <div><b>暗夜飛鳶工作室 DNFK Studios</b>｜線上資訊庫</div>
+            <div>科技部資訊小組 製作｜Made by DNFK T.I.T.</div>
+          </div>
+        </div>
+      </footer>
+    </main>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script src="../assets/js/cda-project.js" type="module"></script>
+</body>
+</html>

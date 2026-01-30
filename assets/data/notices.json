@@ -1,0 +1,100 @@
+{
+  "site": {
+    "name": "暗夜飛鳶工作室 DNFK Studio",
+    "defaultPdf": "document/503.pdf"
+  },
+  "notices": [
+    {
+      "id": "PA-260101",
+      "title": "工作表[CDA]",
+      "category": [
+        "校園偵探社"
+      ],
+      "tags": [
+        "CDA"
+      ],
+      "versions": [
+        {
+          "version": "第01版",
+          "content": "校園偵探社遊戲製作特別專案 工作分配與執行順序表",
+          "pdf": "document/PA-260101.pdf",
+          "uploader": "科技部資訊小組(T.I.T.)",
+          "uploadTime": "2026-01-25",
+          "description": "2026/01/25 制第01版",
+          "related": []
+        }
+      ]
+    },{
+      "id": "PA-260102",
+      "title": "時程表[CDA]",
+      "category": [
+        "校園偵探社"
+      ],
+      "tags": [
+        "CDA"
+      ],
+      "versions": [
+        {
+          "version": "第01版",
+          "content": "校園偵探社遊戲製作特別專案 執行時程表",
+          "pdf": "document/PA-260102.pdf",
+          "uploader": "科技部資訊小組(T.I.T.)",
+          "uploadTime": "2026-01-25",
+          "description": "2026/01/25 制第01版",
+          "related": []
+        }
+      ]
+    },{
+      "id": "PM-260101",
+      "title": "第01次會議[CDA]",
+      "category": [
+        "校園偵探社"
+      ],
+      "tags": [
+        "CDA",
+        "會議記錄"
+      ],
+      "versions": [
+        {
+          "version": "第01版",
+          "content": "校園偵探社遊戲製作特別專案 第01次會議紀錄",
+          "pdf": "document/PM-260101.pdf",
+          "uploader": "科技部資訊小組(T.I.T.)",
+          "uploadTime": "2026-01-25",
+          "description": "2026/01/25 制第01版",
+          "related": [
+            {
+              "title": "附件1、工作分配與執行順序表",
+              "url": "document?id=PA-260101"
+            },
+            {
+              "title": "附件2、工作分配與執行順序表",
+              "url": "document?id=PA-260102"
+            }
+          ]
+        }
+      ]
+    },{
+      "id": "PA-260103",
+      "title": "主角人設[CDA]",
+      "category": [
+        "校園偵探社"
+      ],
+      "tags": [
+        "CDA",
+        "企劃"
+      ],
+      "versions": [
+        {
+          "version": "第01版",
+          "content": "校園偵探社遊戲製作特別專案 主角人設",
+          "pdf": "document/PA-260103.pdf",
+          "uploader": "科技部資訊小組(T.I.T.)",
+          "uploadTime": "2026-01-25",
+          "description": "2026/01/25 制第01版",
+          "related": []
+        }
+      ]
+    }
+  ]
+}

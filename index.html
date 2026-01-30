@@ -1,267 +1,43 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-Hant">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>系統維護中 | DNFK Info Base</title>
-    <style>
-        :root {
-            --text-color: #FFFFFF;
-            --bg-color: #000000;
-            --line-color: rgba(255, 255, 255, 0.4);
-            --line-strong: rgba(255, 255, 255, 0.7);
-        }
-
-        body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden; 
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
-            position: fixed; 
-        }
-
-        
-        .background-lines {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 0;
-            background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-                              linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-            background-size: 40px 40px;
-            
-            animation: breatheBg 10s infinite alternate ease-in-out;
-            will-change: opacity;
-        }
-
-        
-        .diagonal-overlay {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-            background-image: repeating-linear-gradient(45deg, transparent, transparent 4px, var(--line-strong) 4px, var(--line-strong) 5px);
-            opacity: 0.08;
-        }
-
-        
-        .particle {
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            background: var(--text-color);
-            opacity: 0;
-            border-radius: 50%;
-            animation: floatParticle linear infinite;
-            z-index: 5;
-        }
-
-        @keyframes floatParticle {
-            0% { transform: translate(var(--x-start), var(--y-start)) scale(0); opacity: 0; }
-            10% { opacity: 0.8; }
-            90% { opacity: 0.8; }
-            100% { transform: translate(var(--x-end), var(--y-end)) scale(1); opacity: 0; }
-        }
-
-        @keyframes breatheBg {
-            0% { opacity: 0.8; }
-            100% { opacity: 1; }
-        }
-
-        
-        main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            z-index: 20;
-            opacity: 0;
-            animation: fadeIn 1.5s ease-out forwards;
-            animation-delay: 0.5s;
-            position: relative; 
-            padding: 20px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        
-        
-        main::before, main::after, .status-text::before, .status-text::after {
-            content: '';
-            position: absolute;
-            width: 15px;
-            height: 15px;
-            border: 1px solid transparent;
-            transition: all 0.3s ease;
-        }
-        main::before { top: 0; left: 0; border-top-color: var(--line-strong); border-left-color: var(--line-strong); }
-        main::after { top: 0; right: 0; border-top-color: var(--line-strong); border-right-color: var(--line-strong); }
-        
-        
-        main > div.status-container {
-            position: relative;
-            display: inline-block;
-            max-width: 100%;
-        }
-        
-        main .status-text::before { bottom: 0; left: 0; border-bottom-color: var(--line-strong); border-left-color: var(--line-strong); top: auto; width: 10px; height: 10px;}
-        main .status-text::after { bottom: 0; right: 0; border-bottom-color: var(--line-strong); border-right-color: var(--line-strong); top: auto; width: 10px; height: 10px;}
-
-        h1 {
-            
-            font-size: clamp(1.8rem, 5vw, 3rem);
-            margin: 0;
-            letter-spacing: clamp(2px, 1vw, 8px);
-            line-height: 1.2;
-            margin-bottom: 10px;
-        }
-
-        .status-text {
-            
-            font-size: clamp(1rem, 3vw, 1.5rem);
-            margin-top: 10px;
-            opacity: 0.7;
-            border-top: 1px solid var(--line-color);
-            border-bottom: 1px solid var(--line-color);
-            padding: 15px 0;
-            
-            
-            width: 100%; 
-            max-width: 400px;
-            position: relative; 
-            box-sizing: border-box;
-        }
-
-        
-        .orbit {
-            position: absolute;
-            border-radius: 50%;
-            z-index: 10;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(0deg);
-            box-sizing: border-box;
-            pointer-events: none;
-            
-            
-        }
-
-        .full-circle { border: 1px dashed var(--line-strong); animation: rotateCW linear infinite; }
-        .partial-arc { border-width: 1px; border-style: dashed; border-color: transparent; animation: rotateCCW linear infinite; }
-        .arc-top-left { border-top-color: var(--line-color); border-left-color: var(--line-color); animation-duration: 35s;}
-        .arc-bottom-right { border-bottom-color: var(--line-strong); border-right-color: var(--line-strong); animation-duration: 55s;}
-        .arc-left-only { border-left-color: var(--line-strong); animation-duration: 25s;}
-
-        header, footer {
-            z-index: 20;
-            padding: 15px 20px;
-            font-size: 12px;
-            opacity: 0.8;
-            border-top: 1px solid var(--line-color);
-            width: 100%;
-            box-sizing: border-box;
-            animation: fadeIn 1s ease-out forwards;
-            background: rgba(0,0,0,0.3);
-            backdrop-filter: blur(2px);
-        }
-
-        header { border-bottom: 1px solid var(--line-color); text-align: center; line-height: 1.6; }
-        
-        footer { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-top: none; 
-            border-bottom: 1px solid var(--line-color); 
-        }
-
-        .contact-info { text-align: right; }
-        .contact-link { color: var(--text-color); text-decoration: none; border-bottom: 1px solid var(--text-color); padding-bottom: 2px; display: inline-block;}
-        .tit-info { font-size: 10px; margin-top: 5px; opacity: 0.5; }
-        #live-clock { font-size: 13px; opacity: 0.9; font-family: monospace; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes rotateCW { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
-        @keyframes rotateCCW { from { transform: translate(-50%, -50%) rotate(360deg); } to { transform: translate(-50%, -50%) rotate(0deg); } }
-
-        
-        @media screen and (max-width: 768px) {
-            
-            footer {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-                padding-bottom: 30px;
-            }
-            .contact-info { text-align: center; }
-            
-            
-            .orbit { border-width: 1px; opacity: 0.6; }
-            
-            
-            h1 { margin-bottom: 15px; }
-        }
-    </style>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="dark light"/>
+  <link rel="icon" href="../assets/img/logo-dark.png"/>
+  <link rel="stylesheet" href="../assets/css/style.css"/>
+  <title>首頁｜DNFK Info-Base</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
 </head>
+
 <body>
+  <canvas id="starfield" aria-hidden="true"></canvas>
+  <section class="home" aria-label="首頁">
+    <div class="home-inner" id="homeIntro">
+      <div class="home-mark">
+        <img data-role="logo" class="home-logo" src="../assets/img/logo-dark.png" alt="暗夜飛鳶工作室 DNFK Studio"/>
+        <div class="home-rule" aria-hidden="true"></div>
 
-    <div class="background-lines"></div>
-    <div class="diagonal-overlay"></div>
-
-    <div class="orbit full-circle" style="width: 45vmin; height: 45vmin; animation-duration: 40s;"></div>
-    <div class="orbit full-circle" style="width: 80vmin; height: 80vmin; animation-duration: 60s; opacity: 0.3;"></div>
-    <div class="orbit partial-arc arc-top-left" style="width: 60vmin; height: 60vmin;"></div>
-    <div class="orbit partial-arc arc-bottom-right" style="width: 95vmin; height: 95vmin;"></div>
-    <div class="orbit partial-arc arc-left-only" style="width: 30vmin; height: 30vmin;"></div>
-    
-    <div class="particle" style="--x-start: 10vw; --y-start: 20vh; --x-end: 90vw; --y-end: 80vh; animation-duration: 25s; animation-delay: 0s;"></div>
-    <div class="particle" style="--x-start: 80vw; --y-start: 10vh; --x-end: 10vw; --y-end: 90vh; animation-duration: 30s; animation-delay: 2s;"></div>
-    <div class="particle" style="--x-start: 30vw; --y-start: 90vh; --x-end: 70vw; --y-end: 10vh; animation-duration: 20s; animation-delay: 5s;"></div>
-    <div class="particle" style="--x-start: 50vw; --y-start: 0vh; --x-end: 50vw; --y-end: 100vh; animation-duration: 15s; animation-delay: 8s;"></div>
-    <div class="particle" style="--x-start: 0vw; --y-start: 50vh; --x-end: 100vw; --y-end: 50vh; animation-duration: 18s; animation-delay: 10s;"></div>
-    <div class="particle" style="--x-start: 10vw; --y-start: 80vh; --x-end: 90vw; --y-end: 20vh; animation-duration: 22s; animation-delay: 12s;"></div>
-    <div class="particle" style="--x-start: 90vw; --y-start: 90vh; --x-end: 10vw; --y-end: 10vh; animation-duration: 28s; animation-delay: 15s;"></div>
-    <div class="particle" style="--x-start: 20vw; --y-start: 30vh; --x-end: 80vw; --y-end: 70vh; animation-duration: 32s; animation-delay: 18s;"></div>
-    <div class="particle" style="--x-start: 80vw; --y-start: 70vh; --x-end: 20vw; --y-end: 30vh; animation-duration: 26s; animation-delay: 20s;"></div>
-    <div class="particle" style="--x-start: 40vw; --y-start: 10vh; --x-end: 60vw; --y-end: 90vh; animation-duration: 24s; animation-delay: 22s;"></div>
-
-
-    <header>
-        [ STATUS: OFFLINE ] <br> 暗夜飛鳶工作室 線上資訊庫 DNFK Studio Online Info Base
-    </header>
-
-    <main>
-        <div class="status-container">
-            <h1>系統維護中</h1>
-            <div class="status-text">The System Is Under Maintenance.</div>
+        <div>
+          <h1 class="home-title">線上資訊庫</h1>
+          <p class="home-sub">暗夜飛鳶工作室 DNFK Studios</p>
         </div>
-    </main>
 
-    <footer>
-        <div id="live-clock">SYSTEM INITIALIZING...</div>
-        <div class="contact-info">
-            如有疑慮，請 <a href="mailto:tit.contect@dnfk.qzz.io" class="contact-link">按此聯繫</a>
-            <div class="tit-info">暗夜飛鳶工作室 科技部資訊小組 DNFK T.I.T.</div>
-        </div>
-    </footer>
+        <div class="home-rule" aria-hidden="true"></div>
 
-    <script>
-        function updateTime() {
-            const now = new Date();
-            const timeString = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-            document.getElementById('live-clock').innerText = "SYSTEM_TIME: " + timeString;
-        }
+        <nav class="home-actions" aria-label="快速連結">
+          <a class="btn" href="/search">文書查詢</a>
+          <a class="btn" href="/about-site">關於本網站</a>
+          <a class="btn" href="/about-studio">關於本工作室</a>
+          <a class="btn" href="/cda-project">校園偵探社特別專案</a>
+        </nav>
 
-        setInterval(updateTime, 1000);
-        updateTime();
-    </script>
+        
+      </div>
+    </div>
+  </section>
+
+  <script type="module" src="../assets/js/index.js"></script>
 </body>
 </html>
