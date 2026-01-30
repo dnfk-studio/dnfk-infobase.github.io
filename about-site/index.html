@@ -2,16 +2,23 @@
 <html lang="zh-Hant">
 
 <head>
-  <script src="../maintenance/config.js"></script>
   <script>
-    try {
-      if (window.__DNFK_MAINTENANCE__) {
-        if (!location.pathname.includes("/maintenance/")) {
-          location.replace("/maintenance/");
+  (function() {
+    var cfg = document.createElement('script');
+    cfg.src = "../maintenance/config.js?v=" + Date.now();
+    cfg.onload = function() {
+      try {
+        if (window.__DNFK_MAINTENANCE__) {
+          if (!location.pathname.includes("/maintenance/")) {
+            location.replace("../maintenance/index.html?v=" + Date.now());
+          }
         }
-      }
-    } catch (e) {}
-  </script>
+      } catch (e) {}
+    };
+    cfg.onerror = function() {};
+    document.head.appendChild(cfg);
+  })();
+</script>
 
   <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1" name="viewport"/>
@@ -119,7 +126,7 @@
             <div class="hr"></div>
             <h3>網站版本</h3>
             <p>
-              v 1.0.3.00690a<br>
+              v 1.0.3.00691a<br>
             </p>
             
           </div>

@@ -6,7 +6,7 @@
         try {
             if (!window.__DNFK_MAINTENANCE__) {
                 if (location.pathname.includes("/maintenance/")) {
-                    location.replace("/");
+                    location.replace('/?cache_bust=' + Date.now());
                 }
             }
         } catch (e) {}
@@ -317,7 +317,7 @@
             btn.disabled = true;
 
             const script = document.createElement('script');
-            script.src = '../maintenance/config.js?t=' + new Date().getTime();
+            script.src = './config.js?v=' + Date.now();
 
             script.onload = function() {
                 if (typeof window.__DNFK_MAINTENANCE__ !== 'undefined') {
@@ -326,7 +326,7 @@
                         btn.style.borderColor = "#4fffa8";
                         btn.style.color = "#4fffa8";
                         setTimeout(() => {
-                            location.replace("/");
+                            location.replace('/?cache_bust=' + Date.now());
                         }, 800);
                     } else {
                         setTimeout(() => {
