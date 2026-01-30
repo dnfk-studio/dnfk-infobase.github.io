@@ -17,7 +17,7 @@
         {
           "version": "第01版",
           "content": "校園偵探社遊戲製作特別專案 工作分配與執行順序表",
-          "pdf": "document/PA-260101.pdf",
+          "pdf": "PA-260101.pdf",
           "uploader": "科技部資訊小組(T.I.T.)",
           "uploadTime": "2026-01-25",
           "description": "2026/01/25 制第01版",
@@ -37,7 +37,7 @@
         {
           "version": "第01版",
           "content": "校園偵探社遊戲製作特別專案 執行時程表",
-          "pdf": "document/PA-260102.pdf",
+          "pdf": "PA-260102.pdf",
           "uploader": "科技部資訊小組(T.I.T.)",
           "uploadTime": "2026-01-25",
           "description": "2026/01/25 制第01版",
@@ -58,18 +58,18 @@
         {
           "version": "第01版",
           "content": "校園偵探社遊戲製作特別專案 第01次會議紀錄",
-          "pdf": "document/PM-260101.pdf",
+          "pdf": "PM-260101.pdf",
           "uploader": "科技部資訊小組(T.I.T.)",
           "uploadTime": "2026-01-25",
           "description": "2026/01/25 制第01版",
           "related": [
             {
               "title": "附件1、工作分配與執行順序表",
-              "url": "document?id=PA-260101"
+              "url": "?id=PA-260101"
             },
             {
               "title": "附件2、工作分配與執行順序表",
-              "url": "document?id=PA-260102"
+              "url": "?id=PA-260102"
             }
           ]
         }
@@ -88,7 +88,7 @@
         {
           "version": "第01版",
           "content": "校園偵探社遊戲製作特別專案 主角人設",
-          "pdf": "document/PA-260103.pdf",
+          "pdf": "PA-260103.pdf",
           "uploader": "科技部資訊小組(T.I.T.)",
           "uploadTime": "2026-01-25",
           "description": "2026/01/25 制第01版",
