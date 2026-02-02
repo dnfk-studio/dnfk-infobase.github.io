@@ -21,6 +21,7 @@
             --bg-color: #000000;
             --line-color: rgba(255, 255, 255, 0.4);
             --line-strong: rgba(255, 255, 255, 0.7);
+            --accent-color: #4fffa8; /* 強調色 */
         }
 
         body, html {
@@ -113,7 +114,8 @@
         main > div.status-container {
             position: relative;
             display: inline-block;
-            max-width: 100%;
+            max-width: 600px;
+            width: 100%;
         }
         
         main .status-text::before { bottom: 0; left: 0; border-bottom-color: var(--line-strong); border-left-color: var(--line-strong); top: auto; width: 10px; height: 10px;}
@@ -134,13 +136,55 @@
             border-top: 1px solid var(--line-color);
             border-bottom: 1px solid var(--line-color);
             padding: 15px 0;
-            
             width: 100%; 
-            max-width: 400px;
             position: relative; 
             box-sizing: border-box;
         }
 
+        /* --- 維修詳情區塊 --- */
+        .maintenance-details {
+            margin-top: 25px;
+            border: 1px dashed var(--line-color);
+            background: rgba(255, 255, 255, 0.05);
+            padding: 15px;
+            text-align: left;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            backdrop-filter: blur(2px);
+        }
+
+        .detail-row {
+            display: flex;
+            margin-bottom: 8px;
+            align-items: baseline;
+        }
+
+        .detail-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .detail-label {
+            color: var(--line-strong);
+            font-weight: bold;
+            flex-shrink: 0;
+            width: 80px;
+            text-transform: uppercase;
+            font-size: 0.8em;
+            letter-spacing: 1px;
+        }
+
+        .detail-value {
+            color: var(--text-color);
+            margin-left: 10px;
+            font-family: monospace;
+        }
+        
+        /* 強調色文字 */
+        .highlight-text {
+            color: var(--accent-color);
+        }
+
+        /* --- 按鈕樣式 --- */
         .system-btn {
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid var(--line-color);
@@ -158,6 +202,8 @@
             outline: none;
             backdrop-filter: blur(2px);
             z-index: 30;
+            width: 100%;
+            max-width: 300px;
         }
 
         .system-btn::before {
@@ -250,6 +296,22 @@
             .orbit { border-width: 1px; opacity: 0.6; }
             
             h1 { margin-bottom: 15px; }
+
+            .detail-row {
+                flex-direction: column;
+                margin-bottom: 15px;
+            }
+            .detail-label {
+                margin-bottom: 5px;
+                width: auto;
+                opacity: 0.6;
+            }
+            .detail-value {
+                margin-left: 0;
+            }
+            main > div.status-container {
+                max-width: 100%;
+            }
         }
     </style>
 </head>
@@ -285,8 +347,28 @@
             <h1>系統維護中</h1>
             <div class="status-text">The System Is Under Maintenance.</div>
 
+            <div class="maintenance-details">
+                <div class="detail-row">
+                    <span class="detail-label">VERSION</span>
+                    <span class="detail-value highlight-text">
+                        v 1.0.3.00810a-rc
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">TIME</span>
+                    <span class="detail-value highlight-text">
+                        2026/02/02 16:50 - 2026/02/17 10:00 (GMT+8)
+                    </span>
+                </div>
+                <div class="detail-row">
+                    <span class="detail-label">PURPOSE</span>
+                    <span class="detail-value">
+                        核心伺服器安全性升級與資料庫優化作業 (Core System Upgrade)
+                    </span>
+                </div>
+            </div>
             <button id="force-reload-btn" class="system-btn" onclick="forceCheckStatus()">
-                [ 強制重新連線 / FORCE RECONNECT ]
+                [ 重新連線 / RECONNECT ]
             </button>
         </div>
     </main>
