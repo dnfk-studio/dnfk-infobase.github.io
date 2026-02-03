@@ -1,1 +1,1 @@
-window.__DNFK_MAINTENANCE__ = true;
+window.__DNFK_MAINTENANCE__ = flase;
