@@ -5,55 +5,41 @@
   },
   "notices": [
     {
-      "id": "PA-260202",
-      "title": "工作表[CDA]",
+      "id": "PA-260201",
+      "title": "劇情大綱[CDA]",
       "category": [
         "校園偵探社"
       ],
       "tags": [
-        "CDA"
+        "CDA",
+        "企劃"
       ],
       "versions": [
         {
-          "version": "第02版",
-          "content": "校園偵探社遊戲製作特別專案 工作分配與執行順序表",
-          "pdf": "PA-260202.pdf",
-          "uploader": "科技部資訊小組(T.I.T.)",
-          "uploadTime": "2026-02-03",
-          "description": "2026/02/03 制第02版",
-          "related": []
-        },{
           "version": "第01版",
-          "content": "校園偵探社遊戲製作特別專案 工作分配與執行順序表",
-          "pdf": "PA-260101.pdf",
+          "content": "校園偵探社遊戲製作特別專案 劇情大綱",
+          "pdf": "PA-260201.pdf",
           "uploader": "科技部資訊小組(T.I.T.)",
-          "uploadTime": "2026-01-25",
-          "description": "2026/01/25 制第01版",
+          "uploadTime": "2026-02-01",
+          "description": "2026/02/01 制第01版",
           "related": []
         }
       ]
     },{
-      "id": "PA-260203",
-      "title": "時程表[CDA]",
+      "id": "PA-260103",
+      "title": "主角人設[CDA]",
       "category": [
         "校園偵探社"
       ],
       "tags": [
-        "CDA"
+        "CDA",
+        "企劃"
       ],
       "versions": [
         {
-          "version": "第02版",
-          "content": "校園偵探社遊戲製作特別專案 執行時程表",
-          "pdf": "PA-260203.pdf",
-          "uploader": "科技部資訊小組(T.I.T.)",
-          "uploadTime": "2026-02-03",
-          "description": "2026/02/03 制第02版",
-          "related": []
-        },{
           "version": "第01版",
-          "content": "校園偵探社遊戲製作特別專案 執行時程表",
-          "pdf": "PA-260102.pdf",
+          "content": "校園偵探社遊戲製作特別專案 主角人設",
+          "pdf": "PA-260103.pdf",
           "uploader": "科技部資訊小組(T.I.T.)",
           "uploadTime": "2026-01-25",
           "description": "2026/01/25 制第01版",
@@ -91,20 +77,55 @@
         }
       ]
     },{
-      "id": "PA-260103",
-      "title": "主角人設[CDA]",
+      "id": "PA-260203",
+      "title": "時程表[CDA]",
       "category": [
         "校園偵探社"
       ],
       "tags": [
-        "CDA",
-        "企劃"
+        "CDA"
       ],
       "versions": [
         {
+          "version": "第02版",
+          "content": "校園偵探社遊戲製作特別專案 執行時程表",
+          "pdf": "PA-260203.pdf",
+          "uploader": "科技部資訊小組(T.I.T.)",
+          "uploadTime": "2026-02-03",
+          "description": "2026/02/03 制第02版",
+          "related": []
+        },{
           "version": "第01版",
-          "content": "校園偵探社遊戲製作特別專案 主角人設",
-          "pdf": "PA-260103.pdf",
+          "content": "校園偵探社遊戲製作特別專案 執行時程表",
+          "pdf": "PA-260102.pdf",
+          "uploader": "科技部資訊小組(T.I.T.)",
+          "uploadTime": "2026-01-25",
+          "description": "2026/01/25 制第01版",
+          "related": []
+        }
+      ]
+    },{
+      "id": "PA-260202",
+      "title": "工作表[CDA]",
+      "category": [
+        "校園偵探社"
+      ],
+      "tags": [
+        "CDA"
+      ],
+      "versions": [
+        {
+          "version": "第02版",
+          "content": "校園偵探社遊戲製作特別專案 工作分配與執行順序表",
+          "pdf": "PA-260202.pdf",
+          "uploader": "科技部資訊小組(T.I.T.)",
+          "uploadTime": "2026-02-03",
+          "description": "2026/02/03 制第02版",
+          "related": []
+        },{
+          "version": "第01版",
+          "content": "校園偵探社遊戲製作特別專案 工作分配與執行順序表",
+          "pdf": "PA-260101.pdf",
           "uploader": "科技部資訊小組(T.I.T.)",
           "uploadTime": "2026-01-25",
           "description": "2026/01/25 制第01版",
