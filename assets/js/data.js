@@ -20,6 +20,20 @@ export function lastUpdated(notice){
   return ds[0] || null;
 }
 
+function versionTime(v){
+  // prefer updatedAt, fallback uploadedAt, fallback uploadTime/date
+  const s = v.updatedAt || v.uploadedAt || v.uploadTime || v.date || v.time || v.upload_date;
+  if(!s) return -Infinity;
+  const d = parseDate(s);
+  return d ? d.getTime() : -Infinity;
+}
+function sortVersionsDesc(notice){
+  if(!notice || !Array.isArray(notice.versions)) return notice;
+  notice.versions = notice.versions.slice().sort((a,b)=> versionTime(b) - versionTime(a));
+  return notice;
+}
+
+
 export function latestVersionIndex(notice){
   if(!notice?.versions?.length) return 0;
   let best = 0, bestDate = -Infinity;

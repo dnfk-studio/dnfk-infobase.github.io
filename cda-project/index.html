@@ -111,7 +111,7 @@
                 <p style="margin:6px 0 0;color:var(--muted);font-size:13px">專案相關文書。</p>
               </div>
               <div class="collapse-right">
-                <div class="meta-line" id="docStats">文件：—</div>
+                <label class="sortwrap sort-inline" aria-label="文書排序"><select id="docSort" class="sortsel"><option value="time_desc">時間 新到舊</option><option value="time_asc">時間 舊到新</option><option value="name_asc">名稱 A-Z</option><option value="name_desc">名稱 Z-A</option></select></label><div class="meta-line" id="docStats">文件：—</div>
                 <button class="collapse-toggle" type="button" data-collapse="projectDocs"><span class="sr-only">收合</span><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
               </div>
             </div>
@@ -131,7 +131,29 @@
                 <button class="collapse-toggle" type="button" data-collapse="projectTasks"><span class="sr-only">收合</span><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9l6 6 6-6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
               </div>
             </div>
-            <div class="collapse-body"><div class="task-grid scrollbox" id="taskList" style="margin-top:12px"></div></div>
+            <div class="collapse-body"><div class="task-controls">
+  <div class="task-controls-top">
+    <label class="sortwrap" aria-label="事務排序">
+      <select id="taskSort" class="sortsel">
+        <option value="deadline_near">期限 近到遠</option>
+        <option value="deadline_far">期限 遠到近</option>
+        <option value="progress_desc">進度 高到低</option>
+        <option value="progress_asc">進度 低到高</option>
+        <option value="cat_asc">類別 A-Z</option>
+        <option value="cat_desc">類別 Z-A</option>
+        <option value="owner_asc">負責人 A-Z</option>
+        <option value="owner_desc">負責人 Z-A</option>
+      </select>
+    </label>
+    <div class="searchline">
+      <input id="taskQ" class="taskq" type="search" placeholder="搜尋事務（標題 / 說明 / 執行人）" />
+      <button class="iconbtn" id="taskClear" aria-label="清除">×</button>
+    </div>
+  </div>
+  <div class="chips" id="taskChips"></div>
+          <div class="hint" id="taskStats"></div>
+</div>
+<div class="task-grid scrollbox" id="taskList" style="margin-top:12px"></div></div>
           </div>
         </section>
         <div><p></p></div>

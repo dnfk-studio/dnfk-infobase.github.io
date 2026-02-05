@@ -7,29 +7,46 @@ function buildCard(notice, versionIdx){
   const v = notice.versions[versionIdx];
   const updated = lastUpdated(notice);
   const parts = [];
-  const catTxt = (notice.category||[]).length ? (notice.category||[]).map(c=>escapeHtml(c)).join("/") : "—";
+  const catArr = arrify(notice.category);
+  const catTxt = catArr.length ? catArr.map(c=>escapeHtml(c)).join("/") : "—";
   parts.push(`<span><strong>分類</strong> ${catTxt}</span>`);
   if(v?.uploader) parts.push(`<span><strong>上傳者</strong> ${escapeHtml(v.uploader)}</span>`);
   if(v?.uploadTime) parts.push(`<span><strong>上傳</strong> ${escapeHtml(v.uploadTime)}</span>`);
   if(v?.description) parts.push(`<span><strong>說明</strong> ${escapeHtml(v.description)}</span>`);
   if(updated) parts.push(`<span><strong>最後更新</strong> ${formatDate(updated)}</span>`);
 
-  const tags = (notice.tags||[]).slice(0,6).map(t=>`#${escapeHtml(t)}`).join(" ");
+  const tags = arrify(notice.tags).slice(0,6).map(t=>`#${escapeHtml(t)}`).join(" ");
 
   return `
-  <article class="card clickable reveal" data-id="${escapeAttr(notice.id)}">
+  <article class="card clickable reveal" data-id="${escapeAttr(getLatestVid(notice) || notice.id)}">
     <div class="inner">
       <div class="meta-line">${parts.join(' <span class="pipe">|</span> ')}</div>
       <h3>${escapeHtml(notice.title)}</h3>
       <p>${escapeHtml((v?.content||"").slice(0,110))}${(v?.content||"").length>110?"…":""}</p>
       <div class="tags">${tags ? `<span class="tags-text">${tags}</span>` : ""}</div>
       <div class="actions">
-        <button class="btn primary detailbtn" data-open="${escapeAttr(notice.id)}">查看詳情</button>
+        <button class="btn primary detailbtn" data-open="${escapeAttr(getLatestVid(notice) || notice.id)}">查看詳情</button>
         <span class="ver">版本：${escapeHtml(v?.version||"")}</span>
       </div>
     </div>
   </article>`;
 }
+
+function arrify(x){
+  if(Array.isArray(x)) return x;
+  if(x==null) return [];
+  return [x];
+}
+
+function getLatestVid(n){
+  try{
+    if(!n?.versions?.length) return null;
+    const i = latestVersionIndex(n);
+    const v = n.versions[i];
+    return v?.id || v?.versionId || null;
+  }catch(e){ return null; }
+}
+
 
 function escapeHtml(s){
   return (s??"").toString()
@@ -62,6 +79,13 @@ function setupCollapsibleLatest(){
   // initial state
   btn.classList.toggle("is-open", wrap.getAttribute("data-open")==="1");
 }
+
+function makeDocUrl(id){
+  const u = new URL("../document/", location.href);
+  u.searchParams.set("id", String(id||""));
+  return u.toString();
+}
+
 
 
 function setupDetailsMulti(detailsId, items, onChange){
@@ -125,28 +149,6 @@ function hash(s){
   return Math.abs(h);
 }
 
-function syncChips(chipsEl, keyword, catsSet, tagsSet, onRemove){
-  if(!chipsEl) return;
-  const chips = [];
-  if(keyword) chips.push({k:"q", label:`搜尋：${keyword}`});
-  [...catsSet].forEach(c=> chips.push({k:"cat", v:c, label:`分類：${c}`}));
-  [...tagsSet].forEach(t=> chips.push({k:"tag", v:t, label:`標籤：${t}`}));
-
-  chipsEl.innerHTML = chips.map(c=>`
-    <span class="chip">
-      ${escapeHtml(c.label)}
-      <button aria-label="remove">移除</button>
-    </span>
-  `).join("");
-
-  $$(".chip", chipsEl).forEach((el, i)=>{
-    el.querySelector("button")?.addEventListener("click", ()=>{
-      const c = chips[i];
-      onRemove?.(c);
-    });
-  });
-}
-
 export async function bootSearch(){
   const qInput = $("#q");
   const resultsEl = $("#results");
@@ -155,6 +157,7 @@ export async function bootSearch(){
 
   const searchBtn = $("#searchBtn");
   const clearBtn = $("#clearBtn");
+  const sortSel = $("#sortSel");
 
   if(!qInput || !resultsEl) return;
 
@@ -171,35 +174,66 @@ export async function bootSearch(){
 
   const notices = json.notices || [];
   // build filter lists
-  const categories = uniq(notices.flatMap(n=>n.category||[])).sort((a,b)=>a.localeCompare(b,"zh-Hant"));
-  const tags = uniq(notices.flatMap(n=>n.tags||[])).sort((a,b)=>a.localeCompare(b,"zh-Hant"));
-
-  const catDD = setupDetailsMulti("#fdCategory", categories, ()=> render());
-  const tagDD = setupDetailsMulti("#fdTag", tags, ()=> render());
+  const categories = uniq(notices.flatMap(n=>arrify(n.category))).sort((a,b)=>a.localeCompare(b,"zh-Hant"));
+  const tags = uniq(notices.flatMap(n=>arrify(n.tags))).sort((a,b)=>a.localeCompare(b,"zh-Hant"));
+// filter selects (分類/標籤)
+const catSel = $("#catSel");
+const tagSel = $("#tagSel");
+if(catSel){
+  catSel.innerHTML = `<option value="">分類 未選</option>` + categories.map(c=>`<option value="${escapeHtml(c)}">${escapeHtml(c)}</option>`).join("");
+  catSel.addEventListener("change", render);
+}
+if(tagSel){
+  tagSel.innerHTML = `<option value="">標籤 未選</option>` + tags.map(t=>`<option value="${escapeHtml(t)}">${escapeHtml(t)}</option>`).join("");
+  tagSel.addEventListener("change", render);
+}
 
   // latest top 5 (by last update)
-  const latest = notices.slice().sort((a,b)=>{
-    const da = lastUpdated(a)?.getTime() || -Infinity;
-    const db = lastUpdated(b)?.getTime() || -Infinity;
-    return db-da;
-  }).slice(0,5);
-  const latestList = $("#latestList");
-  if(latestList){
-    latestList.innerHTML = latest.map(n=>{
-      const vi = latestVersionIndex(n);
-      const v = n.versions[vi];
-      return `<div class="card clickable" data-id="${escapeAttr(n.id)}">
-        <div class="inner">
-          <div class="meta-line"><span><strong>最後更新</strong> ${formatDate(lastUpdated(n))}</span> <span class="pipe">|</span> <span><strong>版本</strong> ${escapeHtml(v.version||"")}</span></div>
-          <h3>${escapeHtml(n.title)}</h3>
-          <p>${escapeHtml((v.content||"").slice(0,76))}${(v.content||"").length>76?"…":""}</p>
-        </div>
-      </div>`;
-    }).join("");
-  }
+const latest = notices.slice().sort((a,b)=>{
+  const da = lastUpdated(a)?.getTime() || -Infinity;
+  const db = lastUpdated(b)?.getTime() || -Infinity;
+  return db-da;
+}).slice(0,5);
+const latestList = $("#latestList");
+if(latestList){
+  latestList.innerHTML = latest.map(n=>{
+    const vi = latestVersionIndex(n);
+    const v = n.versions[vi];
+    const excerpt = (v.content||"").slice(0,60);
+    const more = (v.content||"").length>60 ? "…" : "";
+    return `<div class="latest-item" data-id="${escapeAttr(getLatestVid(n) || n.id)}">
+      <div class="latest-title">${escapeHtml(n.title)}</div>
+      <div class="latest-sub">${escapeHtml(excerpt)}${more}</div>
+      <div class="latest-meta">最後更新 ${formatDate(lastUpdated(n))} | 版本 ${escapeHtml(v.version||"")}</div>
+    </div>`;
+  }).join("");
+}
 
-  function openNotice(id){
-    location.href = `/document?id=${encodeURIComponent(id)}`;
+// click handlers (latest list + results)
+if(latestList){
+  latestList.addEventListener("click", (e)=>{
+    const item = e.target.closest(".latest-item");
+    if(!item) return;
+    const id = item.getAttribute("data-id");
+    if(id) openNotice(id);
+  });
+}
+resultsEl.addEventListener("click", (e)=>{
+  const btn = e.target.closest("[data-open]");
+  if(btn){
+    const id = btn.getAttribute("data-open");
+    if(id) return openNotice(id);
+  }
+  const card = e.target.closest(".card.clickable[data-id], article.clickable[data-id], article.card[data-id]");
+  if(card){
+    const id = card.getAttribute("data-id");
+    if(id) return openNotice(id);
+  }
+});
+
+
+function openNotice(id){
+    location.href = makeDocUrl(id);
   }
 
   function wireClicks(root){
@@ -212,6 +246,12 @@ export async function bootSearch(){
         btn.addEventListener("click", (e)=>{ e.stopPropagation(); openNotice(btn.getAttribute("data-open")); });
       });
     });
+$$(".latest-item", root).forEach(row=>{
+  row.addEventListener("click", ()=>{
+    const id = row.getAttribute("data-id");
+    if(id) openNotice(id);
+  });
+});
   }
   wireClicks(document);
 
@@ -221,7 +261,8 @@ export async function bootSearch(){
 
   qInput.addEventListener("input", ()=> render());
   searchBtn?.addEventListener("click", ()=> render(true));
-  clearBtn?.addEventListener("click", ()=>{ qInput.value=""; catDD.set([]); tagDD.set([]); render(true); });
+  sortSel?.addEventListener("change", ()=> render(true));
+  clearBtn?.addEventListener("click", ()=>{ qInput.value=""; $("#catSel").value=""; $("#tagSel").value=""; render(true); });
   qInput.addEventListener("keydown", (e)=>{
     if(e.key==="Enter"){ render(true); }
   });
@@ -229,27 +270,31 @@ export async function bootSearch(){
   function render(pushUrl=false){
     const keyword = normalize(qInput.value);
     const words = keyword ? keyword.split(/\s+/).filter(Boolean) : [];
-    const cats = [...catDD.selected];
-    const tgs = [...tagDD.selected];
+    const cat = String($("#catSel")?.value||"").trim();
+    const tag = String($("#tagSel")?.value||"").trim();
 
     const filtered = notices.filter(n=>{
       const vi = latestVersionIndex(n);
       const hay = noticeSearchText(n, vi);
       if(words.length && !includesAll(hay, words)) return false;
-      // AND categories selected
-      if(cats.length){
-        const have = new Set((n.category||[]).map(x=>normalize(x)));
-        if(!cats.every(c=> have.has(normalize(c)))) return false;
+      // 分類篩選
+      if(cat){
+        const have = new Set(arrify(n.category).map(x=>normalize(x)));
+        if(!have.has(normalize(cat))) return false;
       }
-      // AND tags selected
-      if(tgs.length){
-        const have = new Set((n.tags||[]).map(x=>normalize(x)));
-        if(!tgs.every(t=> have.has(normalize(t)))) return false;
+      // 標籤篩選
+      if(tag){
+        const have = new Set(arrify(n.tags).map(x=>normalize(x)));
+        if(!have.has(normalize(tag))) return false;
       }
       return true;
     }).sort((a,b)=>{
+      const mode = sortSel?.value || "time_desc";
+      if(mode==="name_asc") return (a.title||"").localeCompare((b.title||""),"zh-Hant");
+      if(mode==="name_desc") return (b.title||"").localeCompare((a.title||""),"zh-Hant");
       const da = lastUpdated(a)?.getTime() || -Infinity;
       const db = lastUpdated(b)?.getTime() || -Infinity;
+      if(mode==="time_asc") return da-db;
       return db-da;
     });
 
@@ -262,20 +307,23 @@ export async function bootSearch(){
       statsEl.textContent = `結果：${filtered.length} 筆`;
     }
 
-    syncChips(chipsEl, keyword, catDD.selected, tagDD.selected, (chip)=>{
-      if(chip.k==="q"){ qInput.value=""; }
-      if(chip.k==="cat"){ catDD.selected.delete(chip.v); catDD.set([...catDD.selected]); }
-      if(chip.k==="tag"){ tagDD.selected.delete(chip.v); tagDD.set([...tagDD.selected]); }
-      render(true);
+      // chips（與排序/版本同一種下拉選擇，不再使用凸出的清單）
+  const chipParts = [];
+  if(words.length) chipParts.push({k:"q", v: qInput.value.trim(), label: "關鍵字 " + qInput.value.trim()});
+  if(cat) chipParts.push({k:"cat", v: cat, label: "分類 " + cat});
+  if(tag) chipParts.push({k:"tag", v: tag, label: "標籤 " + tag});
+  if(chipsEl){
+    chipsEl.innerHTML = chipParts.map(c=>`<span class="chip"><span>${escapeHtml(c.label)}</span><button type="button" aria-label="移除">×</button></span>`).join("");
+    [...chipsEl.querySelectorAll("button")].forEach((btn,i)=>{
+      btn.addEventListener("click", ()=>{
+        const c = chipParts[i];
+        if(c.k==="q") qInput.value = "";
+        if(c.k==="cat") $("#catSel").value = "";
+        if(c.k==="tag") $("#tagSel").value = "";
+        render();
+      });
     });
-
-    wireClicks(resultsEl);
-
-    if(pushUrl){
-      const u = new URL(location.href);
-      if(keyword) u.searchParams.set("q", keyword); else u.searchParams.delete("q");
-      history.replaceState({}, "", u.toString());
-    }
+  }
 
     // reveal anim: mark newly created as reveal targets
     if(window.gsap){

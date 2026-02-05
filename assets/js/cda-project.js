@@ -1,5 +1,72 @@
 import { bootCommon, $, $$, toast } from "./app.js";
 import { loadNotices, latestVersionIndex, lastUpdated, formatDate, parseDate } from "./data.js";
+function getLatestVid(n, latestVersionIndex){
+  try{
+    if(!n?.versions?.length) return null;
+    const i = latestVersionIndex(n);
+    const v = n.versions[i];
+    return v?.id || v?.versionId || null;
+  }catch(e){ return null; }
+}
+
+
+
+function uniq(arr){ return Array.from(new Set(arr)).filter(Boolean); }
+function normalize(s){ return String(s||"").toLowerCase().trim(); }
+function includesAll(hay, words){
+  const h = normalize(hay);
+  return (words||[]).every(w=> h.includes(normalize(w)));
+}
+function hash(str){ let h=0; for(let i=0;i<str.length;i++){ h=((h<<5)-h)+str.charCodeAt(i); h|=0; } return Math.abs(h); }
+function setupDetailsMulti(detailsId, items, onChange){
+  const el = document.querySelector(detailsId);
+  if(!el) return { selected:new Set(), set:()=>{}, render:()=>{} };
+  const panel = el.querySelector("[data-panel]");
+  const countEl = el.querySelector("[data-count]");
+  const sel = new Set();
+  
+
+function render(){
+    if(!panel) return;
+    panel.innerHTML = items.map(v=>{
+      const id = `x_${detailsId.replace("#","")}_${hash(v)}`;
+      return `<label class="item" for="${id}">
+        <input id="${id}" type="checkbox" ${sel.has(v)?"checked":""}/>
+        <span class="txt">${esc(v)}</span>
+      </label>`;
+    }).join("");
+    panel.querySelectorAll("input").forEach(inp=>{
+      inp.addEventListener("change", ()=>{
+        const val = inp.closest("label")?.querySelector(".txt")?.textContent || "";
+        if(inp.checked) sel.add(val); else sel.delete(val);
+        updateCount();
+        onChange?.();
+      });
+    });
+  }
+  function updateCount(){
+    if(countEl) countEl.textContent = sel.size ? `已選 ${sel.size}` : "未選";
+  }
+  function set(vals){
+    sel.clear();
+    (vals||[]).forEach(v=> sel.add(v));
+    render(); updateCount();
+  }
+  render(); updateCount();
+  return { selected:sel, set, render };
+}
+function syncChips(rootEl, keyword, sets, onRemove){
+  if(!rootEl) return;
+  const chips=[];
+  if(keyword) chips.push({k:"q", v:keyword, label:`關鍵字 ${keyword}`});
+  Object.entries(sets||{}).forEach(([k,set])=>{
+    [...set].forEach(v=> chips.push({k, v, label:`${k==="cat"?"類別":k==="status"?"狀態":"負責人"} ${v}` }));
+  });
+  rootEl.innerHTML = chips.map((c,i)=>`<span class="chip"><span>${esc(c.label)}</span><button type="button" aria-label="移除">×</button></span>`).join("");
+  rootEl.querySelectorAll(".chip button").forEach((btn,i)=>{
+    btn.addEventListener("click", ()=> onRemove?.(chips[i]));
+  });
+}
 
 function stabilizeCalendarLayout(view){
   const wrap = document.getElementById("calendarWrap");
@@ -25,6 +92,13 @@ function esc(s){
     .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
     .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
 }
+
+function makeDocUrl(id){
+  const u = new URL("../document/", location.href);
+  u.searchParams.set("id", String(id||""));
+  return u.toString();
+}
+
 
 const CAT = ["行政","科技","資訊","企劃","藝術","音樂","雜項"];
 const CAT_COLOR_VAR = {
@@ -95,7 +169,8 @@ function buildDocCard(n){
   const up = formatDate(parseDate(v.uploadTime));
   const meta = `分類 ${esc(cat||"—")} | 上傳者 ${esc(v.uploader||"")} | 上傳 ${esc(up)} | 最後更新 ${esc(formatDate(updated))}`;
   const title = esc(n?.title || "");
-  const id = encodeURIComponent(n?.id || "");
+  const vid = (v.id || v.versionId || n?.id || "");
+  const href = makeDocUrl(vid);
   return `
     <article class="result">
       <div class="result-head">
@@ -103,10 +178,29 @@ function buildDocCard(n){
           <div class="meta-line">${meta}</div>
           <h3 class="result-title">${title}</h3>
         </div>
-        <a class="detailbtn" href="/document?id=${id}">查看詳情</a>
+        <a class="detailbtn" href="${href}">查看詳情</a>
       </div>
     </article>
   `;
+}
+
+function autoTaskStatus(t){
+  const p = Math.max(0, Math.min(100, Number(t?.percent||0)));
+  if(p>=100) return "已完成";
+  const running = !!(t?.isRunning ?? t?.running ?? t?.executing ?? t?.isExecuting);
+  const paused = !!(t?.isPaused ?? t?.paused ?? t?.isPausedExec ?? t?.pauseExec);
+  const dl = parseYMDStrict(t?.deadline);
+  const now = new Date();
+  const overdue = !!(dl && dl.getTime() < new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime());
+  if(paused && running) return "暫停中";
+  if(running && overdue) return "已過截止日期（仍在進行中）";
+  if(running) return "進行中";
+  return "尚未開始";
+}
+function parseYMDStrict(s){
+  const mm = String(s||"").match(/(\d{4})-(\d{2})-(\d{2})/);
+  if(!mm) return null;
+  return new Date(Number(mm[1]), Number(mm[2])-1, Number(mm[3]));
 }
 
 function buildTaskCard(t){
@@ -115,7 +209,7 @@ function buildTaskCard(t){
   const meta1 = [
     t.category ? `類別 ${esc(t.category)}` : null,
     t.priority ? `優先度 ${esc(t.priority)}` : null,
-    t.status ? `狀態 ${esc(t.status)}` : null,
+    autoTaskStatus(t) ? `狀態 ${esc(autoTaskStatus(t))}` : null,
     t.owner ? `執行人 ${esc(t.owner)}` : null
   ].filter(Boolean).join(" | ");
   const meta2 = [
@@ -130,7 +224,7 @@ function buildTaskCard(t){
     return [x];
   }).map(String).map(s=>s.trim()).filter(Boolean);
 
-  const relDocs = relDocsArr.map(id=>`<a href="/document?id=${encodeURIComponent(id)}">${esc(id)}</a>`).join("、");
+  const relDocs = relDocsArr.map(id=>`<a href="${makeDocUrl(id)}">${esc(id)}</a>`).join("、");
 
   const relLinksArr = normArr(t.relatedLinks).flatMap(x=>{
     if(!x) return [];
@@ -172,7 +266,7 @@ function openModal(ev){
     .flatMap(x=> Array.isArray(x) ? x : [x])
     .map(x=> String(x ?? "").trim())
     .filter(Boolean)
-    .map(id=>`<a href="/document?id=${encodeURIComponent(id)}">${esc(id)}</a>`)
+    .map(id=>`<a href="../document/?id=${encodeURIComponent(id)}">${esc(id)}</a>`)
     .join("、");
   $("#eventBody").innerHTML = `
     ${ev.desc?`<p style="margin:0 0 10px">${esc(ev.desc)}</p>`:""}
@@ -439,34 +533,127 @@ export async function bootCDA(){
   }
   const tagNeedle = String(projectJson?.project?.docTagWhitelist?.[0] || projectJson?.docTag || "CDA").toLowerCase();
 
-  // docs filtered by tag (never block tasks/calendar if docs have bad data)
-  let docs = [];
-  try{
-    docs = notices.filter(n => normTags(n?.tags).some(t => String(t).toLowerCase()===tagNeedle));
-    $("#docStats").textContent = `文件：${docs.length} 筆`;
-    $("#docList").innerHTML = docs.length
-      ? docs.map(buildDocCard).join("")
-      : `<div class="meta-line" style="color:var(--muted)">（無符合標籤 ${esc(tagNeedle)} 的公告）</div>`;
-  }catch(e){
-    console.error(e);
-    $("#docStats").textContent = "文件：—";
-    $("#docList").innerHTML = `<div class="meta-line" style="color:var(--muted)">（文書清單載入失敗，請檢查 notices.json 格式）</div>`;
-  }
+  // docs (tag filter) + sort
+let docs = [];
+const docSortEl = $("#docSort");
+const docListEl = $("#docList");
+function sortDocsLocal(arr){
+  const mode = docSortEl?.value || "time_desc";
+  return arr.slice().sort((a,b)=>{
+    if(mode==="name_asc") return (a.title||"").localeCompare((b.title||""),"zh-Hant");
+    if(mode==="name_desc") return (b.title||"").localeCompare((a.title||""),"zh-Hant");
+    const da = lastUpdated(a)?.getTime() || -Infinity;
+    const db = lastUpdated(b)?.getTime() || -Infinity;
+    if(mode==="time_asc") return da-db;
+    return db-da;
+  });
+}
+function renderDocs(){
+  if(!docListEl) return;
+  const sorted = sortDocsLocal(docs);
+  $("#docStats").textContent = `文件：${sorted.length} 筆`;
+  docListEl.innerHTML = sorted.length
+    ? sorted.map(buildDocCard).join("")
+    : `<div class="meta-line" style="color:var(--muted)">（無符合標籤 ${esc(tagNeedle)} 的公告）</div>`;
+}
+try{
+  docs = notices.filter(n => normTags(n?.tags).some(t => String(t).toLowerCase()===tagNeedle));
+  renderDocs();
+  docSortEl?.addEventListener("change", renderDocs);
+}catch(e){
+  console.error(e);
+  $("#docStats").textContent = "文件：—";
+  if(docListEl) docListEl.innerHTML = `<div class="meta-line" style="color:var(--muted)">（文書清單載入失敗，請檢查 notices.json 格式）</div>`;
+}
 
-  // tasks (defensive: allow user data to be string/array/object)
-  let tasks = [];
-  try{
-    tasks = Array.isArray(projectJson?.tasks) ? projectJson.tasks : [];
-    tasks = tasks.filter(Boolean).map(x=> (typeof x === "object" ? x : { title:String(x) }));
-    $("#taskStats").textContent = `事務：${tasks.length} 件`;
-    $("#taskList").innerHTML = tasks.length
-      ? tasks.map(buildTaskCard).join("")
-      : `<div class="meta-line" style="color:var(--muted)">（無）</div>`;
-  }catch(e){
-    console.error(e);
-    $("#taskStats").textContent = "事務：—";
-    $("#taskList").innerHTML = `<div class="meta-line" style="color:var(--muted)">（事務資料載入失敗，請檢查 cda-project.json 格式）</div>`;
+
+  // tasks + sort/filter/search (done items last by default)
+let tasks = [];
+const taskListEl = $("#taskList");
+const taskStatsEl = $("#taskStats");
+const taskSortEl = $("#taskSort");
+const taskQEl = $("#taskQ");
+const taskClearEl = $("#taskClear");
+const taskChipsEl = $("#taskChips");
+
+function parseYMDLocal(s){
+  const mm = String(s||"").match(/(\d{4})-(\d{2})-(\d{2})/);
+  if(!mm) return null;
+  return new Date(Number(mm[1]), Number(mm[2])-1, Number(mm[3]));
+}
+function isDoneLocal(t){
+  const p = Math.max(0, Math.min(100, Number(t.percent||0)));
+  return p>=100 || normalize(autoTaskStatus(t))==="已完成";
+}
+function sortTasksLocal(arr){
+  const mode = taskSortEl?.value || "deadline_near";
+  return arr.slice().sort((a,b)=>{
+    const adone = isDoneLocal(a), bdone = isDoneLocal(b);
+    const ap = Math.max(0, Math.min(100, Number(a.percent||0)));
+    const bp = Math.max(0, Math.min(100, Number(b.percent||0)));
+    const ad = parseYMDLocal(a.deadline)?.getTime() ?? Infinity;
+    const bd = parseYMDLocal(b.deadline)?.getTime() ?? Infinity;
+
+    if(mode==="deadline_far"){
+      if(adone!==bdone) return adone? 1 : -1;
+      return bd-ad;
+    }
+    if(mode==="progress_desc") return bp-ap;
+    if(mode==="progress_asc") return ap-bp;
+    if(mode==="cat_asc") return String(a.category||"").localeCompare(String(b.category||""),"zh-Hant");
+    if(mode==="cat_desc") return String(b.category||"").localeCompare(String(a.category||""),"zh-Hant");
+    if(mode==="owner_asc") return String(a.owner||"").localeCompare(String(b.owner||""),"zh-Hant");
+    if(mode==="owner_desc") return String(b.owner||"").localeCompare(String(a.owner||""),"zh-Hant");
+
+    // default deadline_near: done last
+    if(adone!==bdone) return adone? 1 : -1;
+    return ad-bd;
+  });
+}
+
+// build filters from data and hook details panels (if present)
+const taskCats = uniq(tasks.map(t=>t.category)).sort((a,b)=>String(a||"").localeCompare(String(b||""),"zh-Hant"));
+const taskStatuses = uniq(tasks.map(t=>t.status)).sort((a,b)=>String(a||"").localeCompare(String(b||""),"zh-Hant"));
+const taskOwners = uniq(tasks.map(t=>t.owner)).sort((a,b)=>String(a||"").localeCompare(String(b||""),"zh-Hant"));
+
+function renderTasks(){
+  if(!taskListEl) return;
+  const keyword = String(taskQEl?.value||"").trim();
+  const words = keyword ? keyword.split(/\s+/).filter(Boolean) : [];
+  const filtered = tasks.filter(t=>{
+    if(!words.length) return true;
+    const hay = [t.title, t.desc, t.summary, t.owner, t.category, t.status, t.priority].filter(Boolean).join(" ");
+    return includesAll(hay, words);
+  });
+  const sorted = sortTasksLocal(filtered);
+      try{ taskListEl.scrollTop = 0; }catch(e){}
+  taskListEl.innerHTML = sorted.length
+    ? sorted.map(buildTaskCard).join("")
+    : `<div class="meta-line" style="color:var(--muted)">（無）</div>`;
+  if(taskStatsEl) taskStatsEl.textContent = `事務：${sorted.length} 件`;
+  // chips: keyword only
+  if(taskChipsEl){
+    taskChipsEl.innerHTML = keyword
+      ? `<span class="chip"><span>${esc("關鍵字 " + keyword)}</span><button type="button" aria-label="移除">×</button></span>`
+      : "";
+    const btn = taskChipsEl.querySelector("button");
+    btn?.addEventListener("click", ()=>{ if(taskQEl) taskQEl.value=""; renderTasks(); });
   }
+}
+
+
+    try{
+  tasks = Array.isArray(projectJson?.tasks) ? projectJson.tasks : [];
+  tasks = tasks.filter(Boolean).map(x=> (typeof x === "object" ? x : { title:String(x) }));
+  renderTasks();
+  taskSortEl?.addEventListener("change", renderTasks);
+  taskQEl?.addEventListener("input", renderTasks);
+  taskClearEl?.addEventListener("click", ()=>{ if(taskQEl) taskQEl.value=""; renderTasks(); });
+}catch(e){
+  console.error(e);
+  if(taskStatsEl) taskStatsEl.textContent = "事務：—";
+  if(taskListEl) taskListEl.innerHTML = `<div class="meta-line" style="color:var(--muted)">（事務資料載入失敗，請檢查 cda-project.json 格式）</div>`;
+}
 
   // calendar
   const rawEvents = Array.isArray(projectJson?.events) ? projectJson.events : [];
@@ -532,4 +719,16 @@ document.querySelectorAll('[data-collapse-target]').forEach(btn=>{
     target.style.maxHeight = collapsed ? '0px' : '';
     target.style.overflow = collapsed ? 'hidden' : 'auto';
   });
-});
+});function sortDocs(arr, mode){
+  const m = mode || "time_desc";
+  return arr.slice().sort((a,b)=>{
+    if(m==="name_asc") return (a.title||"").localeCompare((b.title||""),"zh-Hant");
+    if(m==="name_desc") return (b.title||"").localeCompare((a.title||""),"zh-Hant");
+    const da = lastUpdated(a)?.getTime() || -Infinity;
+    const db = lastUpdated(b)?.getTime() || -Infinity;
+    if(m==="time_asc") return da-db;
+    return db-da;
+  });
+}
+
+

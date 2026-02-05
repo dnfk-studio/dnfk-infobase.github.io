@@ -1,5 +1,5 @@
 import { bootCommon, $, $$, toast } from "./app.js";
-import { loadNotices, latestVersionIndex, lastUpdated, formatDate } from "./data.js";
+import { loadNotices, latestVersionIndex, lastUpdated, formatDate, parseDate } from "./data.js";
 
 function escapeHtml(s){
   return (s??"").toString()
@@ -53,24 +53,47 @@ export async function bootPost(){
     setTimeout(()=> location.href="/search", 700);
     return;
   }
-  const notice = notices.find(n=>n.id===id);
+  let notice = notices.find(n=>n.id===id);
+  let vi = 0;
+  if(!notice){
+    notice = notices.find(n=> Array.isArray(n.versions) && n.versions.some(v=> (v.id||v.versionId)===id));
+    if(notice){
+      vi = notice.versions.findIndex(v=> (v.id||v.versionId)===id);
+      if(vi<0) vi = 0;
+    }
+  }
   if(!notice){
     toast("找不到公告，將回到搜尋頁");
     setTimeout(()=> location.href="/search", 800);
     return;
   }
 
-  // version
-  let vi = 0;
-  const vParam = url.searchParams.get("v");
-  if(vParam!=null){
-    const num = parseInt(vParam, 10);
-    if(!isNaN(num)) vi = Math.max(0, Math.min(notice.versions.length-1, num));
-  }else{
+  // version (by version id; fallback latest)
+  if(!Array.isArray(notice.versions)) notice.versions = [];
+  if(!notice.versions.length){
+    toast("公告缺少版本資料，將回到搜尋頁");
+    setTimeout(()=> location.href="/search", 800);
+    return;
+  }
+  // if entered via notice id (not specific version), default to latest
+  if(id===notice.id){
     vi = latestVersionIndex(notice);
   }
-
+  // backward compat: if v param exists, map to index and then redirect to version id if possible
+  const vParam = url.searchParams.get("v");
+  if(vParam!=null){
+    const num = parseInt(vParam,10);
+    if(!isNaN(num)) vi = Math.max(0, Math.min(notice.versions.length-1, num));
+  }
   const v = notice.versions[vi];
+  const vid = (v.id||v.versionId||null);
+  if(vParam!=null && vid){
+    const u = new URL(location.href);
+    u.searchParams.delete("v");
+    u.searchParams.set("id", vid);
+    location.replace(u.toString());
+    return;
+  }
 
   // header
   $("#postTitle").textContent = notice.title;
@@ -85,17 +108,34 @@ export async function bootPost(){
   $("#postDesc").textContent = v.description || "—";
   $("#postContent").textContent = v.content || "—";
 
-  // version selector
-  const sel = $("#versionSelect");
-  if(sel){
-    sel.innerHTML = notice.versions.map((x,i)=>`<option value="${i}" ${i===vi?"selected":""}>${escapeHtml(x.version||("v"+(i+1)))} — ${escapeHtml(x.uploadTime||"")}</option>`).join("");
-    sel.addEventListener("change", ()=>{
-      const next = parseInt(sel.value,10) || 0;
-      const u = new URL(location.href);
-      u.searchParams.set("v", String(next));
-      location.href = u.toString();
-    });
-  }
+  // version selector (list old→new; open latest by default)
+const sel = $("#versionSelect");
+if(sel){
+  const ordered = notice.versions.map((x,i)=>({x,i,t:(parseDate(x.uploadTime)?.getTime() ?? -Infinity)}))
+    .sort((a,b)=>a.t-b.t);
+  sel.innerHTML = ordered.map(({x,i})=>{
+    const vidOpt = x.id || x.versionId || null;
+    const label = `${escapeHtml(x.version || vidOpt || ("v"+(i+1)))} — ${escapeHtml(x.uploadTime||"")}`;
+    const value = escapeHtml(vidOpt || String(i));
+    const selected = (i===vi) ? "selected" : "";
+    return `<option value="${value}" ${selected}>${label}</option>`;
+  }).join("");
+  sel.addEventListener("change", ()=>{
+    const picked = sel.value;
+    const found = notice.versions.find(vv => (vv.id||vv.versionId||"") === picked);
+    const u = new URL(location.href);
+    u.searchParams.delete("v");
+    if(found){
+      u.searchParams.set("id", picked);
+    }else{
+      // fallback for old data without version id
+      const idx = parseInt(picked,10) || 0;
+      u.searchParams.set("v", String(idx));
+      u.searchParams.set("id", notice.id);
+    }
+    location.href = u.toString();
+  });
+}
 
   // pdf links
   const pdfUrl = v.pdf || json.site?.defaultPdf || "/document/503.pdf";
