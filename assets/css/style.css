@@ -3,42 +3,44 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700&family=Noto+Sans+TC:wght@100;300;400;700&display=swap');
 
 :root{
-  --bg0:#0b1020;
-  --bg1:#111a33;
-  /* Solid UI surfaces (no glass) */
-  --surface:#0f1730;
-  --surface2:#141f3a;
+  /* Policy-like neutral dark (not too deep) */
+  --bg0:#262b33;
+  --bg1:#262b33;
+  --surface:#2e343d;
+  --surface2:#323945;
   --panel:var(--surface);
-  --text:#eef1f6;
-  --muted:rgba(229,231,235,.72);
-  --stroke:rgba(255,255,255,.16);
-  --shadow:0 14px 48px rgba(0,0,0,.40);
-  --shadow2:0 10px 30px rgba(0,0,0,.28);
-  --radius:20px;
-  --radius2:28px;
+  --text:#e9ecf2;
+  --muted:rgba(233,236,242,.74);
+  --stroke:rgba(233,236,242,.14);
+  --shadow:0 10px 28px rgba(0,0,0,.30);
+  --shadow2:0 8px 18px rgba(0,0,0,.22);
+  --radius:16px;
+  --radius2:20px;
   --gap:16px;
   --max:1180px;
-  --accent:#8b5cf6;
-  --accent2:#22c55e;
+  --accent:#a78bfa;
+  --accent2:#34d399;
   --danger:#fb7185;
-  /* Disable blur/glass */
   --glass-blur:0px;
   --ease:cubic-bezier(.2,.9,.2,1);
   --font: "Lato", "Noto Sans TC", ui-sans-serif, system-ui, -apple-system, "Segoe UI", "PingFang TC", "Microsoft JhengHei", sans-serif;
 }
 
+
 :root[data-theme="light"]{
-  --bg0:#e9edf7;
-  --bg1:#dee6f5;
+  /* Slightly dimmed light theme (avoid too bright) */
+  --bg0:#f0f2f5;
+  --bg1:#f0f2f5;
   --surface:#ffffff;
-  --surface2:#f7f8fb;
+  --surface2:#f6f7f9;
   --panel:var(--surface);
-  --text:#0b1222;
-  --muted:rgba(11,18,34,.70);
-  --stroke:rgba(11,18,34,.12);
-  --shadow:0 18px 50px rgba(11,18,34,.12);
-  --shadow2:0 10px 28px rgba(11,18,34,.10);
+  --text:#1b2230;
+  --muted:rgba(27,34,48,.70);
+  --stroke:rgba(27,34,48,.14);
+  --shadow:0 14px 34px rgba(27,34,48,.12);
+  --shadow2:0 10px 24px rgba(27,34,48,.10);
 }
+
 
 /* Base */
 *{box-sizing:border-box}
@@ -58,7 +60,7 @@ button,input,select{font:inherit}
 h1,h2,h3,h4{font-weight:700}
 p,li,small,span,div{font-weight:300}
 
-::selection{background:rgba(139,92,246,.35)}
+::selection{background:rgba(167,139,250,.28)}
 /* Subtle grain overlay */
 body::before{
   content:"";
@@ -67,9 +69,9 @@ body::before{
   pointer-events:none;
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.18'/%3E%3C/svg%3E");
   mix-blend-mode:overlay;
-  opacity:.25;
+  opacity:.18;
 }
-body::after{content:""; position:fixed; inset:0; z-index:-3; pointer-events:none; background: radial-gradient(1200px 700px at 15% 20%, rgba(139,92,246,.18), transparent 60%), radial-gradient(900px 700px at 85% 10%, rgba(34,197,94,.14), transparent 55%), linear-gradient(180deg,var(--bg0),var(--bg1));}
+body::after{content:""; position:fixed; inset:0; z-index:-3; pointer-events:none; background: var(--bg0);}
 
 /* Animated blobs */
 .bg-blobs{display:none !important}
@@ -81,7 +83,7 @@ body::after{content:""; position:fixed; inset:0; z-index:-3; pointer-events:none
   filter: blur(30px);
   opacity:.28;
   transform:translate3d(0,0,0);
-  background: radial-gradient(circle at 30% 30%, rgba(139,92,246,.75), rgba(139,92,246,.05) 60%);
+  background: radial-gradient(circle at 30% 30%, rgba(167,139,250,.75), rgba(167,139,250,.05) 60%);
 }
 .blob.b2{
   width:min(52vmax,700px);
@@ -139,14 +141,14 @@ body::after{content:""; position:fixed; inset:0; z-index:-3; pointer-events:none
   color:var(--text);
 }
 .nav a.active{
-  border-color: rgba(139,92,246,.40);
-  background: linear-gradient(180deg, rgba(139,92,246,.18), rgba(255,255,255,.06));
+  border-color: rgba(167,139,250,.40);
+  background: linear-gradient(180deg, rgba(167,139,250,.18), rgba(255,255,255,.06));
   color:var(--text);
 }
 .nav .dot{
   width:10px; height:10px; border-radius:50%;
-  background: rgba(139,92,246,.7);
-  box-shadow:0 0 0 4px rgba(139,92,246,.18);
+  background: rgba(167,139,250,.7);
+  box-shadow:0 0 0 4px rgba(167,139,250,.18);
 }
 .sidebar .side-actions{
   margin-top:auto;
@@ -294,7 +296,7 @@ body::after{content:""; position:fixed; inset:0; z-index:-3; pointer-events:none
 .card.clickable:hover{
   transform: translateY(-3px);
   box-shadow: var(--shadow);
-  border-color: rgba(139,92,246,.35);
+  border-color: rgba(167,139,250,.35);
 }
 
 .actions{
@@ -314,11 +316,11 @@ body::after{content:""; position:fixed; inset:0; z-index:-3; pointer-events:none
 }
 
 .detailbtn.primary{
-  background: rgba(139,92,246,.12);
+  background: rgba(167,139,250,.12);
 }
 
 .detailbtn.primary:hover{
-  background: rgba(139,92,246,.18);
+  background: rgba(167,139,250,.18);
 }
 
 .chevbtn{
@@ -344,11 +346,11 @@ body::after{content:""; position:fixed; inset:0; z-index:-3; pointer-events:none
   transition: transform .18s var(--ease), background .25s var(--ease), border-color .25s var(--ease);
   display:inline-flex; align-items:center; justify-content:center; gap:10px;
 }
-.btn:hover{transform: translateY(-1px); background: var(--surface2); border-color: rgba(139,92,246,.35)}
+.btn:hover{transform: translateY(-1px); background: var(--surface2); border-color: rgba(167,139,250,.35)}
 .btn:active{transform: translateY(0px) scale(.98)}
 .btn.primary{
-  border-color: rgba(139,92,246,.45);
-  background: rgba(139,92,246,.14);
+  border-color: rgba(167,139,250,.45);
+  background: rgba(167,139,250,.14);
 }
 .btn.danger{
   border-color: rgba(251,113,133,.45);
@@ -370,7 +372,7 @@ body::after{content:""; position:fixed; inset:0; z-index:-3; pointer-events:none
   outline:none;
   transition: border-color .25s var(--ease), background .25s var(--ease);
 }
-.searchbar input:focus{border-color: rgba(139,92,246,.45); background: var(--surface2)}
+.searchbar input:focus{border-color: rgba(167,139,250,.45); background: var(--surface2)}
 .chips{
   display:flex; gap:8px; flex-wrap:wrap;
   padding:0 14px 14px;
@@ -585,7 +587,7 @@ body::after{content:""; position:fixed; inset:0; z-index:-3; pointer-events:none
   overflow: visible;
   transition: transform .25s var(--ease), background .25s var(--ease), border-color .25s var(--ease);
 }
-.hero-tile:hover{transform: translateY(-2px); background: rgba(255,255,255,.10); border-color: rgba(139,92,246,.35)}
+.hero-tile:hover{transform: translateY(-2px); background: rgba(255,255,255,.10); border-color: rgba(167,139,250,.35)}
 .hero-tile b{display:block; margin-bottom:6px}
 .hero-tile span{color:var(--muted); font-size:13px}
 

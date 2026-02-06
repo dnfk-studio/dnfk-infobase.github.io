@@ -1,1 +1,1 @@
-window.__DNFK_MAINTENANCE__ = flase;
+window.__DNFK_MAINTENANCE__ = false;;
