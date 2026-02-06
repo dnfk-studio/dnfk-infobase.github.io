@@ -103,6 +103,15 @@
           "uploadTime": "2026-01-25",
           "description": "2026/01/25 制第01版",
           "related": []
+        },{
+          "id": "PA-260205",
+          "version": "第03版",
+          "content": "校園偵探社遊戲製作特別專案 執行時程表",
+          "pdf": "PA-260205.pdf",
+          "uploader": "科技部資訊小組(T.I.T.)",
+          "uploadTime": "2026-02-06",
+          "description": "2026/02/06 制第03版",
+          "related": []
         }
       ]
     },{
@@ -131,6 +140,15 @@
           "uploader": "科技部資訊小組(T.I.T.)",
           "uploadTime": "2026-01-25",
           "description": "2026/01/25 制第01版",
+          "related": []
+        },{
+          "id": "PA-260204",
+          "version": "第03版",
+          "content": "校園偵探社遊戲製作特別專案 工作分配與執行順序表",
+          "pdf": "PA-260204.pdf",
+          "uploader": "科技部資訊小組(T.I.T.)",
+          "uploadTime": "2026-02-06",
+          "description": "2026/02/06 制第03版",
           "related": []
         }
       ]
