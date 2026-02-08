@@ -172,7 +172,7 @@ function buildDocCard(n){
   const vid = (v.id || v.versionId || n?.id || "");
   const href = makeDocUrl(vid);
   return `
-    <article class="result">
+    <article class="result clickable" data-open="${esc(vid)}">
       <div class="result-head">
         <div>
           <div class="meta-line">${meta}</div>
@@ -731,4 +731,19 @@ document.querySelectorAll('[data-collapse-target]').forEach(btn=>{
   });
 }
 
+
+
+function delegateDocOpen(){
+  // allow clicking the whole doc card to open details
+  document.addEventListener("click", (e)=>{
+    const a = e.target.closest("a");
+    if(a) return; // let links behave normally
+    const card = e.target.closest(".result.clickable[data-open]");
+    if(!card) return;
+    const id = card.getAttribute("data-open") || "";
+    if(!id) return;
+    location.href = makeDocUrl(id);
+  });
+}
+delegateDocOpen();
 
