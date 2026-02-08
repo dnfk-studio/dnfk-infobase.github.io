@@ -379,15 +379,67 @@
     </footer>
 
     <script>
-        function updateTime() {
-            const now = new Date();
-            const timeString = `${now.getFullYear()}/${String(now.getMonth() + 1).padStart(2, '0')}/${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
-            document.getElementById('live-clock').innerText = "SYSTEM_TIME: " + timeString;
+        // 初始化時差，預設為 0
+        let serverTimeOffset = 0;
+
+        /**
+         * 同步伺服器時間 (適用於 GitHub Pages)
+         * 原理：發送 HEAD 請求獲取 GitHub 伺服器的 Date 標頭 (GMT 時間)
+         * 計算出與本地時間的誤差，確保使用者修改本機時間不會影響顯示
+         */
+        function syncServerTime() {
+            // cache: 'no-store' 確保不讀取瀏覽器快取，拿到最新伺服器時間
+            fetch(window.location.href, { method: 'HEAD', cache: 'no-store' })
+                .then(response => {
+                    const serverDateStr = response.headers.get('Date');
+                    if (serverDateStr) {
+                        // GitHub 回傳的是 GMT 標準時間
+                        const serverTime = new Date(serverDateStr).getTime();
+                        const localTime = Date.now();
+                        // 計算時差：伺服器時間 - 本地時間
+                        serverTimeOffset = serverTime - localTime;
+                        
+                        updateTime(); // 同步完成後立即刷新顯示
+                    }
+                })
+                .catch(err => {
+                    console.warn("Time sync failed, using local time fallback:", err);
+                });
         }
 
-        setInterval(updateTime, 1000);
-        updateTime();
+        function updateTime() {
+            // 1. 取得經過校正的當前 UTC 時間 (本地時間 + 時差)
+            // 這樣即使本地時間被改，因為 offset 也會相對變動 (若在載入前改)，或校正回歸
+            let currentCorrectedTime = Date.now() + serverTimeOffset;
 
+            // 2. 強制轉換為 GMT+8 (台灣時間)
+            // 系統時間應該是固定的，不應隨使用者飛到不同國家而改變
+            // 台灣是 UTC+8，所以加 8小時 (8 * 60 * 60 * 1000 ms)
+            const timezoneOffsetMs = 8 * 60 * 60 * 1000; 
+            const taiwanDate = new Date(currentCorrectedTime + timezoneOffsetMs);
+
+            // 3. 格式化輸出 (注意：因為我們已經手動加了時區秒數，這裡要用 UTC 方法取值，否則會重複加時區)
+            const year = taiwanDate.getUTCFullYear();
+            const month = String(taiwanDate.getUTCMonth() + 1).padStart(2, '0');
+            const day = String(taiwanDate.getUTCDate()).padStart(2, '0');
+            const hour = String(taiwanDate.getUTCHours()).padStart(2, '0');
+            const min = String(taiwanDate.getUTCMinutes()).padStart(2, '0');
+            const sec = String(taiwanDate.getUTCSeconds()).padStart(2, '0');
+
+            const timeString = `${year}/${month}/${day} ${hour}:${min}:${sec}`;
+            document.getElementById('live-clock').innerText = "SYSTEM_TIME: " + timeString + " (GMT+8)";
+        }
+
+        // 頁面載入時同步一次
+        syncServerTime();
+
+        // 每秒更新顯示
+        setInterval(updateTime, 1000);
+        
+        // 每 5 分鐘重新校正一次，防止長時間運行誤差
+        setInterval(syncServerTime, 300000);
+
+        // --- 重新連線按鈕邏輯 ---
         function forceCheckStatus() {
             const btn = document.getElementById('force-reload-btn');
             const originalText = btn.innerHTML;
@@ -395,7 +447,11 @@
             btn.innerHTML = "[ SYNCING DATA... ]";
             btn.disabled = true;
 
+            // 這裡也順便重新同步一次時間
+            syncServerTime();
+
             const script = document.createElement('script');
+            // 添加隨機參數防止快取
             script.src = './config.js?v=' + Date.now();
 
             script.onload = function() {
