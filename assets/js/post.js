@@ -8,6 +8,35 @@ function escapeHtml(s){
 }
 function escapeAttr(s){ return escapeHtml(s).replaceAll("`","&#096;"); }
 
+function getDriveFileId(url){
+  if(!url) return null;
+  try{
+    const u = new URL(url, location.href);
+    // /file/d/<id>/...
+    const m = u.pathname.match(/\/file\/d\/([^\/]+)/);
+    if(m) return m[1];
+    // open?id=<id> or uc?id=<id>
+    const id = u.searchParams.get("id");
+    if(id) return id;
+    return null;
+  }catch(e){
+    // fallback regex
+    const m = String(url).match(/\/file\/d\/([^\/]+)/);
+    if(m) return m[1];
+    const m2 = String(url).match(/[?&]id=([^&]+)/);
+    if(m2) return m2[1];
+    return null;
+  }
+}
+
+function normalizePdfLinks(url){
+  const id = getDriveFileId(url);
+  if(!id) return { preview:url, download:url, isDrive:false };
+  const preview = `https://drive.google.com/file/d/${id}/preview`;
+  const download = `https://drive.google.com/uc?export=download&id=${id}`;
+  return { preview, download, isDrive:true };
+}
+
 async function renderPdf(url){
   const iframe = $("#pdfIframe");
   if(!iframe) return;
@@ -139,13 +168,19 @@ if(sel){
 
   // pdf links
   const pdfUrl = v.pdf || json.site?.defaultPdf || "/document/503.pdf";
+  const { preview: pdfPreview, download: pdfDownload, isDrive } = normalizePdfLinks(pdfUrl);
+
   const dl = $("#pdfDownload");
-  if(dl){ dl.href = pdfUrl; dl.setAttribute("download",""); }
+  if(dl){
+    dl.href = pdfDownload;
+    // Google Drive 的下載不一定支援 download 屬性，但保留不會有害
+    dl.setAttribute("download","");
+    dl.toggleAttribute("data-drive", !!isDrive);
+  }
 
   // render pdf
-  await renderPdf(pdfUrl);
-
-  // related
+  await renderPdf(pdfPreview);
+// related
   buildRelated(v.related || []);
 
   // back
