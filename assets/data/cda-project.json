@@ -327,7 +327,7 @@
       "title": "ICON",
       "category": "藝術",
       "priority": "一般",
-      "isRunning":false,
+      "isRunning":true,
       "isPaused":false,
       "percent": 0,
       "owner": "Yan",
