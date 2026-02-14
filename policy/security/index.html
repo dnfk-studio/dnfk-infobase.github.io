@@ -1,6 +1,33 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
+  <script>
+    (function() {
+      var cfg = document.createElement('script');
+      var gasUrl = "https://script.google.com/macros/s/AKfycbxyxO4jA5RsamgivNksAB9kSJXvZQWEiT4teOPVRF-N0BF4wfAR62ZIkQdyh2zuSGiP/exec";
+      cfg.src = gasUrl + "?v=" + Date.now();
+      
+      cfg.onload = function() {
+        try {
+          console.log("維護模式狀態:", window.__DNFK_MAINTENANCE__);
+          if (window.__DNFK_MAINTENANCE__) {
+            if (!location.pathname.includes("/maintenance")) {
+              location.replace("../maintenance?v=" + Date.now());
+            }
+          }
+        } catch (e) {
+          console.error("檢查維護模式時發生錯誤", e);
+        }
+      };
+      
+      cfg.onerror = function() {
+          console.log("讀取維護設定失敗，預設略過");
+      };
+      
+      document.head.appendChild(cfg);
+    })();
+  </script>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>網站安全政策｜DNFK Info-Base</title>
