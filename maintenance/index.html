@@ -1,32 +1,64 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-  <script>
-    (function() {
-      var cfg = document.createElement('script');
-      var gasUrl = "https://script.google.com/macros/s/AKfycbxyxO4jA5RsamgivNksAB9kSJXvZQWEiT4teOPVRF-N0BF4wfAR62ZIkQdyh2zuSGiP/exec";
-      cfg.src = gasUrl + "?v=" + Date.now();
-      
-      cfg.onload = function() {
-        try {
-          console.log("維護模式狀態:", window.__DNFK_MAINTENANCE__);
-          if (!window.__DNFK_MAINTENANCE__) {
-            if (location.pathname.includes("/maintenance")) {
-              location.replace("/?cache_bust=" + Date.now());
+    <script>
+        /**
+         * Self-invoking function to initialize maintenance configuration.
+         * Fetches remote settings from Google Apps Script (GAS) to determine if maintenance is active.
+         */
+        (function() {
+            var cfg = document.createElement('script');
+            var gasUrl = "https://script.google.com/macros/s/AKfycbxyxO4jA5RsamgivNksAB9kSJXvZQWEiT4teOPVRF-N0BF4wfAR62ZIkQdyh2zuSGiP/exec";
+            cfg.src = gasUrl + "?v=" + Date.now();
+            
+            cfg.onload = function() {
+                try {
+                    // Redirect to home if maintenance mode is explicitly disabled in the config
+                    if (typeof window.__DNFK_MAINTENANCE__ !== 'undefined' && !window.__DNFK_MAINTENANCE__) {
+                        location.replace("/?cache_bust=" + Date.now());
+                        return;
+                    }
+                    // Update UI with fetched configuration data
+                    if (window.__DNFK_CONFIG__) {
+                        updateUI(window.__DNFK_CONFIG__);
+                    }
+                } catch (e) {
+                    console.error("[DNFK] Error parsing maintenance config:", e);
+                }
+            };
+            
+            cfg.onerror = function() {
+                console.warn("[DNFK] Failed to load remote config. UI will remain in default state.");
+            };
+            
+            document.head.appendChild(cfg);
+        })();
+
+        /**
+         * Updates the UI elements with dynamic data from the GAS server.
+         * @param {Object} data - Configuration object containing version, time, and purpose.
+         */
+        function updateUI(data) {
+            const elVersion = document.getElementById('display-version');
+            const elTime = document.getElementById('display-time');
+            const elPurpose = document.getElementById('display-purpose');
+
+            // Format: v versionCode-versionHipe (v versionDate)
+            if (elVersion && data.versionCode) {
+                elVersion.innerText = "v " + data.versionCode + "-" + (data.versionHipe || "") + " (v " + (data.versionDate || "") + ")";
             }
-          }
-        } catch (e) {
-          console.error("檢查維護模式時發生錯誤", e);
+
+            // Format: StartTime - EndTime (GMT+8)
+            if (elTime && data.timeStart && data.timeEnd) {
+                elTime.innerText = data.timeStart + " - " + data.timeEnd + " (GMT+8)";
+            }
+
+            // Format: Chinese Description <br> (English Description)
+            if (elPurpose) {
+                elPurpose.innerHTML = (data.purposeCH || "維護中") + "<br>(" + (data.purposeEG || "Under Maintenance") + ")";
+            }
         }
-      };
-      
-      cfg.onerror = function() {
-          console.log("讀取維護設定失敗，預設略過");
-      };
-      
-      document.head.appendChild(cfg);
-    })();
-  </script>
+    </script>
 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
@@ -41,24 +73,19 @@
         }
 
         body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
             overflow: hidden;
             background-color: var(--bg-color);
             color: var(--text-color);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            flex-direction: column;
+            display: flex; flex-direction: column;
             position: fixed;
         }
 
         .background-lines {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
-            z-index: 0;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0;
             background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
                               linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
             background-size: 40px 40px;
@@ -67,23 +94,16 @@
         }
 
         .diagonal-overlay {
-            position: fixed;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
+            position: fixed; width: 100%; height: 100%;
+            pointer-events: none; z-index: 1;
             background-image: repeating-linear-gradient(45deg, transparent, transparent 4px, var(--line-strong) 4px, var(--line-strong) 5px);
             opacity: 0.08;
         }
 
         .particle {
-            position: absolute;
-            width: 3px;
-            height: 3px;
-            background: var(--text-color);
-            opacity: 0;
-            border-radius: 50%;
-            animation: floatParticle linear infinite;
+            position: absolute; width: 3px; height: 3px;
+            background: var(--text-color); opacity: 0;
+            border-radius: 50%; animation: floatParticle linear infinite;
             z-index: 5;
         }
 
@@ -94,33 +114,20 @@
             100% { transform: translate(var(--x-end), var(--y-end)) scale(1); opacity: 0; }
         }
 
-        @keyframes breatheBg {
-            0% { opacity: 0.8; }
-            100% { opacity: 1; }
-        }
+        @keyframes breatheBg { 0% { opacity: 0.8; } 100% { opacity: 1; } }
 
         main {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            z-index: 20;
-            opacity: 0;
-            animation: fadeIn 1.5s ease-out forwards;
-            animation-delay: 0.5s;
-            position: relative; 
-            padding: 20px;
-            width: 100%;
-            box-sizing: border-box;
+            flex: 1; display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            text-align: center; z-index: 20;
+            opacity: 0; animation: fadeIn 1.5s ease-out forwards;
+            animation-delay: 0.5s; position: relative; 
+            padding: 20px; width: 100%; box-sizing: border-box;
         }
         
         main::before, main::after, .status-text::before, .status-text::after {
-            content: '';
-            position: absolute;
-            width: 15px;
-            height: 15px;
+            content: ''; position: absolute;
+            width: 15px; height: 15px;
             border: 1px solid transparent;
             transition: all 0.3s ease;
         }
@@ -128,203 +135,69 @@
         main::after { top: 0; right: 0; border-top-color: var(--line-strong); border-right-color: var(--line-strong); }
         
         main > div.status-container {
-            position: relative;
-            display: inline-block;
-            max-width: 600px;
-            width: 100%;
+            position: relative; display: inline-block;
+            max-width: 600px; width: 100%;
         }
         
         main .status-text::before { bottom: 0; left: 0; border-bottom-color: var(--line-strong); border-left-color: var(--line-strong); top: auto; width: 10px; height: 10px;}
         main .status-text::after { bottom: 0; right: 0; border-bottom-color: var(--line-strong); border-right-color: var(--line-strong); top: auto; width: 10px; height: 10px;}
 
-        h1 {
-            font-size: clamp(1.8rem, 5vw, 3rem);
-            margin: 0;
-            letter-spacing: clamp(2px, 1vw, 8px);
-            line-height: 1.2;
-            margin-bottom: 10px;
-        }
+        h1 { font-size: clamp(1.8rem, 5vw, 3rem); margin: 0; letter-spacing: clamp(2px, 1vw, 8px); line-height: 1.2; margin-bottom: 10px; }
 
         .status-text {
-            font-size: clamp(1rem, 3vw, 1.5rem);
-            margin-top: 10px;
-            opacity: 0.7;
-            border-top: 1px solid var(--line-color);
-            border-bottom: 1px solid var(--line-color);
-            padding: 15px 0;
-            width: 100%; 
-            position: relative; 
-            box-sizing: border-box;
+            font-size: clamp(1rem, 3vw, 1.5rem); margin-top: 10px; opacity: 0.7;
+            border-top: 1px solid var(--line-color); border-bottom: 1px solid var(--line-color);
+            padding: 15px 0; width: 100%; position: relative; box-sizing: border-box;
         }
 
         .maintenance-details {
-            margin-top: 25px;
-            border: 1px dashed var(--line-color);
-            background: rgba(255, 255, 255, 0.05);
-            padding: 15px;
-            text-align: left;
-            font-size: 0.9rem;
-            line-height: 1.6;
+            margin-top: 25px; border: 1px dashed var(--line-color);
+            background: rgba(255, 255, 255, 0.05); padding: 15px;
+            text-align: left; font-size: 0.9rem; line-height: 1.6;
             backdrop-filter: blur(2px);
         }
 
-        .detail-row {
-            display: flex;
-            margin-bottom: 8px;
-            align-items: baseline;
-        }
-
-        .detail-row:last-child {
-            margin-bottom: 0;
-        }
-
-        .detail-label {
-            color: var(--line-strong);
-            font-weight: bold;
-            flex-shrink: 0;
-            width: 80px;
-            text-transform: uppercase;
-            font-size: 0.8em;
-            letter-spacing: 1px;
-        }
-
-        .detail-value {
-            color: var(--text-color);
-            margin-left: 10px;
-            font-family: monospace;
-        }
-        
-        .highlight-text {
-            color: var(--accent-color);
-        }
+        .detail-row { display: flex; margin-bottom: 8px; align-items: baseline; }
+        .detail-row:last-child { margin-bottom: 0; }
+        .detail-label { color: var(--line-strong); font-weight: bold; flex-shrink: 0; width: 80px; text-transform: uppercase; font-size: 0.8em; letter-spacing: 1px; }
+        .detail-value { color: var(--text-color); margin-left: 10px; font-family: monospace; }
+        .highlight-text { color: var(--accent-color); }
 
         .system-btn {
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--line-color);
-            color: var(--text-color);
-            padding: 12px 25px;
-            margin-top: 25px;
-            font-family: inherit;
-            font-size: 12px;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            text-transform: uppercase;
-            outline: none;
-            backdrop-filter: blur(2px);
-            z-index: 30;
-            width: 100%;
-            max-width: 300px;
+            background: rgba(0, 0, 0, 0.3); border: 1px solid var(--line-color);
+            color: var(--text-color); padding: 12px 25px; margin-top: 25px;
+            font-family: inherit; font-size: 12px; letter-spacing: 2px;
+            cursor: pointer; transition: all 0.3s ease; position: relative;
+            overflow: hidden; text-transform: uppercase; outline: none;
+            backdrop-filter: blur(2px); z-index: 30; width: 100%; max-width: 300px;
         }
 
-        .system-btn::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transition: 0.5s;
-        }
+        .system-btn:hover { border-color: var(--line-strong); box-shadow: 0 0 15px rgba(255, 255, 255, 0.1); }
+        .system-btn:disabled { opacity: 0.5; cursor: wait; }
 
-        .system-btn:hover {
-            border-color: var(--line-strong);
-            box-shadow: 0 0 15px rgba(255, 255, 255, 0.1);
-            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-        }
-
-        .system-btn:hover::before {
-            left: 100%;
-        }
-
-        .system-btn:active {
-            transform: scale(0.98);
-        }
-
-        .system-btn:disabled {
-            opacity: 0.5;
-            cursor: wait;
-            border-color: var(--line-color);
-        }
-
-        .orbit {
-            position: absolute;
-            border-radius: 50%;
-            z-index: 10;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%) rotate(0deg);
-            box-sizing: border-box;
-            pointer-events: none;
-        }
-
+        .orbit { position: absolute; border-radius: 50%; z-index: 10; top: 50%; left: 50%; transform: translate(-50%, -50%) rotate(0deg); pointer-events: none; }
         .full-circle { border: 1px dashed var(--line-strong); animation: rotateCW linear infinite; }
         .partial-arc { border-width: 1px; border-style: dashed; border-color: transparent; animation: rotateCCW linear infinite; }
         .arc-top-left { border-top-color: var(--line-color); border-left-color: var(--line-color); animation-duration: 35s;}
-        .arc-bottom-right { border-bottom-color: var(--line-strong); border-right-color: var(--line-strong); animation-duration: 55s;}
-        .arc-left-only { border-left-color: var(--line-strong); animation-duration: 25s;}
 
         header, footer {
-            z-index: 20;
-            padding: 15px 20px;
-            font-size: 12px;
-            opacity: 0.8;
-            border-top: 1px solid var(--line-color);
-            width: 100%;
-            box-sizing: border-box;
-            animation: fadeIn 1s ease-out forwards;
-            background: rgba(0,0,0,0.3);
-            backdrop-filter: blur(2px);
+            z-index: 20; padding: 15px 20px; font-size: 12px; opacity: 0.8;
+            border-top: 1px solid var(--line-color); width: 100%; box-sizing: border-box;
+            background: rgba(0,0,0,0.3); backdrop-filter: blur(2px);
         }
 
-        header { border-bottom: 1px solid var(--line-color); text-align: center; line-height: 1.6; }
-        
-        footer { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            border-top: none; 
-            border-bottom: 1px solid var(--line-color); 
-        }
-
-        .contact-info { text-align: right; }
-        .contact-link { color: var(--text-color); text-decoration: none; border-bottom: 1px solid var(--text-color); padding-bottom: 2px; display: inline-block;}
-        .tit-info { font-size: 10px; margin-top: 5px; opacity: 0.5; }
-        #live-clock { font-size: 13px; opacity: 0.9; font-family: monospace; }
+        header { border-bottom: 1px solid var(--line-color); text-align: center; }
+        footer { display: flex; justify-content: space-between; align-items: center; border-top: none; border-bottom: 1px solid var(--line-color); }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes rotateCW { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
         @keyframes rotateCCW { from { transform: translate(-50%, -50%) rotate(360deg); } to { transform: translate(-50%, -50%) rotate(0deg); } }
 
         @media screen and (max-width: 768px) {
-            footer {
-                flex-direction: column;
-                gap: 15px;
-                text-align: center;
-                padding-bottom: 30px;
-            }
-            .contact-info { text-align: center; }
-            
-            .orbit { border-width: 1px; opacity: 0.6; }
-            
-            h1 { margin-bottom: 15px; }
-
-            .detail-row {
-                flex-direction: column;
-                margin-bottom: 15px;
-            }
-            .detail-label {
-                margin-bottom: 5px;
-                width: auto;
-                opacity: 0.6;
-            }
-            .detail-value {
-                margin-left: 0;
-            }
-            main > div.status-container {
-                max-width: 100%;
-            }
+            footer { flex-direction: column; gap: 15px; text-align: center; }
+            .detail-row { flex-direction: column; margin-bottom: 15px; }
+            .detail-label { width: auto; opacity: 0.6; }
+            .detail-value { margin-left: 0; }
         }
     </style>
 </head>
@@ -335,21 +208,9 @@
 
     <div class="orbit full-circle" style="width: 45vmin; height: 45vmin; animation-duration: 40s;"></div>
     <div class="orbit full-circle" style="width: 80vmin; height: 80vmin; animation-duration: 60s; opacity: 0.3;"></div>
-    <div class="orbit partial-arc arc-top-left" style="width: 60vmin; height: 60vmin;"></div>
-    <div class="orbit partial-arc arc-bottom-right" style="width: 95vmin; height: 95vmin;"></div>
-    <div class="orbit partial-arc arc-left-only" style="width: 30vmin; height: 30vmin;"></div>
     
-    <div class="particle" style="--x-start: 10vw; --y-start: 20vh; --x-end: 90vw; --y-end: 80vh; animation-duration: 25s; animation-delay: 0s;"></div>
-    <div class="particle" style="--x-start: 80vw; --y-start: 10vh; --x-end: 10vw; --y-end: 90vh; animation-duration: 30s; animation-delay: 2s;"></div>
-    <div class="particle" style="--x-start: 30vw; --y-start: 90vh; --x-end: 70vw; --y-end: 10vh; animation-duration: 20s; animation-delay: 5s;"></div>
-    <div class="particle" style="--x-start: 50vw; --y-start: 0vh; --x-end: 50vw; --y-end: 100vh; animation-duration: 15s; animation-delay: 8s;"></div>
-    <div class="particle" style="--x-start: 0vw; --y-start: 50vh; --x-end: 100vw; --y-end: 50vh; animation-duration: 18s; animation-delay: 10s;"></div>
-    <div class="particle" style="--x-start: 10vw; --y-start: 80vh; --x-end: 90vw; --y-end: 20vh; animation-duration: 22s; animation-delay: 12s;"></div>
-    <div class="particle" style="--x-start: 90vw; --y-start: 90vh; --x-end: 10vw; --y-end: 10vh; animation-duration: 28s; animation-delay: 15s;"></div>
-    <div class="particle" style="--x-start: 20vw; --y-start: 30vh; --x-end: 80vw; --y-end: 70vh; animation-duration: 32s; animation-delay: 18s;"></div>
-    <div class="particle" style="--x-start: 80vw; --y-start: 70vh; --x-end: 20vw; --y-end: 30vh; animation-duration: 26s; animation-delay: 20s;"></div>
-    <div class="particle" style="--x-start: 40vw; --y-start: 10vh; --x-end: 60vw; --y-end: 90vh; animation-duration: 24s; animation-delay: 22s;"></div>
-
+    <div class="particle" style="--x-start: 10vw; --y-start: 20vh; --x-end: 90vw; --y-end: 80vh; animation-duration: 25s;"></div>
+    <div class="particle" style="--x-start: 80vw; --y-start: 10vh; --x-end: 10vw; --y-end: 90vh; animation-duration: 30s;"></div>
 
     <header>
         [ STATUS: OFFLINE ] <br> 暗夜飛鳶工作室 線上資訊庫 DNFK Studio Online Info Base
@@ -363,19 +224,19 @@
             <div class="maintenance-details">
                 <div class="detail-row">
                     <span class="detail-label">VERSION</span>
-                    <span class="detail-value highlight-text">
+                    <span id="display-version" class="detail-value highlight-text">
                         v 1.0.4.01095t-rc83d (v 260213173)
                     </span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">TIME</span>
-                    <span class="detail-value highlight-text">
+                    <span id="display-time" class="detail-value highlight-text">
                         0000/00/00 00:00 - 0000/00/00 00:00 (GMT+8)
                     </span>
                 </div>
                 <div class="detail-row">
                     <span class="detail-label">PURPOSE</span>
-                    <span class="detail-value">
+                    <span id="display-purpose" class="detail-value">
                         維護完成，請重新連線。<br>(Maintenance Complete. Please Reconnect.)
                     </span>
                 </div>
@@ -387,128 +248,77 @@
     </main>
 
     <footer>
-        <div id="live-clock">SYSTEM INITIALIZING...</div>
+        <div id="live-clock">SYSTEM_TIME: LOADING...</div>
         <div class="contact-info">
-            如有疑慮，請 <a href="mailto:tit.contect@dnfk.qzz.io" class="contact-link">按此聯繫</a>
-            <div class="tit-info">暗夜飛鳶工作室 科技部資訊小組 DNFK T.I.T.</div>
+            如有疑慮，請 <a href="mailto:tit.contect@dnfk.qzz.io" class="contact-link" style="color:white; text-decoration: underline;">按此聯繫</a>
+            <div style="font-size: 10px; margin-top: 5px; opacity: 0.5;">暗夜飛鳶工作室 科技部資訊小組 DNFK T.I.T.</div>
         </div>
     </footer>
 
     <script>
-        // 初始化時差，預設為 0
         let serverTimeOffset = 0;
 
         /**
-         * 同步伺服器時間 (適用於 GitHub Pages)
-         * 原理：發送 HEAD 請求獲取 GitHub 伺服器的 Date 標頭 (GMT 時間)
-         * 計算出與本地時間的誤差，確保使用者修改本機時間不會影響顯示
+         * Syncs system time with server to prevent client-side clock tampering.
          */
         function syncServerTime() {
-            // cache: 'no-store' 確保不讀取瀏覽器快取，拿到最新伺服器時間
             fetch(window.location.href, { method: 'HEAD', cache: 'no-store' })
                 .then(response => {
                     const serverDateStr = response.headers.get('Date');
                     if (serverDateStr) {
-                        // GitHub 回傳的是 GMT 標準時間
-                        const serverTime = new Date(serverDateStr).getTime();
-                        const localTime = Date.now();
-                        // 計算時差：伺服器時間 - 本地時間
-                        serverTimeOffset = serverTime - localTime;
-                        
-                        updateTime(); // 同步完成後立即刷新顯示
+                        serverTimeOffset = new Date(serverDateStr).getTime() - Date.now();
+                        updateTime();
                     }
-                })
-                .catch(err => {
-                    console.warn("Time sync failed, using local time fallback:", err);
-                });
+                }).catch(err => console.warn("[DNFK] Time sync failed."));
         }
 
+        /**
+         * Formats and displays corrected Taiwan time (GMT+8).
+         */
         function updateTime() {
-            // 1. 取得經過校正的當前 UTC 時間 (本地時間 + 時差)
-            // 這樣即使本地時間被改，因為 offset 也會相對變動 (若在載入前改)，或校正回歸
-            let currentCorrectedTime = Date.now() + serverTimeOffset;
-
-            // 2. 強制轉換為 GMT+8 (台灣時間)
-            // 系統時間應該是固定的，不應隨使用者飛到不同國家而改變
-            // 台灣是 UTC+8，所以加 8小時 (8 * 60 * 60 * 1000 ms)
-            const timezoneOffsetMs = 8 * 60 * 60 * 1000; 
-            const taiwanDate = new Date(currentCorrectedTime + timezoneOffsetMs);
-
-            // 3. 格式化輸出 (注意：因為我們已經手動加了時區秒數，這裡要用 UTC 方法取值，否則會重複加時區)
-            const year = taiwanDate.getUTCFullYear();
-            const month = String(taiwanDate.getUTCMonth() + 1).padStart(2, '0');
-            const day = String(taiwanDate.getUTCDate()).padStart(2, '0');
-            const hour = String(taiwanDate.getUTCHours()).padStart(2, '0');
-            const min = String(taiwanDate.getUTCMinutes()).padStart(2, '0');
-            const sec = String(taiwanDate.getUTCSeconds()).padStart(2, '0');
-
-            const timeString = `${year}/${month}/${day} ${hour}:${min}:${sec}`;
+            let correctedNow = Date.now() + serverTimeOffset;
+            const taiwanDate = new Date(correctedNow + (8 * 60 * 60 * 1000));
+            const f = (n) => String(n).padStart(2, '0');
+            const timeString = `${taiwanDate.getUTCFullYear()}/${f(taiwanDate.getUTCMonth()+1)}/${f(taiwanDate.getUTCDate())} ${f(taiwanDate.getUTCHours())}:${f(taiwanDate.getUTCMinutes())}:${f(taiwanDate.getUTCSeconds())}`;
             document.getElementById('live-clock').innerText = "SYSTEM_TIME: " + timeString + " (GMT+8)";
         }
 
-        // 頁面載入時同步一次
+        setInterval(updateTime, 1000);
         syncServerTime();
 
-        // 每秒更新顯示
-        setInterval(updateTime, 1000);
-        
-        // 每 5 分鐘重新校正一次，防止長時間運行誤差
-        setInterval(syncServerTime, 300000);
-
-        // --- 重新連線按鈕邏輯 ---
+        /**
+         * Triggers manual status re-check by reloading the GAS script.
+         */
         function forceCheckStatus() {
             const btn = document.getElementById('force-reload-btn');
             const originalText = btn.innerHTML;
-            
             btn.innerHTML = "[ SYNCING DATA... ]";
             btn.disabled = true;
 
-            // 這裡也順便重新同步一次時間
-            syncServerTime();
-
             const script = document.createElement('script');
-            // 添加隨機參數防止快取
-            script.src = './config.js?v=' + Date.now();
+            const gasUrl = "https://script.google.com/macros/s/AKfycbxyxO4jA5RsamgivNksAB9kSJXvZQWEiT4teOPVRF-N0BF4wfAR62ZIkQdyh2zuSGiP/exec";
+            script.src = gasUrl + "?v=" + Date.now();
 
             script.onload = function() {
                 if (typeof window.__DNFK_MAINTENANCE__ !== 'undefined') {
                     if (!window.__DNFK_MAINTENANCE__) {
-                        btn.innerHTML = "[ SYSTEM ONLINE. REDIRECTING... ]";
-                        btn.style.borderColor = "#4fffa8";
+                        btn.innerHTML = "[ ONLINE. REDIRECTING... ]";
                         btn.style.color = "#4fffa8";
-                        setTimeout(() => {
-                            location.replace('/?cache_bust=' + Date.now());
-                        }, 800);
+                        setTimeout(() => location.replace('/?cache_bust=' + Date.now()), 800);
                     } else {
+                        if (window.__DNFK_CONFIG__) updateUI(window.__DNFK_CONFIG__);
                         setTimeout(() => {
-                            btn.innerHTML = "[ SYSTEM STILL OFFLINE ]";
-                            setTimeout(() => {
-                                btn.innerHTML = originalText;
-                                btn.disabled = false;
-                            }, 2000);
+                            btn.innerHTML = "[ STILL OFFLINE ]";
+                            setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 2000);
                         }, 500);
                     }
-                } else {
-                    handleError(btn, originalText);
                 }
             };
-
-            script.onerror = function() {
-                handleError(btn, originalText);
+            script.onerror = () => {
+                btn.innerHTML = "[ ERROR ]";
+                setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 2000);
             };
-
             document.head.appendChild(script);
-        }
-
-        function handleError(btn, originalText) {
-            btn.innerHTML = "[ CONNECTION ERROR ]";
-            btn.style.borderColor = "#ff4f4f";
-            setTimeout(() => {
-                btn.innerHTML = originalText;
-                btn.disabled = false;
-                btn.style.borderColor = ""; 
-                btn.style.color = "";
-            }, 2000);
         }
     </script>
 </body>
