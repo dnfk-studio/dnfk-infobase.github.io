@@ -1,4 +1,6 @@
-import { applyTheme, bootCommon } from "./app.js?v=20260215b";
+import * as App from "./app.js?v=20260215c";
+const applyTheme = App.applyTheme || (()=>{});
+const bootCommon = App.bootCommon || (async ()=>{});
 
 function safeTween(fn){
   try{ fn(); }catch(e){ /* ignore animation errors */ }

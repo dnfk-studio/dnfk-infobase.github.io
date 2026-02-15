@@ -1,4 +1,10 @@
-import { bootCommon, showLoading, hideLoading, setUiLocked, toast, showAuthGate } from "./app.js?v=20260215b";
+import * as App from "./app.js?v=20260215c";
+const bootCommon   = App.bootCommon   || (async ()=>{});
+const showLoading  = App.showLoading  || (()=>{});
+const hideLoading  = App.hideLoading  || (()=>{});
+const setUiLocked  = App.setUiLocked  || (()=>{});
+const toast        = App.toast        || ((msg)=> console.log(msg));
+const showAuthGate = App.showAuthGate || (()=>{});
 import { loadPages } from "./data.js";
 
 bootCommon();

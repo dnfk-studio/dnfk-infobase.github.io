@@ -1,4 +1,8 @@
-import { bootCommon, $, $$, showAuthGate } from "./app.js?v=20260215b";
+import * as App from "./app.js?v=20260215c";
+const $  = App.$  || ((sel, root=document)=> root.querySelector(sel));
+const $$ = App.$$ || ((sel, root=document)=> Array.from(root.querySelectorAll(sel)));
+const bootCommon   = App.bootCommon   || (async ()=>{});
+const showAuthGate = App.showAuthGate || (()=>{});
 import { loadNotices, latestVersionIndex, lastUpdated, formatDate } from "./data.js";
 
 function escapeHtml(s){

@@ -1,4 +1,12 @@
-import { bootCommon, $, $$, toast, showLoading, hideLoading, setUiLocked, showAuthGate } from "./app.js?v=20260215b";
+import * as App from "./app.js?v=20260215c";
+const $  = App.$  || ((sel, root=document)=> root.querySelector(sel));
+const $$ = App.$$ || ((sel, root=document)=> Array.from(root.querySelectorAll(sel)));
+const bootCommon    = App.bootCommon    || (async ()=>{});
+const toast         = App.toast         || ((msg)=> console.log(msg));
+const showLoading   = App.showLoading   || (()=>{});
+const hideLoading   = App.hideLoading   || (()=>{});
+const setUiLocked   = App.setUiLocked   || (()=>{});
+const showAuthGate  = App.showAuthGate  || (()=>{});
 import { loadNotices, latestVersionIndex, lastUpdated, formatDate, parseDate } from "./data.js";
 
 function escapeHtml(s){
