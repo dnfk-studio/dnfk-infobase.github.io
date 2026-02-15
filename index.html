@@ -2,69 +2,127 @@
 <html lang="zh-Hant">
 
 <head>
-  <script>
-    (function() {
-      var cfg = document.createElement('script');
-      var gasUrl = "https://script.google.com/macros/s/AKfycbxyxO4jA5RsamgivNksAB9kSJXvZQWEiT4teOPVRF-N0BF4wfAR62ZIkQdyh2zuSGiP/exec";
-      cfg.src = gasUrl + "?v=" + Date.now();
-      
-      cfg.onload = function() {
-        try {
-          console.log("維護模式狀態:", window.__DNFK_MAINTENANCE__);
-          if (window.__DNFK_MAINTENANCE__) {
-            if (!location.pathname.includes("/maintenance")) {
-              location.replace("../maintenance?v=" + Date.now());
-            }
-          }
-        } catch (e) {
-          console.error("檢查維護模式時發生錯誤", e);
-        }
-      };
-      
-      cfg.onerror = function() {
-          console.log("讀取維護設定失敗，預設略過");
-      };
-      
-      document.head.appendChild(cfg);
-    })();
-  </script>
-
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="dark light"/>
-  <link rel="icon" href="assets/img/logo-dark.png"/>
-  <link rel="stylesheet" href="assets/css/style.css?v=0382456498756"/>
-  <title>首頁｜DNFK Info-Base</title>
+  <title>系統維護中｜DNFK Info-Base</title>
+  
+  <link rel="icon" href="../assets/img/logo-dark.png"/>
+  <link rel="stylesheet" href="../assets/css/style.css?v=0382456498756"/>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+
+  <style>
+    /* 針對維修頁面的微調樣式 */
+    .maintenance-info { margin: 20px 0; color: #aaa; font-size: 0.9em; }
+    .status-box { background: rgba(255, 50, 50, 0.1); border: 1px solid rgba(255, 50, 50, 0.3); padding: 15px; border-radius: 8px; margin-bottom: 20px; }
+    .time-display { font-family: monospace; color: #ff6b6b; display: block; margin-top: 5px; }
+    #retry-btn { cursor: pointer; }
+  </style>
+
+  <script>
+    // 定義檢查狀態的函式 (供按鈕和自動執行使用)
+    function checkSystemStatus() {
+        var btn = document.getElementById('retry-btn');
+        var statusText = document.getElementById('status-text');
+        var timeDisplay = document.getElementById('maintenance-time');
+        
+        if(btn) {
+            btn.innerHTML = "正在連線伺服器...";
+            btn.style.opacity = "0.7";
+            btn.style.pointerEvents = "none"; // 防止連點
+        }
+
+        var script = document.createElement('script');
+        var gasUrl = "https://script.google.com/macros/s/AKfycbxyxO4jA5RsamgivNksAB9kSJXvZQWEiT4teOPVRF-N0BF4wfAR62ZIkQdyh2zuSGiP/exec";
+        // 加上隨機數防止快取
+        script.src = gasUrl + "?v=" + Date.now();
+        
+        script.onload = function() {
+            try {
+                // 1. 如果維護已結束 (false)，跳轉回首頁
+                if (window.__DNFK_MAINTENANCE__ === false) {
+                    if(btn) btn.innerHTML = "系統已恢復！正在返回...";
+                    setTimeout(function(){
+                        location.replace("../?v=" + Date.now()); // 回到上一層 (首頁)
+                    }, 1000);
+                    return;
+                }
+
+                // 2. 如果還在維護中 (true)
+                if(btn) {
+                    btn.innerHTML = "系統維護中 (點擊再次檢查)";
+                    btn.style.opacity = "1";
+                    btn.style.pointerEvents = "auto";
+                }
+
+                // 更新畫面上的時間資訊
+                if (window.__DNFK_CONFIG__ && timeDisplay) {
+                    timeDisplay.innerHTML = window.__DNFK_CONFIG__.timeStart + " ~ " + window.__DNFK_CONFIG__.timeEnd;
+                }
+
+            } catch (e) {
+                console.error("解析失敗", e);
+                handleError(btn);
+            }
+        };
+        
+        script.onerror = function() {
+            console.error("連線失敗");
+            handleError(btn);
+        };
+        
+        document.head.appendChild(script);
+    }
+
+    function handleError(btn) {
+        if(btn) {
+            btn.innerHTML = "連線失敗，請稍後再試";
+            btn.style.opacity = "1";
+            btn.style.pointerEvents = "auto";
+        }
+    }
+
+    // 頁面載入時自動檢查一次
+    window.onload = function() {
+        checkSystemStatus();
+    };
+  </script>
 </head>
 
 <body>
   <canvas id="starfield" aria-hidden="true"></canvas>
-  <section class="home" aria-label="首頁">
-    <div class="home-inner" id="homeIntro">
+  
+  <section class="home" aria-label="維護頁面">
+    <div class="home-inner">
       <div class="home-mark">
-        <img data-role="logo" class="home-logo" src="assets/img/logo-dark.png" alt="暗夜飛鳶工作室 DNFK Studio"/>
+        <img data-role="logo" class="home-logo" src="../assets/img/logo-dark.png" alt="暗夜飛鳶工作室 DNFK Studio"/>
         <div class="home-rule" aria-hidden="true"></div>
 
         <div>
-          <h1 class="home-title">線上資訊庫</h1>
-          <p class="home-sub">暗夜飛鳶工作室 DNFK Studios</p>
+          <h1 class="home-title" style="color: #ff6b6b;">系統維護中</h1>
+          <p class="home-sub">System Under Maintenance</p>
         </div>
 
         <div class="home-rule" aria-hidden="true"></div>
 
-        <nav class="home-actions" aria-label="快速連結">
-          <a class="btn" href="/search">文書查詢</a>
-          <a class="btn" href="/about-site">關於本網站</a>
-          <a class="btn" href="/about-studio">關於本工作室</a>
-          <a class="btn" href="/cda-project">校園偵探社特別專案</a>
+        <div class="maintenance-info">
+            <p>我們正在進行必要的系統升級與維護工作。<br>造成不便，敬請見諒。</p>
+            
+            <div class="status-box">
+                <span id="status-text">預計維護時間：</span>
+                <span id="maintenance-time" class="time-display">讀取中...</span>
+            </div>
+        </div>
+
+        <nav class="home-actions">
+          <a class="btn" id="retry-btn" onclick="checkSystemStatus()">重新整理狀態</a>
+          <a class="btn" href="mailto:contact@dnfk.studio">聯絡管理員</a>
         </nav>
 
-        
       </div>
     </div>
   </section>
 
-  <script type="module" src="assets/js/index.js"></script>
+  <script type="module" src="../assets/js/index.js"></script>
 </body>
 </html>

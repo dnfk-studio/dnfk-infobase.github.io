@@ -4,6 +4,13 @@
 <head>
   <script>
     (function() {
+      function forceMaintenanceRedirect() {
+        console.warn("系統偵測到異常，強制進入維護模式");
+        if (!location.pathname.includes("/maintenance")) {
+          location.replace("../maintenance?v=" + Date.now());
+        }
+      }
+
       var cfg = document.createElement('script');
       var gasUrl = "https://script.google.com/macros/s/AKfycbxyxO4jA5RsamgivNksAB9kSJXvZQWEiT4teOPVRF-N0BF4wfAR62ZIkQdyh2zuSGiP/exec";
       cfg.src = gasUrl + "?v=" + Date.now();
@@ -11,6 +18,10 @@
       cfg.onload = function() {
         try {
           console.log("維護模式狀態:", window.__DNFK_MAINTENANCE__);
+          if (typeof window.__DNFK_MAINTENANCE__ === 'undefined') {
+              throw new Error("Config not loaded properly");
+          }
+
           if (window.__DNFK_MAINTENANCE__) {
             if (!location.pathname.includes("/maintenance")) {
               location.replace("../maintenance?v=" + Date.now());
@@ -18,11 +29,13 @@
           }
         } catch (e) {
           console.error("檢查維護模式時發生錯誤", e);
+          forceMaintenanceRedirect();
         }
       };
       
       cfg.onerror = function() {
-          console.log("讀取維護設定失敗，預設略過");
+          console.error("讀取維護設定失敗 (Network Error)");
+          forceMaintenanceRedirect();
       };
       
       document.head.appendChild(cfg);
