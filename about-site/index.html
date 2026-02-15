@@ -1,179 +1,46 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-Hant">
-
 <head>
-  <script>
-    (function() {
-      function forceMaintenanceRedirect() {
-        console.warn("系統偵測到異常，強制進入維護模式");
-        if (!location.pathname.includes("/maintenance")) {
-          location.replace("../maintenance?v=" + Date.now());
-        }
-      }
-
-      var cfg = document.createElement('script');
-      var gasUrl = "https://script.google.com/macros/s/AKfycbxyxO4jA5RsamgivNksAB9kSJXvZQWEiT4teOPVRF-N0BF4wfAR62ZIkQdyh2zuSGiP/exec";
-      cfg.src = gasUrl + "?v=" + Date.now();
-      
-      cfg.onload = function() {
-        try {
-          console.log("維護模式狀態:", window.__DNFK_MAINTENANCE__);
-          if (typeof window.__DNFK_MAINTENANCE__ === 'undefined') {
-              throw new Error("Config not loaded properly");
-          }
-
-          if (window.__DNFK_MAINTENANCE__) {
-            if (!location.pathname.includes("/maintenance")) {
-              location.replace("../maintenance?v=" + Date.now());
-            }
-          }
-        } catch (e) {
-          console.error("檢查維護模式時發生錯誤", e);
-          forceMaintenanceRedirect();
-        }
-      };
-      
-      cfg.onerror = function() {
-          console.error("讀取維護設定失敗 (Network Error)");
-          forceMaintenanceRedirect();
-      };
-      
-      document.head.appendChild(cfg);
-    })();
-  </script>
-
-  <meta charset="utf-8"/>
-  <meta content="width=device-width, initial-scale=1" name="viewport"/>
-  <meta content="dark light" name="color-scheme"/>
-  <link href="../assets/img/logo-dark.png" rel="icon"/>
-  <link href="../assets/css/style.css?v=0382456498756" rel="stylesheet"/>
-  <title>關於本網站｜DNFK Info-Base</title>
-  <script defer="" src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>關於本網站｜DNFK 資訊公告站</title>
+  <link rel="icon" href="/assets/img/logo-dark.png" />
+  <link rel="stylesheet" href="/assets/css/style.css" />
 </head>
+<body data-slug="about-site">
+  <header class="topbar">
+    <div class="container">
+      <div class="nav">
+        <a class="brand" href="/" aria-label="回到首頁">
+          <img id="brandLogo" src="/assets/img/logo-dark.png" alt="DNFK logo" />
+          <div style="display:flex; flex-direction:column; line-height:1.1;">
+            <div class="title" id="siteTitleZh">DNFK 資訊公告站</div>
+            <div style="font-size:12px; color:var(--muted);" id="siteTitleEn">DNFK InfoBase</div>
+          </div>
+        </a>
+        <div class="nav-actions">
+          <a class="btn" data-nav href="/search/">文書查詢</a>
+          <a class="btn" data-nav href="/about-site/">關於本網站</a>
+          <a class="btn" data-nav href="/about-studio/">關於本工作室</a>
+          <a class="btn" data-nav href="/cda-project/">CDA 專案</a>
+          <button class="btn primary" id="themeToggle" type="button">切換主題</button>
+        </div>
+      </div>
+    </div>
+  </header>
 
-<body data-pagefade="1">
-  <div aria-hidden="true" class="bg-blobs">
-    <div class="blob" style="left:-18%; top:-20%"></div>
-    <div class="blob b2" style="right:-16%; bottom:-18%"></div>
-  </div>
-  <canvas aria-hidden="true" id="starfield"></canvas>
-  <div class="shell">
-    <aside class="sidebar">
-      <a class="brand" href="/" aria-label="回到首頁">
-        <img alt="暗夜飛鳶工作室 DNFK Studio" data-role="logo" src="../assets/img/logo-dark.png"/>
-        <div class="title">
-          <b>暗夜飛鳶工作室</b>
-          <span>DNFK Studio</span>
-        </div>
-      </a>
-      <nav aria-label="導覽" class="nav">
-        <a href="/search"><span class="dot"></span>文書查詢</a>
-        <a href="/about-site"><span class="dot"></span>關於本網站</a>
-        <a href="/about-studio"><span class="dot"></span>關於本工作室</a>
-        <a href="/cda-project"><span class="dot"></span>校園偵探社特別專案</a>
-      </nav>
-      <div class="side-actions">
-        <button class="textbtn" data-action="theme-toggle">主題：<span data-theme-label="">系統</span></button>
-      </div>
-    </aside>
-    <main class="main">
-      <header class="topbar">
-        <div class="left">
-        
-          <button class="hamburger" id="hamburger"><span aria-hidden="true" class="burger"><i></i><i></i><i></i></span><span class="sr-only">選單</span></button>
-          <nav class="crumbs" aria-label="位置導覽"><a href="/">首頁</a><span class="sep">/</span><span class="current">關於本網站</span></nav>
-        </div>
-        <div style="display:flex;gap:10px;align-items:center"></div>
-      </header>
-      <div class="overlay" id="overlay"></div>
-      <aside aria-label="手機導覽" class="drawer" id="drawer">
-        <div style="display:flex;align-items:center;gap:10px">
-          <a class="brand" href="/" aria-label="回到首頁" style="padding:0">
-            <img alt="暗夜飛鳶工作室 DNFK Studio" data-role="logo" src="../assets/img/logo-dark.png"/>
-            <div class="title">
-              <b>暗夜飛鳶工作室</b>
-              <span>DNFK Studio</span>
-            </div>
-          </a>
-        </div>
-        <button class="drawerClose" id="drawerClose" aria-label="關閉">
-            <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-          </button>
-        <div class="hr"></div>
-        <nav aria-label="導覽" class="nav">
-          <a href="/search"><span class="dot"></span>文書查詢</a>
-          <a href="/about-site"><span class="dot"></span>關於本網站</a>
-          <a href="/about-studio"><span class="dot"></span>關於本工作室</a>
-          <a href="/cda-project"><span class="dot"></span>校園偵探社特別專案</a>
-        </nav>
-        <div class="side-actions" style="margin-top:18px">
-          <button class="textbtn" data-action="theme-toggle">主題：<span data-theme-label="">系統</span></button>
-        </div>
-      </aside>
-      <div class="container">
-        <div class="section-title reveal">
-          <div>
-            <h1>關於本網站</h1>
-            <p>線上資訊庫的辛酸血淚史⧸⎩⎠⎞͏(・∀・)⎛͏⎝⎭⧹</p>
-          </div>
-        </div>
-        <section class="card reveal">
-          <div class="inner">
-            <h3>暗夜飛鳶工作室線上資訊庫  歷史</h3>
-            <p>
-              哇！說來話長，就由我（存活在線上資訊庫裡3年的「資訊庫精靈」）來為你們解說吧Σ(ﾟωﾟ)<br>
-              首先首先，線上資訊庫（Online Info Base）最早是在（我看看...）2022年6月14日建立的喔（哇~ 真有歷史呢）(・∀・)ノ三G[__]ｺ<br>
-              當時還只是個簡單的Google協作網站（我也還沒誕生）( ´･･)ﾉ(._.`)<br>
-              所有的資料都是資訊小組（時技術科技部門A組）一個一個把PDF轉成PNG上傳的喔！（連最新公告都是自己手動更改呢）(｡A｡)<br>
-              不過後來因為大家要會考，所以工作室休息之後，就沒落了呢（被雪藏了Σ(;ﾟдﾟ)）<br>
-              接著啊，由現在的資訊小組做了第一代的線上資訊庫（不過很難用就是了，啊不是我開玩笑的，不要把我用不見哇啊啊啊啊啊啊δ△δ δ△δ δ△δ δ△δ δ△δ δ△δ）<br>
-              <em>─ 當時可是藉助了某個G大神的能力呢~（一定不是Chat-GPT拉哈哈(ﾉ∀`*)） ─</em><br>
-              但其實資訊小組還是有做一些些啦（啊我回來了ヽ( ° ▽°)ノ，剛剛可真可怕呢，資訊小組惹不起嗚嗚嗚wwww）<br>
-              不過也因為G大神有點高冷，聽不懂資訊小組小動物們的哀號，他只自顧自的思考了130分鐘¯\_(ツ)_/¯<br>
-              所以最後做出來的東東，其實與資訊小組所想要的不一樣ヾ(⌒(_´･ㅅ･`)_<br>
-              也因此資訊小組這次可是下足了血本，親自上戰場打code了呢d(`･∀･)b<br>
-              也就有了這個網站（線上資訊庫），以及我（資訊庫精靈）的出現（我其實早就存在了，只是這次有了一個專欄可以說話(ﾉ∀`*)）<br>
-              總之，真是個「偉大資訊庫」呢ヽ( ° ▽°)ノヽ( ° ▽°)ノヽ( ° ▽°)ノヽ( ° ▽°)ノ<br>
-            </p>
-            <div class="hr"></div>
-            <h3>製作群</h3>
-            <p>
-              暗夜飛鳶工作室 科技部 資訊小組<br>
-              DNFK Studios T.I.T.
-              <div style="display:flex; justify-content:flex-end; gap:12px;">
-                <a class="btn primary" href="mailto:tit.contect@dnfk.qzz.io">聯繫我們（gmail）</a>
-                <a class="btn primary" href="https://forms.gle/gegJTDnbBRWfETG47">錯誤回報</a>
-              </div>
-            </p>
-            <div class="hr"></div>
-            <h3>網站版本</h3>
-            <p>
-              v 1.0.4.01102a<br>
-            </p>
-            
-          </div>
-        </section>
-      </div>
-      <footer class="footer">
-        <div class="container">
-          <div class="row">
-            <div><b>暗夜飛鳶工作室 DNFK Studios</b>｜線上資訊庫</div>
-            <div>科技部資訊小組 製作｜Made by DNFK T.I.T.</div>
-          </div>
-          <div style="height: 15px;"></div>
-          <div style="text-align: center;">
-            Copyright © 2026 DNFK Studio. All Rights Reserved.
-          </div>
-          <div style="text-align: center;">
-              <a href="/policy/privacy" style="text-decoration: underline; margin: 0 10px;">隱私權政策</a>
-              <a href="/policy/security" style="text-decoration: underline; margin: 0 10px;">網站安全政策</a>
-              <a href="/policy/usage" style="text-decoration: underline; margin: 0 10px;">使用條款</a>
-          </div>
-        </div>
-      </footer>
-    </main>
-  </div>
-  <div class="toast" id="toast"></div>
-  <script src="../assets/js/about.js" type="module"></script>
+  <main class="container">
+
+<div class="card reveal" id="contentRoot">
+  <h1 id="pageTitle" style="margin:0 0 10px 0;">關於本網站</h1>
+  <div id="pageBody" style="color:var(--muted); line-height:1.75;"></div>
+</div>
+
+    <div class="footer">
+      <div>© <span id="year"></span> DNFK Studio · <a href="/policy/privacy/">隱私權政策</a> · <a href="/policy/usage/">使用條款</a> · <a href="/policy/security/">網站安全政策</a></div>
+    </div>
+  </main>
+
+  <script type="module" src="/assets/js/content-page.js"></script>
 </body>
 </html>
