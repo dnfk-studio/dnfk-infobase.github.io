@@ -1,4 +1,4 @@
-import { bootCommon, $, $$, toast, showLoading, hideLoading, setUiLocked, showAuthGate } from "./app.js";
+import { bootCommon, $, $$, toast, showLoading, hideLoading, setUiLocked, showAuthGate } from "./app.js?v=20260215b";
 import { loadNotices, latestVersionIndex, lastUpdated, formatDate, normalize, noticeSearchText, includesAll } from "./data.js";
 
 function uniq(arr){ return Array.from(new Set(arr)).filter(Boolean); }
