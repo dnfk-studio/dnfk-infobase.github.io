@@ -1,4 +1,4 @@
-import { bootCommon, $, $$, toast, showLoading, hideLoading, setUiLocked } from "./app.js";
+import { bootCommon, $, $$, toast, showLoading, hideLoading, setUiLocked, showAuthGate } from "./app.js";
 import { loadNotices, latestVersionIndex, lastUpdated, formatDate, normalize, noticeSearchText, includesAll } from "./data.js";
 
 function uniq(arr){ return Array.from(new Set(arr)).filter(Boolean); }
@@ -169,6 +169,7 @@ export async function bootSearch(){
     hideLoading();
     setUiLocked(false);
   }catch(e){
+    if(e && e.code==="AUTH_REQUIRED"){ showAuthGate(e.loginUrl||"/api/data?r=meta"); return; }
     toast("資料載入失敗");
     console.error(e);
     return;

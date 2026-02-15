@@ -268,6 +268,52 @@ function setupBlobs(){
   });
 }
 
+
+export function showAuthGate(loginUrl="/api/data?r=meta"){
+  // Full-screen gate prompting user to authenticate via Cloudflare Access
+  let gate = document.getElementById("authGate");
+  if(gate) return;
+  gate = document.createElement("div");
+  gate.id = "authGate";
+  gate.setAttribute("role","dialog");
+  gate.setAttribute("aria-modal","true");
+  gate.style.cssText = [
+    "position:fixed","inset:0","z-index:99999",
+    "display:flex","align-items:center","justify-content:center",
+    "background:rgba(0,0,0,.55)","backdrop-filter: blur(6px)"
+  ].join(";");
+  const card = document.createElement("div");
+  card.style.cssText = [
+    "width:min(520px, calc(100vw - 32px))",
+    "border-radius:16px",
+    "padding:18px 18px 16px",
+    "background:var(--card, #0f172a)",
+    "border:1px solid rgba(255,255,255,.10)",
+    "box-shadow:0 18px 60px rgba(0,0,0,.45)"
+  ].join(";");
+  card.innerHTML = `
+    <div style="display:flex;gap:12px;align-items:flex-start">
+      <div style="width:42px;height:42px;border-radius:12px;display:grid;place-items:center;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.10)">
+        <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7v3H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-1V9a7 7 0 0 0-7-7zm-5 10V9a5 5 0 0 1 10 0v3H7zm5 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4z" fill="currentColor"/></svg>
+      </div>
+      <div style="flex:1">
+        <div style="font-weight:700;font-size:16px;line-height:1.2;margin-top:2px">需要登入才能讀取資料</div>
+        <div style="opacity:.82;margin-top:6px;line-height:1.5">此網站資料由 Cloudflare Access 保護。請先登入允許的帳號後再使用。</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:14px">
+      <a class="btn primary" href="${loginUrl}" style="text-decoration:none">前往登入</a>
+      <button class="btn" id="authGateReload" type="button">我已登入，重新整理</button>
+    </div>
+  `;
+  gate.appendChild(card);
+  document.body.appendChild(gate);
+  const btn = document.getElementById("authGateReload");
+  if(btn){
+    btn.addEventListener("click", ()=> location.reload());
+  }
+}
+
 export function bootCommon(){
   applyTheme();
   setupThemeToggle();

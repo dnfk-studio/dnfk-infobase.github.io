@@ -4,6 +4,13 @@ async function fetchRoute(route){
   const url = `/api/data?r=${encodeURIComponent(route)}&v=${Date.now()}`;
   const res = await fetch(url, {cache:"no-store", credentials:"include"});
   if(!res.ok) throw new Error(`無法載入資料 ${route}`);
+  const ct = (res.headers.get("content-type")||"").toLowerCase();
+  if(!ct.includes("application/json")){
+    const err = new Error("AUTH_REQUIRED");
+    err.code = "AUTH_REQUIRED";
+    err.loginUrl = `/api/data?r=${encodeURIComponent(route)}`;
+    throw err;
+  }
   const payload = await res.json();
   return (payload && typeof payload==="object" && "data" in payload) ? payload.data : payload;
 }

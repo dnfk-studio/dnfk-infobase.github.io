@@ -1,4 +1,4 @@
-import { bootCommon, $, $$, toast, showLoading, hideLoading, setUiLocked } from "./app.js";
+import { bootCommon, $, $$, toast, showLoading, hideLoading, setUiLocked, showAuthGate } from "./app.js";
 import { loadNotices, loadProject, latestVersionIndex, lastUpdated, formatDate, parseDate } from "./data.js";
 function getLatestVid(n, latestVersionIndex){
   try{

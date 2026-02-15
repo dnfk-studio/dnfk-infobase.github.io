@@ -1,4 +1,4 @@
-import { bootCommon, $, $$ } from "./app.js";
+import { bootCommon, $, $$, showAuthGate } from "./app.js";
 import { loadNotices, latestVersionIndex, lastUpdated, formatDate } from "./data.js";
 
 function escapeHtml(s){

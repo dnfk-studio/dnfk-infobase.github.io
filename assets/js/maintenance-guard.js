@@ -6,6 +6,11 @@
     try{
       const res = await fetch("/api/data?r=config", {cache:"no-store", credentials:"include"});
       if(!res.ok) throw new Error("config fetch failed");
+      const ct = (res.headers.get("content-type")||"").toLowerCase();
+      if(!ct.includes("application/json")){
+        // likely Cloudflare Access login page; do not force maintenance
+        return;
+      }
       const payload = await res.json();
       const cfg = payload && typeof payload==="object" && "data" in payload ? payload.data : payload;
       // expose for legacy

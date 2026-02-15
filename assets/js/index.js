@@ -1,4 +1,4 @@
-import { bootCommon } from "./app.js";
+import { bootCommon, showAuthGate } from "./app.js";
 
 export function bootIndex(){
   bootCommon();
