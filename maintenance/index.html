@@ -8,22 +8,24 @@
          */
         (function() {
             var cfg = document.createElement('script');
+            // 你的 GAS 網址
             var gasUrl = "https://script.google.com/macros/s/AKfycbxyxO4jA5RsamgivNksAB9kSJXvZQWEiT4teOPVRF-N0BF4wfAR62ZIkQdyh2zuSGiP/exec";
             cfg.src = gasUrl + "?v=" + Date.now();
             
             cfg.onload = function() {
                 try {
-                    // Redirect to home if maintenance mode is explicitly disabled in the config
+                    // 1. 如果維護模式已關閉 (False) -> 跳轉回首頁 (使用 ../ 相對路徑)
                     if (typeof window.__DNFK_MAINTENANCE__ !== 'undefined' && !window.__DNFK_MAINTENANCE__) {
-                        location.replace("/?cache_bust=" + Date.now());
+                        location.replace("../?cache_bust=" + Date.now());
                         return;
                     }
-                    // Update UI with fetched configuration data
+                    // 2. 如果仍在維護中 -> 更新畫面資訊
                     if (window.__DNFK_CONFIG__) {
                         updateUI(window.__DNFK_CONFIG__);
                     }
                 } catch (e) {
                     console.error("[DNFK] Error parsing maintenance config:", e);
+                    // 發生錯誤時保留在維護頁面 (Fail-Safe)
                 }
             };
             
@@ -291,33 +293,49 @@
          */
         function forceCheckStatus() {
             const btn = document.getElementById('force-reload-btn');
-            const originalText = btn.innerHTML;
+            const originalText = "[ 重新連線 / RECONNECT ]"; // 確保文字正確
             btn.innerHTML = "[ SYNCING DATA... ]";
             btn.disabled = true;
 
             const script = document.createElement('script');
+            // 確保這裡是正確的 GAS 網址
             const gasUrl = "https://script.google.com/macros/s/AKfycbxyxO4jA5RsamgivNksAB9kSJXvZQWEiT4teOPVRF-N0BF4wfAR62ZIkQdyh2zuSGiP/exec";
             script.src = gasUrl + "?v=" + Date.now();
 
             script.onload = function() {
+                // 如果 window.__DNFK_MAINTENANCE__ 未定義，視為失敗，不要當作成功
                 if (typeof window.__DNFK_MAINTENANCE__ !== 'undefined') {
                     if (!window.__DNFK_MAINTENANCE__) {
+                        // 維護結束：跳轉回首頁
                         btn.innerHTML = "[ ONLINE. REDIRECTING... ]";
                         btn.style.color = "#4fffa8";
-                        setTimeout(() => location.replace('/?cache_bust=' + Date.now()), 800);
+                        setTimeout(() => location.replace('../?cache_bust=' + Date.now()), 800);
                     } else {
+                        // 仍在維護：更新 UI 並恢復按鈕
                         if (window.__DNFK_CONFIG__) updateUI(window.__DNFK_CONFIG__);
                         setTimeout(() => {
                             btn.innerHTML = "[ STILL OFFLINE ]";
-                            setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 2000);
+                            setTimeout(() => { 
+                                btn.innerHTML = originalText; 
+                                btn.disabled = false; 
+                                btn.style.color = "";
+                            }, 2000);
                         }, 500);
                     }
+                } else {
+                    // 雖然載入但沒有變數，視為錯誤
+                    script.onerror();
                 }
             };
+            
             script.onerror = () => {
                 btn.innerHTML = "[ ERROR ]";
-                setTimeout(() => { btn.innerHTML = originalText; btn.disabled = false; }, 2000);
+                setTimeout(() => { 
+                    btn.innerHTML = originalText; 
+                    btn.disabled = false; 
+                }, 2000);
             };
+            
             document.head.appendChild(script);
         }
     </script>
