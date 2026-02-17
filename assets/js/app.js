@@ -92,6 +92,49 @@ export function hideLoading(){
   document.documentElement.classList.remove("is-loading");
 }
 
+let __siteInfoPromise = null;
+
+export async function fetchSiteInfo(){
+  if(__siteInfoPromise) return __siteInfoPromise;
+  __siteInfoPromise = (async ()=>{
+    const r = await fetch("/api/data/info.json?v=" + Date.now(), { cache: "no-store" });
+    if(!r.ok) throw new Error("info.json fetch failed: " + r.status);
+    const data = await r.json();
+    return data;
+  })();
+  return __siteInfoPromise;
+}
+
+export function formatVersion(info){
+  if(!info) return "";
+  const major = String(info.major ?? "").trim();
+  const minor = String(info.minor ?? "").trim();
+  const patch = String(info.patch ?? "").trim();
+  const dataID = String(info.dataID ?? info.dataId ?? "").trim();
+  const dataStatue = String(info.dataStatue ?? "").trim();
+  // Example: 1.1.0.01508f  (dataID + dataStatue)
+  const tail = (dataID || "") + (dataStatue || "");
+  const base = [major, minor, patch].filter(Boolean).join(".");
+  if(base && tail) return base + "." + tail;
+  return base || tail;
+}
+
+async function applySiteInfo(){
+  try{
+    const info = await fetchSiteInfo();
+    window.__DNFK_SITE_INFO__ = info;
+    const v = formatVersion(info);
+    if(!v) return;
+    const nodes = document.querySelectorAll("[data-site-version]");
+    nodes.forEach(el=>{
+      el.textContent = "v " + v;
+    });
+  }catch(e){
+    // fail-soft: version not critical, do nothing
+    console.warn("Site info load failed:", e);
+  }
+}
+
 
 function setupThemeToggle(){
   const buttons = $$('[data-action="theme-toggle"]');
@@ -269,6 +312,7 @@ export function bootCommon(){
   setupReveal();
   setupBackground();
   setupBlobs();
+  applySiteInfo();
 
   // smooth page fade (optional)
   const pf = document.body.getAttribute("data-pagefade");
