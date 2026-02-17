@@ -7,6 +7,37 @@
          * Fetches remote settings from Google Apps Script (GAS) to determine if maintenance is active.
          */
         (function() {
+
+      function ensureBootLoading() {
+        if (document.getElementById('dnfk-boot-loading')) return;
+        if (!document.getElementById('dnfk-boot-loading-style')) {
+          var st = document.createElement('style');
+          st.id = 'dnfk-boot-loading-style';
+          st.textContent =
+            "html.dnfk-boot-lock, html.dnfk-boot-lock body{overflow:hidden}" +
+            "#dnfk-boot-loading{position:fixed;inset:0;z-index:99999;display:flex;align-items:center;justify-content:center;" +
+            "background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}" +
+            "#dnfk-boot-loading .spinner{width:42px;height:42px;border-radius:50%;border:3px solid rgba(255,255,255,.25);" +
+            "border-top-color:rgba(255,255,255,.85);animation:dnfkSpin .9s linear infinite}" +
+            "@keyframes dnfkSpin{to{transform:rotate(360deg)}}";
+          document.head.appendChild(st);
+        }
+        var ov = document.createElement('div');
+        ov.id = 'dnfk-boot-loading';
+        ov.setAttribute('role', 'status');
+        ov.setAttribute('aria-live', 'polite');
+        ov.innerHTML = "<div class='spinner' aria-label='Loading'></div>";
+        document.documentElement.appendChild(ov);
+        document.documentElement.classList.add('dnfk-boot-lock');
+      }
+
+      function removeBootLoading() {
+        var ov = document.getElementById('dnfk-boot-loading');
+        if (ov) ov.remove();
+        document.documentElement.classList.remove('dnfk-boot-lock');
+      }
+
+            ensureBootLoading();
             var cfg = document.createElement('script');
             // 你的 GAS 網址
             var apiUrl = "/api/data/config.js";
@@ -23,14 +54,17 @@
                     if (window.__DNFK_CONFIG__) {
                         updateUI(window.__DNFK_CONFIG__);
                     }
+                    removeBootLoading();
                 } catch (e) {
                     console.error("[DNFK] Error parsing maintenance config:", e);
                     // 發生錯誤時保留在維護頁面 (Fail-Safe)
+                    removeBootLoading();
                 }
             };
             
             cfg.onerror = function() {
                 console.warn("[DNFK] Failed to load remote config. UI will remain in default state.");
+                removeBootLoading();
             };
             
             document.head.appendChild(cfg);
