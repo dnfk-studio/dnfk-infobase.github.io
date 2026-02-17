@@ -97,10 +97,24 @@ let __siteInfoPromise = null;
 export async function fetchSiteInfo(){
   if(__siteInfoPromise) return __siteInfoPromise;
   __siteInfoPromise = (async ()=>{
-    const r = await fetch("/api/data/info.json?v=" + Date.now(), { cache: "no-store" });
-    if(!r.ok) throw new Error("info.json fetch failed: " + r.status);
-    const data = await r.json();
-    return data;
+    try{
+      // Use absolute same-origin URL to avoid any base-path edge cases.
+      const u = new URL("/api/data/info.json", location.origin);
+      u.searchParams.set("v", String(Date.now()));
+      const r = await fetch(u.toString(), { cache: "no-store", redirect: "follow" });
+      if(!r.ok) throw new Error("info.json fetch failed: " + r.status);
+
+      // If an auth/Access layer returned HTML, JSON parsing will fail.
+      const ct = (r.headers.get("content-type") || "").toLowerCase();
+      if(ct.includes("text/html")) throw new Error("info.json returned HTML (likely auth redirect)");
+
+      const data = await r.json();
+      return data;
+    }catch(e){
+      // Allow retry after transient failures (e.g., auth handshake)
+      __siteInfoPromise = null;
+      throw e;
+    }
   })();
   return __siteInfoPromise;
 }
@@ -125,13 +139,30 @@ async function applySiteInfo(){
     window.__DNFK_SITE_INFO__ = info;
     const v = formatVersion(info);
     if(!v) return;
-    const nodes = document.querySelectorAll("[data-site-version]");
-    nodes.forEach(el=>{
-      el.textContent = "v " + v;
-    });
+    // Some pages might render the version placeholder late; retry a few times.
+    let tries = 0;
+    const apply = ()=>{
+      const nodes = document.querySelectorAll("[data-site-version]");
+      if(nodes && nodes.length){
+        nodes.forEach(el=>{ el.textContent = "v " + v; });
+        return true;
+      }
+      return false;
+    };
+
+    if(apply()) return;
+    while(tries < 10){
+      await new Promise(r=>setTimeout(r, 150));
+      tries++;
+      if(apply()) return;
+    }
   }catch(e){
-    // fail-soft: version not critical, do nothing
+    // fail-soft: version not critical, but retry once after a short delay.
     console.warn("Site info load failed:", e);
+    setTimeout(()=>{
+      // try again once; if it still fails, keep placeholder
+      applySiteInfo().catch(()=>{});
+    }, 1200);
   }
 }
 
@@ -313,6 +344,11 @@ export function bootCommon(){
   setupBackground();
   setupBlobs();
   applySiteInfo();
+
+  // Safety: ensure site info is attempted after DOM is fully ready.
+  if(document.readyState === "loading"){
+    document.addEventListener("DOMContentLoaded", ()=> applySiteInfo(), {once:true});
+  }
 
   // smooth page fade (optional)
   const pf = document.body.getAttribute("data-pagefade");
