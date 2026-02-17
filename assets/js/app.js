@@ -95,25 +95,33 @@ export function hideLoading(){
 let __siteInfoPromise = null;
 
 export async function fetchSiteInfo(){
-  // Prefer script-injected info (same approach as config.js) to avoid auth/CORS/redirect issues.
-  if(window.__DNFK_INFO__) return window.__DNFK_INFO__;
+  // 修正：檢查 window.__DNFK_INFO__ 是否存在且具有有效內容 (例如 major 不為空)
+  // 避免 Worker 回傳的空殼物件被誤認為有效資料
+  if(window.__DNFK_INFO__ && window.__DNFK_INFO__.major !== "") {
+    return window.__DNFK_INFO__;
+  }
+
   if(__siteInfoPromise) return __siteInfoPromise;
+  
   __siteInfoPromise = (async ()=>{
     try{
-      // Use absolute same-origin URL to avoid any base-path edge cases.
       const u = new URL("/api/data/info.json", location.origin);
       u.searchParams.set("v", String(Date.now()));
       const r = await fetch(u.toString(), { cache: "no-store", redirect: "follow" });
       if(!r.ok) throw new Error("info.json fetch failed: " + r.status);
 
-      // If an auth/Access layer returned HTML, JSON parsing will fail.
       const ct = (r.headers.get("content-type") || "").toLowerCase();
-      if(ct.includes("text/html")) throw new Error("info.json returned HTML (likely auth redirect)");
+      if(ct.includes("text/html")) throw new Error("info.json returned HTML");
 
       const data = await r.json();
+      
+      // 雙重保險：如果 fetch 回來的也是空的 (可能是 Worker cache 了錯誤回應)，拋出錯誤讓它重試
+      if (!data || !data.major && data.major !== 0) {
+         throw new Error("Fetched data is empty");
+      }
+      
       return data;
     }catch(e){
-      // Allow retry after transient failures (e.g., auth handshake)
       __siteInfoPromise = null;
       throw e;
     }
@@ -123,15 +131,25 @@ export async function fetchSiteInfo(){
 
 export function formatVersion(info){
   if(!info) return "";
-  const major = String(info.major ?? "").trim();
-  const minor = String(info.minor ?? "").trim();
-  const patch = String(info.patch ?? "").trim();
+  
+  // 確保轉為字串，避免 undefined/null
+  const major = String(info.major ?? "");
+  const minor = String(info.minor ?? "");
+  const patch = String(info.patch ?? "");
+  
+  // 處理 dataId 大小寫相容與 statue
   const dataID = String(info.dataID ?? info.dataId ?? "").trim();
   const dataStatue = String(info.dataStatue ?? "").trim();
-  // Example: 1.1.0.01508f  (dataID + dataStatue)
-  const tail = (dataID || "") + (dataStatue || "");
-  const base = [major, minor, patch].filter(Boolean).join(".");
+
+  // 合併 dataId 與 statue (直接連接，無符號)
+  const tail = dataID + dataStatue;
+
+  // 核心修正：使用 v !== "" 而非 Boolean(v)，確保 "0" 能被保留
+  const base = [major, minor, patch].filter(v => v !== "").join(".");
+
+  // 格式規則：如果有版號與尾綴，用 "." 連接
   if(base && tail) return base + "." + tail;
+  
   return base || tail;
 }
 
