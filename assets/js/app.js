@@ -95,6 +95,8 @@ export function hideLoading(){
 let __siteInfoPromise = null;
 
 export async function fetchSiteInfo(){
+  // Prefer script-injected info (same approach as config.js) to avoid auth/CORS/redirect issues.
+  if(window.__DNFK_INFO__) return window.__DNFK_INFO__;
   if(__siteInfoPromise) return __siteInfoPromise;
   __siteInfoPromise = (async ()=>{
     try{
@@ -347,7 +349,19 @@ export function bootCommon(){
 
   // Safety: ensure site info is attempted after DOM is fully ready.
   if(document.readyState === "loading"){
-    document.addEventListener("DOMContentLoaded", ()=> applySiteInfo(), {once:true});
+    document.addEventListener("DOMContentLoaded", ()=>{
+    applySiteInfo().catch(()=>{});
+    // Retry a few times in case an auth layer briefly redirects during initial load.
+    let tries = 0;
+    const timer = setInterval(()=>{
+      const el = document.querySelector("[data-site-version]");
+      const txt = (el && el.textContent || "").trim();
+      if(txt && txt !== "v —"){ clearInterval(timer); return; }
+      tries++;
+      if(tries > 6){ clearInterval(timer); return; }
+      applySiteInfo().catch(()=>{});
+    }, 1500);
+  }, {once:true});
   }
 
   // smooth page fade (optional)
