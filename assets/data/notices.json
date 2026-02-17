@@ -1,0 +1,157 @@
+{
+  "site": {
+    "name": "暗夜飛鳶工作室 DNFK Studio",
+    "defaultPdf": "https://drive.google.com/file/d/1iuW6hsOaPVDtDc0SFBEtStefCgEqlOJi/view?usp=sharing"
+  },
+  "notices": [
+    {
+      "title": "劇情大綱[CDA]",
+      "category": [
+        "校園偵探社"
+      ],
+      "tags": [
+        "CDA",
+        "企劃"
+      ],
+      "versions": [
+        {
+          "id": "PA-260201",
+          "version": "第01版",
+          "content": "校園偵探社遊戲製作特別專案 劇情大綱",
+          "pdf": "https://drive.google.com/file/d/1UkT_dvCfClINVM2nJufCUl1JAcCSGSfj/view?usp=drive_link",
+          "uploader": "科技部資訊小組(T.I.T.)",
+          "uploadTime": "2026-02-01",
+          "description": "2026/02/01 制第01版",
+          "related": []
+        }
+      ]
+    },{
+      "title": "主角人設[CDA]",
+      "category": [
+        "校園偵探社"
+      ],
+      "tags": [
+        "CDA",
+        "企劃"
+      ],
+      "versions": [
+        {
+          "id": "PA-260103",
+          "version": "第01版",
+          "content": "校園偵探社遊戲製作特別專案 主角人設",
+          "pdf": "https://drive.google.com/file/d/1RLrUWa9ULSKLm6DgGgymbdGRIc8zPx-a/view?usp=sharing",
+          "uploader": "科技部資訊小組(T.I.T.)",
+          "uploadTime": "2026-01-25",
+          "description": "2026/01/25 制第01版",
+          "related": []
+        }
+      ]
+    },{
+      "title": "第01次會議[CDA]",
+      "category": [
+        "校園偵探社"
+      ],
+      "tags": [
+        "CDA",
+        "會議記錄"
+      ],
+      "versions": [
+        {
+          "id": "PM-260101",
+          "version": "第01版",
+          "content": "校園偵探社遊戲製作特別專案 第01次會議紀錄",
+          "pdf": "https://drive.google.com/file/d/1n51VAvSkG5bytneAe0OTaWwkevR3kUd2/view?usp=sharing",
+          "uploader": "科技部資訊小組(T.I.T.)",
+          "uploadTime": "2026-01-25",
+          "description": "2026/01/25 制第01版",
+          "related": [
+            {
+              "title": "附件1、工作分配與執行順序表",
+              "url": "?id=PA-260101"
+            },
+            {
+              "title": "附件2、執行時程表",
+              "url": "?id=PA-260102"
+            }
+          ]
+        }
+      ]
+    },{
+      "title": "時程表[CDA]",
+      "category": [
+        "校園偵探社"
+      ],
+      "tags": [
+        "CDA"
+      ],
+      "versions": [
+        {
+          "id": "PA-260203",
+          "version": "第02版",
+          "content": "校園偵探社遊戲製作特別專案 執行時程表",
+          "pdf": "https://drive.google.com/file/d/1Zp_1BuOGtL4Uf_wrH5QheTVjsnSM_cBd/view?usp=sharing",
+          "uploader": "科技部資訊小組(T.I.T.)",
+          "uploadTime": "2026-02-03",
+          "description": "2026/02/03 制第02版",
+          "related": []
+        },{
+          "id": "PA-260102",
+          "version": "第01版",
+          "content": "校園偵探社遊戲製作特別專案 執行時程表",
+          "pdf": "https://drive.google.com/file/d/1Dz54IGKrH-CSddUUFR3mEcFsZ4GN_J8_/view?usp=sharing",
+          "uploader": "科技部資訊小組(T.I.T.)",
+          "uploadTime": "2026-01-25",
+          "description": "2026/01/25 制第01版",
+          "related": []
+        },{
+          "id": "PA-260205",
+          "version": "第03版",
+          "content": "校園偵探社遊戲製作特別專案 執行時程表",
+          "pdf": "https://drive.google.com/file/d/1RZnS9VJ3eDOA4JZkUtIAO-GDE5RCizoD/view?usp=sharing",
+          "uploader": "科技部資訊小組(T.I.T.)",
+          "uploadTime": "2026-02-06",
+          "description": "2026/02/06 制第03版",
+          "related": []
+        }
+      ]
+    },{
+      "title": "工作表[CDA]",
+      "category": [
+        "校園偵探社"
+      ],
+      "tags": [
+        "CDA"
+      ],
+      "versions": [
+        {
+          "id": "PA-260202",
+          "version": "第02版",
+          "content": "校園偵探社遊戲製作特別專案 工作分配與執行順序表",
+          "pdf": "https://drive.google.com/file/d/10P0aFc60jRme0j-qZL95RJo3HdldNJO8/view?usp=sharing",
+          "uploader": "科技部資訊小組(T.I.T.)",
+          "uploadTime": "2026-02-03",
+          "description": "2026/02/03 制第02版",
+          "related": []
+        },{
+          "id": "PA-260101",
+          "version": "第01版",
+          "content": "校園偵探社遊戲製作特別專案 工作分配與執行順序表",
+          "pdf": "https://drive.google.com/file/d/1Br90MDnt1EB1p2Cw1E6fECk61AlyGsJC/view?usp=drive_link",
+          "uploader": "科技部資訊小組(T.I.T.)",
+          "uploadTime": "2026-01-25",
+          "description": "2026/01/25 制第01版",
+          "related": []
+        },{
+          "id": "PA-260204",
+          "version": "第03版",
+          "content": "校園偵探社遊戲製作特別專案 工作分配與執行順序表",
+          "pdf": "https://drive.google.com/file/d/1ug99UMiipnJJux7iTAGB4V9sbm3hZfL5/view?usp=sharing",
+          "uploader": "科技部資訊小組(T.I.T.)",
+          "uploadTime": "2026-02-06",
+          "description": "2026/02/06 制第03版",
+          "related": []
+        }
+      ]
+    }
+  ]
+}

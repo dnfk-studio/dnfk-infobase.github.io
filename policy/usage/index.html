@@ -1,8 +1,47 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-  <script type="module" src="../../assets/js/maintenance-guard.v20260215d.js"></script>
-<meta charset="UTF-8">
+  <script>
+    (function() {
+      function forceMaintenanceRedirect() {
+        console.warn("系統偵測到異常，強制進入維護模式");
+        if (!location.pathname.includes("/maintenance")) {
+          location.replace("/maintenance?v=" + Date.now());
+        }
+      }
+
+      var cfg = document.createElement('script');
+      var apiUrl = "/api/data/config.js";
+      cfg.src = apiUrl + "?v=" + Date.now();
+      
+      cfg.onload = function() {
+        try {
+          console.log("維護模式狀態:", window.__DNFK_MAINTENANCE__);
+          if (typeof window.__DNFK_MAINTENANCE__ === 'undefined') {
+              throw new Error("Config not loaded properly");
+          }
+
+          if (window.__DNFK_MAINTENANCE__) {
+            if (!location.pathname.includes("/maintenance")) {
+              location.replace("/maintenance?v=" + Date.now());
+            }
+          }
+        } catch (e) {
+          console.error("檢查維護模式時發生錯誤", e);
+          forceMaintenanceRedirect();
+        }
+      };
+      
+      cfg.onerror = function() {
+          console.error("讀取維護設定失敗 (Network Error)");
+          forceMaintenanceRedirect();
+      };
+      
+      document.head.appendChild(cfg);
+    })();
+  </script>
+  
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>使用條款｜DNFK Info-Base</title>
     <style>
@@ -101,87 +140,74 @@
                 gap: 15px;
             }
         }
-    </style>
+        </style>
 </head>
 <body>
-
     <div class="container">
-        
-        <header class="page-header">
-            <h1 class="page-title">暗夜飛鳶工作室線上資訊庫使用條款</h1>
-            <a href="/" class="btn-home">回首頁</a>
-        </header>
-
-        <div class="content">
-
-            <p>為維護暗夜飛鳶工作室線上資訊庫（以下簡稱「本網站」）之系統穩定性並保障雙方權益，制定本使用者條款。當您開始使用本網站服務時，即表示您已詳細閱讀、充分瞭解並同意接受本條款之所有內容。</p>
-
-            <div class="policy-section">
-                <h2>第一條、服務說明</h2>
-                <p>1. 本網站提供之所有服務內容（以下簡稱「本服務」），均依據本使用條款提供。</p>
-                <p>2. 本網站保留隨時修改、暫停或終止服務之權利，且無須事先通知使用者，使用者不得因此要求任何賠償。</p>
-            </div>
-
-            <div class="policy-section">
-                <h2>第二條、使用者義務</h2>
-                <p>使用者在使用本服務時，應遵守中華民國相關法律法規及網際網路慣例，並不得進行以下行為：</p>
-                <ul>
-                    <li>利用本服務進行任何非法、犯罪或侵權活動。</li>
-                    <li>干擾、破壞或攻擊本服務之系統安全、伺服器或網路運作。</li>
-                    <li>未經授權蒐集、處理或利用他人之個人資料與隱私資訊。</li>
-                </ul>
-            </div>
-
-            <div class="policy-section">
-                <h2>第三條、使用授權</h2>
-                <p>使用者應經正當程序獲得本網站授權，方可閱覽特定資訊。對於未經授權或無權閱覽之資料，使用者不得以任何方式進行竊取、窺視、解密或嘗試存取。</p>
-            </div>
-
-            <div class="policy-section">
-                <h2>第四條、禁止侵害系統</h2>
-                <p>使用者不得於本網站使用任何可能損害系統之輔助軟體、程式或外掛（包括但不限於自動化腳本、網路爬蟲、木馬程式等），亦不得以任何方式對本網站系統造成負擔或損害。</p>
-            </div>
-
-            <div class="policy-section">
-                <h2>第五條、免責聲明</h2>
-                <p>本網站不保證服務之穩定性、安全性、無誤性及不中斷。使用者應自行承擔使用本服務之所有風險，以及因使用本服務而可能致生之損害。</p>
-                <p>對於使用者於本網站所存取之資料，使用者應自行備份重要內容，本網站不負任何資料保管或遺失之賠償責任。</p>
-            </div>
-
-            <div class="policy-section">
-                <h2>第六條、保密與閱覽限制</h2>
-                <p>本網站內之所有資料（包含文字、圖片、檔案等），除經特別授權者外，嚴禁使用者擅自重製、散布或對外公開傳播。</p>
-            </div>
-
-            <div class="policy-section">
-                <h2>第七條、終止服務</h2>
-                <p>若使用者之行為有損本網站利益，或經本工作室科技部資訊小組（T.I.T.）認定不宜繼續使用本網站者，本網站有權在不事先通知的情況下，暫停或永久終止該使用者之使用權限。</p>
-            </div>
-
-            <div class="policy-section">
-                <h2>第八條、損害賠償</h2>
-                <p>若使用者違反本使用條款、相關法令，或以任何非法、未經授權之方式使用本網站，致使本網站或第三人受有損害（包括但不限於財產損失、商譽受損、訴訟費用及律師費用），使用者應負完全之損害賠償責任。</p>
-            </div>
-
-            <div class="policy-section">
-                <h2>第九條、法律責任與管轄</h2>
-                <p>使用者若涉及不法行為，除應負上述損害賠償責任外，亦應自負相關刑事與民事法律責任。本條款之解釋與適用，以及與本條款有關之爭議，均應以中華民國法律為準據法。</p>
-            </div>
-
-            <div class="policy-section">
-                <h2>第十條、條款修訂</h2>
-                <p>本條款經本工作室科技部首席、科技部資訊小組（T.I.T.）組長及行政部法律事務小組組長共同核定後公告實施，修正時亦同。</p>
-            </div>
-
+        <div class="page-header">
+            <h1 class="page-title">使用條款</h1>
+            <a class="btn-home" href="/">回到首頁</a>
         </div>
 
-        <footer class="footer">
-            <div class="row" style="text-align: center;">
-                <div>Copyright © 2026 DNFK Studio. All Rights Reserved.</div>
+        <div id="policyRoot">
+            <div class="policy-section">
+                <h2>載入中</h2>
+                <p>資料載入中…</p>
             </div>
-        </footer>
-
+        </div>
     </div>
 
+    <script type="module">
+      import { showLoading, hideLoading } from "/assets/js/app.js";
+
+      function esc(s){
+        return String(s ?? "")
+          .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+          .replace(/"/g,"&quot;").replace(/'/g,"&#39;");
+      }
+
+      function renderPolicy(data){
+        const root = document.getElementById("policyRoot");
+        if(!root) return;
+        const foreword = data?.foreword ? `
+          <div class="policy-section">
+            <h2>前言</h2>
+            <p>${esc(data.foreword)}</p>
+          </div>` : "";
+
+        const articles = (data?.articles || []).map(a=>{
+          const contents = (a?.contents || []).map(c=>{
+            const p = c?.content ? `<p>${esc(c.content)}</p>` : "";
+            const ul = Array.isArray(c?.ul) && c.ul.length
+              ? `<ul>${c.ul.map(x=>`<li>${esc(x.li)}</li>`).join("")}</ul>`
+              : "";
+            return p + ul;
+          }).join("");
+          return `
+            <div class="policy-section">
+              <h2>${esc(a?.title || "")}</h2>
+              ${contents}
+            </div>
+          `;
+        }).join("");
+
+        root.innerHTML = foreword + articles;
+      }
+
+      async function main(){
+        showLoading("資料載入中…");
+        try{
+          const res = await fetch("/api/data/usage.json", {cache:"no-store"});
+          if(!res.ok) throw new Error("載入失敗");
+          const data = await res.json();
+          renderPolicy(data);
+        }catch(e){
+          try{ location.replace("/maintenance?v=" + Date.now()); }catch(_){}
+        }finally{
+          hideLoading();
+        }
+      }
+      main();
+    </script>
 </body>
 </html>

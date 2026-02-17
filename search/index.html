@@ -2,12 +2,51 @@
 <html lang="zh-Hant">
 
 <head>
-  <script type="module" src="../assets/js/maintenance-guard.v20260215d.js"></script>
-<meta charset="utf-8"/>
+  <script>
+    (function() {
+      function forceMaintenanceRedirect() {
+        console.warn("系統偵測到異常，強制進入維護模式");
+        if (!location.pathname.includes("/maintenance")) {
+          location.replace("/maintenance?v=" + Date.now());
+        }
+      }
+
+      var cfg = document.createElement('script');
+      var apiUrl = "/api/data/config.js";
+      cfg.src = apiUrl + "?v=" + Date.now();
+      
+      cfg.onload = function() {
+        try {
+          console.log("維護模式狀態:", window.__DNFK_MAINTENANCE__);
+          if (typeof window.__DNFK_MAINTENANCE__ === 'undefined') {
+              throw new Error("Config not loaded properly");
+          }
+
+          if (window.__DNFK_MAINTENANCE__) {
+            if (!location.pathname.includes("/maintenance")) {
+              location.replace("/maintenance?v=" + Date.now());
+            }
+          }
+        } catch (e) {
+          console.error("檢查維護模式時發生錯誤", e);
+          forceMaintenanceRedirect();
+        }
+      };
+      
+      cfg.onerror = function() {
+          console.error("讀取維護設定失敗 (Network Error)");
+          forceMaintenanceRedirect();
+      };
+      
+      document.head.appendChild(cfg);
+    })();
+  </script>
+
+  <meta charset="utf-8"/>
   <meta content="width=device-width, initial-scale=1" name="viewport"/>
   <meta content="dark light" name="color-scheme"/>
   <link href="../assets/img/logo-dark.png" rel="icon"/>
-  <link href="../assets/css/style.v20260215d.css" rel="stylesheet"/>
+  <link href="../assets/css/style.css?v=0382456498756" rel="stylesheet"/>
   <title>文書查詢｜DNFK Info-Base</title>
   <script defer="" src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 </head>
@@ -159,6 +198,6 @@
   </div>
 
   <div class="toast" id="toast"></div>
-  <script src="../assets/js/search.v20260215d.js" type="module"></script>
+  <script src="../assets/js/search.js" type="module"></script>
 </body>
 </html>

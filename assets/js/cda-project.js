@@ -1,13 +1,5 @@
-import * as App from "./app.js?v=20260215c";
-const $  = App.$  || ((sel, root=document)=> root.querySelector(sel));
-const $$ = App.$$ || ((sel, root=document)=> Array.from(root.querySelectorAll(sel)));
-const bootCommon    = App.bootCommon    || (async ()=>{});
-const toast         = App.toast         || ((msg)=> console.log(msg));
-const showLoading   = App.showLoading   || (()=>{});
-const hideLoading   = App.hideLoading   || (()=>{});
-const setUiLocked   = App.setUiLocked   || (()=>{});
-const showAuthGate  = App.showAuthGate  || (()=>{});
-import { loadNotices, loadProject, latestVersionIndex, lastUpdated, formatDate, parseDate } from "./data.js";
+import { bootCommon, $, $$, toast, showLoading, hideLoading } from "./app.js";
+import { loadNotices, latestVersionIndex, lastUpdated, formatDate, parseDate } from "./data.js";
 function getLatestVid(n, latestVersionIndex){
   try{
     if(!n?.versions?.length) return null;
@@ -162,6 +154,19 @@ function inRange(day, s, e){
   return t>=s.getTime() && t<=e.getTime();
 }
 
+async function loadProject(){
+  showLoading("資料載入中…");
+  try{
+    const res = await fetch("/api/data/cda-project.json", {cache:"no-store"});
+    if(!res.ok) throw new Error("無法載入 cda-project.json");
+    return await res.json();
+  }catch(e){
+    try{ location.replace("/maintenance?v=" + Date.now()); }catch(_){}
+    throw e;
+  }finally{
+    hideLoading();
+  }
+}
 
 function buildDocCard(n){
   const versions = Array.isArray(n?.versions) ? n.versions : [];
@@ -487,8 +492,6 @@ function syncView(view){
 
 export async function bootCDA(){
   bootCommon();
-  showLoading("載入專案資料…");
-  setUiLocked(true);
 
   // collapsible sections
   $$("[data-collapse]").forEach(btn=>{
@@ -511,12 +514,8 @@ export async function bootCDA(){
   let noticesJson, projectJson;
   try{
     [noticesJson, projectJson] = await Promise.all([loadNotices(), loadProject()]);
-    hideLoading();
-    setUiLocked(false);
   }catch(e){
     console.error(e);
-    hideLoading();
-    setUiLocked(false);
     toast("專案資料載入失敗");
     return;
   }

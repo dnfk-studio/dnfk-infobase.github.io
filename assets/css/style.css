@@ -743,13 +743,13 @@ body::after{content:""; position:fixed; inset:0; z-index:-3; pointer-events:none
   inset:0;
   background:
     linear-gradient(180deg, rgba(0,0,0,.45), rgba(0,0,0,.55)),
-    url("../img/home-bg.jpg") center/cover no-repeat;
+    url("../assets/img/home-bg.jpg") center/cover no-repeat;
   transform: scale(1.02);
 }
 :root[data-theme="light"] .home::before{
   background:
     linear-gradient(180deg, rgba(255,255,255,.35), rgba(255,255,255,.55)),
-    url("../img/home-bg.jpg") center/cover no-repeat;
+    url("../assets/img/home-bg.jpg") center/cover no-repeat;
 }
 .home-inner{
   position:relative;
@@ -1605,44 +1605,14 @@ html[data-theme="dark"] .cal-cell{background:var(--card2) !important;}
 html[data-theme="dark"] .btn:hover, html[data-theme="dark"] .detailbtn:hover{color:var(--text) !important;}
 
 
-
-/* === Loading Overlay (refit) === */
-.loading-overlay{
-  position:fixed;
-  inset:0;
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-  background: rgba(0,0,0,.45);
-  backdrop-filter: blur(6px);
-}
-.loading-overlay.show{ display:flex; }
-.loading-card{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  padding:16px 18px;
-  border-radius:16px;
-  border:1px solid var(--stroke);
-  background: var(--panel);
-  box-shadow: 0 20px 60px rgba(0,0,0,.35);
-}
-.spinner{
-  width:22px;height:22px;
-  border-radius:50%;
-  border:2px solid rgba(255,255,255,.22);
-  border-top-color: rgba(255,255,255,.85);
-  animation: spin 0.9s linear infinite;
-}
-html[data-theme="light"] .spinner{
-  border-color: rgba(10,20,40,.18);
-  border-top-color: rgba(10,20,40,.8);
-}
-@keyframes spin{ to { transform: rotate(360deg); } }
-.loading-text{ color: var(--text); font-weight:600; letter-spacing:.2px; }
-
-/* Respect reduced motion */
-@media (prefers-reduced-motion: reduce){
-  .spinner{ animation: none; }
-}
+/* Global loading overlay (added) */
+.global-loading{position:fixed; inset:0; z-index:9999; display:none;}
+.global-loading.show{display:block;}
+.global-loading-backdrop{position:absolute; inset:0; background:rgba(0,0,0,.35);} 
+.global-loading-box{position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); min-width:220px; max-width:90vw; padding:16px 18px; border-radius:14px; background:var(--card); border:1px solid var(--line); box-shadow:0 10px 30px rgba(0,0,0,.25); display:flex; align-items:center; gap:12px;}
+.global-loading-text{font-size:14px; color:var(--text);}
+.spinner{width:18px; height:18px; border-radius:50%; border:2px solid var(--line); border-top-color:var(--text); animation:spin 0.9s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+html.is-loading{cursor:progress;}
+html.is-loading body{pointer-events:none;}
+html.is-loading #globalLoading{pointer-events:auto;}

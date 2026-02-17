@@ -1,12 +1,4 @@
-import * as App from "./app.js?v=20260215c";
-const $  = App.$  || ((sel, root=document)=> root.querySelector(sel));
-const $$ = App.$$ || ((sel, root=document)=> Array.from(root.querySelectorAll(sel)));
-const bootCommon    = App.bootCommon    || (async ()=>{});
-const toast         = App.toast         || ((msg)=> console.log(msg));
-const showLoading   = App.showLoading   || (()=>{});
-const hideLoading   = App.hideLoading   || (()=>{});
-const setUiLocked   = App.setUiLocked   || (()=>{});
-const showAuthGate  = App.showAuthGate  || (()=>{});
+import { bootCommon, $, $$, toast } from "./app.js";
 import { loadNotices, latestVersionIndex, lastUpdated, formatDate, parseDate } from "./data.js";
 
 function escapeHtml(s){
@@ -80,21 +72,7 @@ function buildRelated(list){
 }
 
 export async function bootPost(){
-  showLoading("載入文書…");
-  setUiLocked(true);
-  let json;
-  try{
-    json = await loadNotices();
-  }catch(e){
-    console.error(e);
-    hideLoading();
-    setUiLocked(false);
-    toast("文書資料載入失敗");
-    setTimeout(()=> location.href="/search/", 900);
-    return;
-  }
-  hideLoading();
-  setUiLocked(false);
+  const json = await loadNotices();
   const notices = json.notices || [];
 
   const url = new URL(location.href);

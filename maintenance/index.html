@@ -9,8 +9,8 @@
         (function() {
             var cfg = document.createElement('script');
             // 你的 GAS 網址
-            var gasUrl = "https://script.google.com/macros/s/AKfycbxyxO4jA5RsamgivNksAB9kSJXvZQWEiT4teOPVRF-N0BF4wfAR62ZIkQdyh2zuSGiP/exec";
-            cfg.src = gasUrl + "?v=" + Date.now();
+            var apiUrl = "/api/data/config.js";
+            cfg.src = apiUrl + "?v=" + Date.now();
             
             cfg.onload = function() {
                 try {

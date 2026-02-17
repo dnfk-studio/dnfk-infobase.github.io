@@ -1,13 +1,4 @@
-import * as App from "./app.js?v=20260215c";
-// Robust fallbacks: avoid hard failure if app.js is cached/older or gated.
-const $  = App.$  || ((sel, root=document)=> root.querySelector(sel));
-const $$ = App.$$ || ((sel, root=document)=> Array.from(root.querySelectorAll(sel)));
-const bootCommon    = App.bootCommon    || (async ()=>{});
-const toast         = App.toast         || ((msg)=> console.log(msg));
-const showLoading   = App.showLoading   || (()=>{});
-const hideLoading   = App.hideLoading   || (()=>{});
-const setUiLocked   = App.setUiLocked   || (()=>{});
-const showAuthGate  = App.showAuthGate  || (()=>{});
+import { bootCommon, $, $$, toast } from "./app.js";
 import { loadNotices, latestVersionIndex, lastUpdated, formatDate, normalize, noticeSearchText, includesAll } from "./data.js";
 
 function uniq(arr){ return Array.from(new Set(arr)).filter(Boolean); }
@@ -175,10 +166,7 @@ export async function bootSearch(){
   let json;
   try{
     json = await loadNotices();
-    hideLoading();
-    setUiLocked(false);
   }catch(e){
-    if(e && e.code==="AUTH_REQUIRED"){ showAuthGate(e.loginUrl||"/api/data?r=meta"); return; }
     toast("資料載入失敗");
     console.error(e);
     return;
