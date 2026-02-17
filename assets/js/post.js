@@ -12,15 +12,15 @@ function getDriveFileId(url){
   if(!url) return null;
   try{
     const u = new URL(url, location.href);
-    // /file/d/<id>/...
+
     const m = u.pathname.match(/\/file\/d\/([^\/]+)/);
     if(m) return m[1];
-    // open?id=<id> or uc?id=<id>
+
     const id = u.searchParams.get("id");
     if(id) return id;
     return null;
   }catch(e){
-    // fallback regex
+
     const m = String(url).match(/\/file\/d\/([^\/]+)/);
     if(m) return m[1];
     const m2 = String(url).match(/[?&]id=([^&]+)/);
@@ -97,18 +97,18 @@ export async function bootPost(){
     return;
   }
 
-  // version (by version id; fallback latest)
+
   if(!Array.isArray(notice.versions)) notice.versions = [];
   if(!notice.versions.length){
     toast("公告缺少版本資料，將回到搜尋頁");
     setTimeout(()=> location.href="/search", 800);
     return;
   }
-  // if entered via notice id (not specific version), default to latest
+
   if(id===notice.id){
     vi = latestVersionIndex(notice);
   }
-  // backward compat: if v param exists, map to index and then redirect to version id if possible
+
   const vParam = url.searchParams.get("v");
   if(vParam!=null){
     const num = parseInt(vParam,10);
@@ -124,7 +124,7 @@ export async function bootPost(){
     return;
   }
 
-  // header
+
   $("#postTitle").textContent = notice.title;
   const metaParts = [];
   metaParts.push(`<span><strong>分類</strong> ${(notice.category||[]).map(escapeHtml).join("/")||"—"}</span>`);
@@ -137,7 +137,7 @@ export async function bootPost(){
   $("#postDesc").textContent = v.description || "—";
   $("#postContent").textContent = v.content || "—";
 
-  // version selector (list old→new; open latest by default)
+
 const sel = $("#versionSelect");
 if(sel){
   const ordered = notice.versions.map((x,i)=>({x,i,t:(parseDate(x.uploadTime)?.getTime() ?? -Infinity)}))
@@ -157,7 +157,7 @@ if(sel){
     if(found){
       u.searchParams.set("id", picked);
     }else{
-      // fallback for old data without version id
+
       const idx = parseInt(picked,10) || 0;
       u.searchParams.set("v", String(idx));
       u.searchParams.set("id", notice.id);
@@ -166,24 +166,24 @@ if(sel){
   });
 }
 
-  // pdf links
+
   const pdfUrl = v.pdf || json.site?.defaultPdf || "/document/503.pdf";
   const { preview: pdfPreview, download: pdfDownload, isDrive } = normalizePdfLinks(pdfUrl);
 
   const dl = $("#pdfDownload");
   if(dl){
     dl.href = pdfDownload;
-    // Google Drive 的下載不一定支援 download 屬性，但保留不會有害
+
     dl.setAttribute("download","");
     dl.toggleAttribute("data-drive", !!isDrive);
   }
 
-  // render pdf
+
   await renderPdf(pdfPreview);
-// related
+
   buildRelated(v.related || []);
 
-  // back
+
   $("#backBtn")?.addEventListener("click", ()=> history.length>1 ? history.back() : (location.href="/search"));
 }
 

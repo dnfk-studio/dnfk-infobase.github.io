@@ -72,12 +72,10 @@ function stabilizeCalendarLayout(view){
   const wrap = document.getElementById("calendarWrap");
   const list = document.getElementById("calendarList");
   if(!wrap || !list) return;
-  // avoid stale heights when switching views on mobile
   requestAnimationFrame(()=>{
     wrap.style.height = "auto";
     list.style.height = "auto";
     if(view === "list"){
-      // list view can be taller; keep it readable without breaking layout
       list.style.maxHeight = "520px";
       list.style.overflow = "auto";
     }else{
@@ -138,8 +136,8 @@ function ymd(d){
 }
 function startOfWeek(d){
   const x=new Date(d.getFullYear(), d.getMonth(), d.getDate());
-  const day=x.getDay(); // 0 Sun
-  const diff = (day+6)%7; // make Monday start
+  const day=x.getDay();
+  const diff = (day+6)%7;
   x.setDate(x.getDate()-diff);
   x.setHours(0,0,0,0);
   return x;
@@ -329,7 +327,7 @@ function renderMonth(anchor, events){
   grid.className = "cal-grid";
   wrap.appendChild(grid);
 
-  // build list per day
+
   const days = [];
   for(let d=new Date(start); d<=end; d=addDays(d,1)){
     days.push(new Date(d));
@@ -366,7 +364,7 @@ function renderMonth(anchor, events){
     grid.appendChild(cell);
   });
 
-  // click bindings
+
   $$(".cal-evt", wrap).forEach(btn=>{
     btn.addEventListener("click", ()=>{
       const idx = Number(btn.getAttribute("data-idx"));
@@ -493,7 +491,7 @@ function syncView(view){
 export async function bootCDA(){
   bootCommon();
 
-  // collapsible sections
+
   $$("[data-collapse]").forEach(btn=>{
     btn.addEventListener("click", ()=>{
       const id = btn.getAttribute("data-collapse");
@@ -504,7 +502,7 @@ export async function bootCDA(){
   });
 
 
-  // modal
+
   $("#eventModal")?.addEventListener("click", (e)=>{
     if(e.target?.matches?.("[data-close]") || e.target?.id==="eventModal") closeModal();
   });
@@ -520,10 +518,7 @@ export async function bootCDA(){
     return;
   }
 
-  // notices.json may be one of:
-  // 1) { site:{...}, notices:[...] }
-  // 2) { notices:{ id1:{...}, id2:{...} } }
-  // 3) [ ... ] (legacy)
+
   let notices = [];
   try{
     const raw = (noticesJson && typeof noticesJson === "object" && ("notices" in noticesJson))
@@ -541,7 +536,7 @@ export async function bootCDA(){
   }
   const tagNeedle = String(projectJson?.project?.docTagWhitelist?.[0] || projectJson?.docTag || "CDA").toLowerCase();
 
-  // docs (tag filter) + sort
+
 let docs = [];
 const docSortEl = $("#docSort");
 const docListEl = $("#docList");
@@ -575,7 +570,7 @@ try{
 }
 
 
-  // tasks + sort/filter/search (done items last by default)
+
 let tasks = [];
 const taskListEl = $("#taskList");
 const taskStatsEl = $("#taskStats");
@@ -613,13 +608,13 @@ function sortTasksLocal(arr){
     if(mode==="owner_asc") return String(a.owner||"").localeCompare(String(b.owner||""),"zh-Hant");
     if(mode==="owner_desc") return String(b.owner||"").localeCompare(String(a.owner||""),"zh-Hant");
 
-    // default deadline_near: done last
+
     if(adone!==bdone) return adone? 1 : -1;
     return ad-bd;
   });
 }
 
-// build filters from data and hook details panels (if present)
+
 const taskCats = uniq(tasks.map(t=>t.category)).sort((a,b)=>String(a||"").localeCompare(String(b||""),"zh-Hant"));
 const taskStatuses = uniq(tasks.map(t=>t.status)).sort((a,b)=>String(a||"").localeCompare(String(b||""),"zh-Hant"));
 const taskOwners = uniq(tasks.map(t=>t.owner)).sort((a,b)=>String(a||"").localeCompare(String(b||""),"zh-Hant"));
@@ -639,7 +634,7 @@ function renderTasks(){
     ? sorted.map(buildTaskCard).join("")
     : `<div class="meta-line" style="color:var(--muted)">（無）</div>`;
   if(taskStatsEl) taskStatsEl.textContent = `事務：${sorted.length} 件`;
-  // chips: keyword only
+
   if(taskChipsEl){
     taskChipsEl.innerHTML = keyword
       ? `<span class="chip"><span>${esc("關鍵字 " + keyword)}</span><button type="button" aria-label="移除">×</button></span>`
@@ -663,7 +658,7 @@ function renderTasks(){
   if(taskListEl) taskListEl.innerHTML = `<div class="meta-line" style="color:var(--muted)">（事務資料載入失敗，請檢查 cda-project.json 格式）</div>`;
 }
 
-  // calendar
+
   const rawEvents = Array.isArray(projectJson?.events) ? projectJson.events : [];
   const events = rawEvents.map(normalizeEvent).filter(e=>e._s && e._e).map((e,i)=> ({...e, _idx:i}));
   const viewSel = $("#calView");
@@ -717,7 +712,7 @@ function renderTasks(){
 bootCDA();
 
 
-// v18 修正：收合不再用 display:none，避免 scroll 區塊失效
+
 
 document.querySelectorAll('[data-collapse-target]').forEach(btn=>{
   const target = document.querySelector(btn.dataset.collapseTarget);
@@ -742,10 +737,9 @@ document.querySelectorAll('[data-collapse-target]').forEach(btn=>{
 
 
 function delegateDocOpen(){
-  // allow clicking the whole doc card to open details
   document.addEventListener("click", (e)=>{
     const a = e.target.closest("a");
-    if(a) return; // let links behave normally
+    if(a) return;
     const card = e.target.closest(".result.clickable[data-open]");
     if(!card) return;
     const id = card.getAttribute("data-open") || "";

@@ -76,7 +76,7 @@ function setupCollapsibleLatest(){
     }
     btn.classList.toggle("is-open", !open);
   });
-  // initial state
+
   btn.classList.toggle("is-open", wrap.getAttribute("data-open")==="1");
 }
 
@@ -129,7 +129,7 @@ function setupDetailsMulti(detailsId, items, onChange){
     updateCount();
   }
 
-  // close other details when opening
+
   wrap.addEventListener("toggle", ()=>{
     if(wrap.open){
       $$(".filter-details").forEach(d=>{
@@ -173,10 +173,10 @@ export async function bootSearch(){
   }
 
   const notices = json.notices || [];
-  // build filter lists
+
   const categories = uniq(notices.flatMap(n=>arrify(n.category))).sort((a,b)=>a.localeCompare(b,"zh-Hant"));
   const tags = uniq(notices.flatMap(n=>arrify(n.tags))).sort((a,b)=>a.localeCompare(b,"zh-Hant"));
-// filter selects (分類/標籤)
+
 const catSel = $("#catSel");
 const tagSel = $("#tagSel");
 if(catSel){
@@ -188,7 +188,7 @@ if(tagSel){
   tagSel.addEventListener("change", render);
 }
 
-  // latest top 5 (by last update)
+
 const latest = notices.slice().sort((a,b)=>{
   const da = lastUpdated(a)?.getTime() || -Infinity;
   const db = lastUpdated(b)?.getTime() || -Infinity;
@@ -209,7 +209,7 @@ if(latestList){
   }).join("");
 }
 
-// click handlers (latest list + results)
+
 if(latestList){
   latestList.addEventListener("click", (e)=>{
     const item = e.target.closest(".latest-item");
@@ -255,7 +255,7 @@ $$(".latest-item", root).forEach(row=>{
   }
   wireClicks(document);
 
-  // apply initial from URL
+
   const url = new URL(location.href);
   if(url.searchParams.get("q")) qInput.value = url.searchParams.get("q");
 
@@ -277,12 +277,12 @@ $$(".latest-item", root).forEach(row=>{
       const vi = latestVersionIndex(n);
       const hay = noticeSearchText(n, vi);
       if(words.length && !includesAll(hay, words)) return false;
-      // 分類篩選
+
       if(cat){
         const have = new Set(arrify(n.category).map(x=>normalize(x)));
         if(!have.has(normalize(cat))) return false;
       }
-      // 標籤篩選
+
       if(tag){
         const have = new Set(arrify(n.tags).map(x=>normalize(x)));
         if(!have.has(normalize(tag))) return false;
@@ -307,7 +307,7 @@ $$(".latest-item", root).forEach(row=>{
       statsEl.textContent = `結果：${filtered.length} 筆`;
     }
 
-      // chips（與排序/版本同一種下拉選擇，不再使用凸出的清單）
+
   const chipParts = [];
   if(words.length) chipParts.push({k:"q", v: qInput.value.trim(), label: "關鍵字 " + qInput.value.trim()});
   if(cat) chipParts.push({k:"cat", v: cat, label: "分類 " + cat});
@@ -325,7 +325,6 @@ $$(".latest-item", root).forEach(row=>{
     });
   }
 
-    // reveal anim: mark newly created as reveal targets
     if(window.gsap){
       $$(".reveal", resultsEl).forEach(el=>{
         gsap.fromTo(el, {y: 14, opacity: 0}, {y:0, opacity:1, duration:.55, ease:"power3.out"});

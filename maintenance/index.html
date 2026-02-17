@@ -2,10 +2,6 @@
 <html lang="zh-Hant">
 <head>
     <script>
-        /**
-         * Self-invoking function to initialize maintenance configuration.
-         * Fetches remote settings from Google Apps Script (GAS) to determine if maintenance is active.
-         */
         (function() {
 
       function ensureBootLoading() {
@@ -39,25 +35,25 @@
 
             ensureBootLoading();
             var cfg = document.createElement('script');
-            // 你的 GAS 網址
+
             var apiUrl = "/api/data/config.js";
             cfg.src = apiUrl + "?v=" + Date.now();
             
             cfg.onload = function() {
                 try {
-                    // 1. 如果維護模式已關閉 (False) -> 跳轉回首頁 (使用 ../ 相對路徑)
+
                     if (typeof window.__DNFK_MAINTENANCE__ !== 'undefined' && !window.__DNFK_MAINTENANCE__) {
                         location.replace("../?cache_bust=" + Date.now());
                         return;
                     }
-                    // 2. 如果仍在維護中 -> 更新畫面資訊
+
                     if (window.__DNFK_CONFIG__) {
                         updateUI(window.__DNFK_CONFIG__);
                     }
                     removeBootLoading();
                 } catch (e) {
                     console.error("[DNFK] Error parsing maintenance config:", e);
-                    // 發生錯誤時保留在維護頁面 (Fail-Safe)
+
                     removeBootLoading();
                 }
             };
@@ -70,26 +66,22 @@
             document.head.appendChild(cfg);
         })();
 
-        /**
-         * Updates the UI elements with dynamic data from the GAS server.
-         * @param {Object} data - Configuration object containing version, time, and purpose.
-         */
         function updateUI(data) {
             const elVersion = document.getElementById('display-version');
             const elTime = document.getElementById('display-time');
             const elPurpose = document.getElementById('display-purpose');
 
-            // Format: v versionCode-versionHipe (v versionDate)
+
             if (elVersion && data.versionCode) {
                 elVersion.innerText = "v " + data.versionCode + "-" + (data.versionHipe || "") + " (v " + (data.versionDate || "") + ")";
             }
 
-            // Format: StartTime - EndTime (GMT+8)
+
             if (elTime && data.timeStart && data.timeEnd) {
                 elTime.innerText = data.timeStart + " - " + data.timeEnd + " (GMT+8)";
             }
 
-            // Format: Chinese Description <br> (English Description)
+
             if (elPurpose) {
                 elPurpose.innerHTML = (data.purposeCH || "維護中") + "<br>(" + (data.purposeEG || "Under Maintenance") + ")";
             }
@@ -294,9 +286,6 @@
     <script>
         let serverTimeOffset = 0;
 
-        /**
-         * Syncs system time with server to prevent client-side clock tampering.
-         */
         function syncServerTime() {
             fetch(window.location.href, { method: 'HEAD', cache: 'no-store' })
                 .then(response => {
@@ -308,9 +297,7 @@
                 }).catch(err => console.warn("[DNFK] Time sync failed."));
         }
 
-        /**
-         * Formats and displays corrected Taiwan time (GMT+8).
-         */
+
         function updateTime() {
             let correctedNow = Date.now() + serverTimeOffset;
             const taiwanDate = new Date(correctedNow + (8 * 60 * 60 * 1000));
@@ -322,30 +309,24 @@
         setInterval(updateTime, 1000);
         syncServerTime();
 
-        /**
-         * Triggers manual status re-check by reloading the GAS script.
-         */
+
         function forceCheckStatus() {
             const btn = document.getElementById('force-reload-btn');
-            const originalText = "[ 重新連線 / RECONNECT ]"; // 確保文字正確
+            const originalText = "[ 重新連線 / RECONNECT ]";
             btn.innerHTML = "[ SYNCING DATA... ]";
             btn.disabled = true;
 
             const script = document.createElement('script');
-            // 確保這裡是正確的 GAS 網址
             const gasUrl = "https://script.google.com/macros/s/AKfycbxyxO4jA5RsamgivNksAB9kSJXvZQWEiT4teOPVRF-N0BF4wfAR62ZIkQdyh2zuSGiP/exec";
             script.src = gasUrl + "?v=" + Date.now();
 
             script.onload = function() {
-                // 如果 window.__DNFK_MAINTENANCE__ 未定義，視為失敗，不要當作成功
                 if (typeof window.__DNFK_MAINTENANCE__ !== 'undefined') {
                     if (!window.__DNFK_MAINTENANCE__) {
-                        // 維護結束：跳轉回首頁
                         btn.innerHTML = "[ ONLINE. REDIRECTING... ]";
                         btn.style.color = "#4fffa8";
                         setTimeout(() => location.replace('../?cache_bust=' + Date.now()), 800);
                     } else {
-                        // 仍在維護：更新 UI 並恢復按鈕
                         if (window.__DNFK_CONFIG__) updateUI(window.__DNFK_CONFIG__);
                         setTimeout(() => {
                             btn.innerHTML = "[ STILL OFFLINE ]";
@@ -357,7 +338,6 @@
                         }, 500);
                     }
                 } else {
-                    // 雖然載入但沒有變數，視為錯誤
                     script.onerror();
                 }
             };

@@ -1605,7 +1605,7 @@ html[data-theme="dark"] .cal-cell{background:var(--card2) !important;}
 html[data-theme="dark"] .btn:hover, html[data-theme="dark"] .detailbtn:hover{color:var(--text) !important;}
 
 
-/* Global loading overlay (added) */
+
 .global-loading{position:fixed; inset:0; z-index:9999; display:none;}
 .global-loading.show{display:block;}
 .global-loading-backdrop{position:absolute; inset:0; background:rgba(0,0,0,.35);} 

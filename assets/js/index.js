@@ -3,7 +3,7 @@ import { bootCommon } from "./app.js";
 export function bootIndex(){
   bootCommon();
 
-  // Intro animation (always on index, including refresh)
+
   if(window.gsap){
     const tl = gsap.timeline({defaults:{ease:"power3.out"}});
     tl.fromTo("#homeIntro", {opacity:0, y: 18}, {opacity:1, y:0, duration:.8})

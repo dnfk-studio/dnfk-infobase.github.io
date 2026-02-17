@@ -1,5 +1,5 @@
 import { showLoading, hideLoading } from "./app.js";
-// Data helpers
+
 export async function loadNotices(){
   showLoading("資料載入中…");
   try{
@@ -7,7 +7,7 @@ export async function loadNotices(){
     if(!res.ok) throw new Error("無法載入資料 notices.json");
     return await res.json();
   }catch(e){
-    // fail closed: 任何資料讀取異常，強制導向維護頁
+
     try{ location.replace("/maintenance?v=" + Date.now()); }catch(_){}
     throw e;
   }finally{
@@ -16,7 +16,7 @@ export async function loadNotices(){
 }
 
 export function parseDate(s){
-  // Expect YYYY-MM-DD or ISO
+
   const d = new Date(s);
   return isNaN(d.getTime()) ? null : d;
 }
@@ -31,7 +31,7 @@ export function lastUpdated(notice){
 }
 
 function versionTime(v){
-  // prefer updatedAt, fallback uploadedAt, fallback uploadTime/date
+
   const s = v.updatedAt || v.uploadedAt || v.uploadTime || v.date || v.time || v.upload_date;
   if(!s) return -Infinity;
   const d = parseDate(s);
